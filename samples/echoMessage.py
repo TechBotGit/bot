@@ -11,7 +11,7 @@ def handle(msg):
     if content_type == 'text':
         bot.sendMessage(chat_id, msg['text'])
 
-token = "411692236:AAFT7dtWSr_FM56juxyneZmoqPZD_qqxhR0"
+token = "<token>"
 bot = telepot.Bot(token)
 
 MessageLoop(bot, handle).run_as_thread()

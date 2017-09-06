@@ -93,5 +93,5 @@ def createEvent():
     print('Event created: %s' % (event.get('htmlLink')))
 
 
-if __name__ == '__createEvent__':
+if __name__ == '__main__':
     createEvent()

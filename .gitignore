@@ -1,4 +1,8 @@
 # Python cache files (if any)
 __pycache__/
+
 # ok la ignore this file below
 a.txt
+
+# Remove any api
+.json

@@ -2,3 +2,6 @@
 __pycache__/
 # ok la ignore this file below
 a.txt
+samples/.vs/slnx.sqlite
+samples/.vs/ProjectSettings.json
+samples/.vs/samples/v15/.suo

@@ -5,4 +5,4 @@ __pycache__/
 a.txt
 
 # Remove any api
-.json
+*.json

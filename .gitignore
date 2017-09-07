@@ -1,7 +1,10 @@
 # Python cache files (if any)
 __pycache__/
+
 # ok la ignore this file below
 a.txt
-samples/.vs/slnx.sqlite
-samples/.vs/ProjectSettings.json
-samples/.vs/samples/v15/.suo
+
+# IDE settings
+.vs/
+.vscode/
+.idea/

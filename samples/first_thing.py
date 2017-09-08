@@ -2,6 +2,7 @@ import sys
 import time
 import telepot
 from telepot.loop import MessageLoop
+import splinter
 
 dict={
     'hi': 'Hi',
@@ -35,7 +36,7 @@ def handle(msg):
         print(msg_received)#debug lowered input
         if msg_received=='/start': 
             print("bot started")
-            bot.sendMessage(chat_id,"Beep. You can start chatting with me now, or ask me to do stuff :)")
+            bot.sendMessage(chat_id,"Beep. You can start chatting with me now, or ask me to do stuff. :)")
         elif msg_received in dict : 
             print(dict[msg_received])#debug reply
             if second_reply[msg_received]==1 : 
@@ -43,7 +44,7 @@ def handle(msg):
             else :
                 bot.sendMessage(chat_id,dict[msg_received])
         else :
-            bot.sendMessage(chat_id,"Sorry, I don't know what to reply such conversation yet :'(. ")
+            bot.sendMessage(chat_id,"Sorry, I don't know what to reply such conversation yet. :'( ")
         #print(response[0]['message']['from']['first_name']+response[0]['message']['from']['last_name'])
 f=open("a.txt","r")
 token= (f.read())

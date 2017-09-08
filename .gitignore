@@ -8,3 +8,6 @@ a.txt
 .vs/
 .vscode/
 .idea/
+
+# Remove any api
+*.json

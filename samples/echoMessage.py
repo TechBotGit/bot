@@ -8,6 +8,7 @@ import sys
 cwd = os.path.dirname(sys.argv[0])
 path_file = cwd + '/a.txt'
 
+
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     print(content_type, chat_type, chat_id)

@@ -21,20 +21,11 @@ APPLICATION_NAME = 'Google Calendar API Python Quickstart'
 
 
 def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'calendar-python-quickstart.json')
+    credential_path = os.path.join(credential_dir, 'calendar-python-quickstart.json')
 
     store = Storage(credential_path)
     credentials = store.get()
@@ -50,10 +41,6 @@ def get_credentials():
 
 
 def createEvent():
-    """Shows basic usage of the Google Calendar API.
-
-    Creates a Google Calendar API service object
-    """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)

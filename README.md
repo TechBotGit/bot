@@ -5,16 +5,24 @@ bot-project
 ### Installing Python modules
 
 #### **1. Telepot module**
-```pip install telepot```
+```
+pip install telepot
+```
 	
 #### **2. Beautifulsoup module**
-```pip install beautifulsoup4```
+```
+pip install beautifulsoup4
+```
 
 #### **3. Splinter module**
-```pip install splinter```
+```
+pip install splinter
+```
 
 #### **4. Google API module**
-```pip install --upgrade google-api-python-client```
+```
+pip install --upgrade google-api-python-client
+```
 
 ### Setting Up Google API
 #### **Turn on the Google API of your account**

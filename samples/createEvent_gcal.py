@@ -1,8 +1,3 @@
-# Refer to the Python quickstart on how to setup the environment:
-# https://developers.google.com/google-apps/calendar/quickstart/python
-# Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
-# stored credentials.
-
 from __future__ import print_function
 import httplib2
 import os
@@ -20,8 +15,6 @@ try:
 except ImportError:
     flags = None
 
-# If modifying these scopes, delete your previously saved credentials
-# at ~/.credentials/calendar-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = '../resources/api/client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
@@ -71,11 +64,11 @@ def createEvent():
         'location': 'Nanyang Technological University',
         'description': 'Let us be a TechBot',
         'start': {
-            'dateTime': '2017-09-8T10:00:00',
+            'dateTime': '2017-09-10T10:00:00',
             'timeZone': 'Asia/Singapore',
         },
         'end': {
-            'dateTime': '2017-09-8T14:00:00',
+            'dateTime': '2017-09-10T14:00:00',
             'timeZone': 'Asia/Singapore',
         },
         'attendees': [

@@ -3,6 +3,10 @@ __pycache__/
 
 # ok la ignore this file below
 a.txt
+personal.txt
+
+#logging file
+geckodriver.log
 
 # IDE settings
 .vs/

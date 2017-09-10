@@ -1,7 +1,13 @@
 import telepot
+import os
+import sys
 
+cwd = os.path.dirname(sys.argv[0])
+path_file = cwd + '/a.txt'
 
-token = "<token>"
+f = open(path_file, "r")
+token = (f.read())
+f.close()
 bot = telepot.Bot(token)
 
 bot.sendMessage('<chat_id>', "Hi this is a message from the terminal")

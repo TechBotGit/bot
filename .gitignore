@@ -12,3 +12,6 @@ geckodriver.log
 .vs/
 .vscode/
 .idea/
+
+# Remove any api
+*.json

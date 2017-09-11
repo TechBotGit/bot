@@ -2,7 +2,7 @@ import sys
 import time
 import telepot
 from telepot.loop import MessageLoop
-import splinter
+# import splinter
 import os
 import sys
 
@@ -33,7 +33,6 @@ def handle(msg):
     if content_type == 'text':
         response = bot.getUpdates()
         print(response)  # debug id response
-        # bot.sendMessage(chat_id, msg['text'])
         msg_received = msg['text'].lower()
         print(msg['text'])  # debug input
         print(msg_received)  # debug lowered input
@@ -43,12 +42,11 @@ def handle(msg):
         elif msg_received in reply_dict:
             print(reply_dict[msg_received])  # debug reply
             if second_reply[msg_received] == 1:
-                bot.sendMessage(chat_id, reply_dict[msg_received]+', ' + response[0]['message']['from']['first_name']+' '+response[0]['message']['from']['last_name']+'!')
+                bot.sendMessage(chat_id, reply_dict[msg_received]+', ' + response[0]['message']['from']['first_name']+' !')
             else:
                 bot.sendMessage(chat_id, reply_dict[msg_received])
         else:
             bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'( ")
-        # print(response[0]['message']['from']['first_name']+response[0]['message']['from']['last_name'])
 
 cwd = os.path.dirname(sys.argv[0])
 path_file = cwd + '/a.txt'

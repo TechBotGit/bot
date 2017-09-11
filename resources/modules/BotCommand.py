@@ -7,7 +7,7 @@ import os
 import sys
 
 
-class BotFunction(object):
+class BotCommand(object):
 
     def __init__(self, command):
         self.command = command
@@ -18,11 +18,11 @@ class BotFunction(object):
             '/quit'
         ]
 
-    def isValidFunction(self, command):
+    def isValidCommand(self, command):
         return command in self.command_list
 
     def executeCommand(self, command):
-        if self.isValidFunction():
+        if self.isValidCommand():
             if command == '/start':
                 bot.sendMessage(chat_id, "Beep. You can start chatting with me now, or ask me to do stuff. :)")
         else:

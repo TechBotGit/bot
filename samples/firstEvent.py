@@ -51,11 +51,8 @@ def handle(msg):
             else:
                 bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'( ")
 
-cwd = os.path.dirname(sys.argv[0])
-path_file = cwd + '/a.txt'
-f = open(path_file, "r")
-token = (f.read())
-f.close()
+
+token = bc.API().token
 bot = telepot.Bot(token)
 
 MessageLoop(bot, handle).run_as_thread()

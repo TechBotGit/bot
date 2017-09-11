@@ -1,6 +1,20 @@
-class BotCommand(object):
+import sys
+import os
+
+
+class API (object):
+    def __init__(self):
+        self.cwd = os.path.dirname(sys.argv[0])
+        self.api_key = self.cwd + '/a.txt'
+        f = open(self.api_key, 'r')
+        self.token = f.read()
+        f.close()
+
+
+class BotCommand(API):
 
     def __init__(self, command):
+        API.__init__(self)
         self.command = command
         self.command_list = [
             '/start',

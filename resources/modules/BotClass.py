@@ -19,7 +19,7 @@ class API(object):
         print(content_type, chat_type, chat_id)  # debug msg received
 
         if content_type == 'text':
-            
+           
             # Convert the message to lower case
             msg_received = msg['text'].lower()
             
@@ -56,7 +56,7 @@ class API(object):
 class BotReply(API):
     """This is a class for Replies"""
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         self.reply_dict = {
             'hi': 'Hi',
             'hello': 'Hello',

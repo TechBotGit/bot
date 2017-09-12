@@ -1,11 +1,11 @@
 import sys
 import os
-import time
 import telepot
 from telepot.loop import MessageLoop
 
 
-class API (object):
+class API(object):
+    """API Basic initialisation"""
     def __init__(self):
         self.cwd = os.path.dirname(sys.argv[0])
         self.api_key = self.cwd + '/a.txt'
@@ -19,37 +19,44 @@ class API (object):
         print(content_type, chat_type, chat_id)  # debug msg received
 
         if content_type == 'text':
-
+            
+            # Convert the message to lower case
             msg_received = msg['text'].lower()
-
+            
+            # If the message is a valid command
             if BotCommand().isValidCommand(msg_received):
                 if msg_received == '/start':
                     self.bot.sendMessage(chat_id, "Beep. You can start chatting with me now, or ask me to do stuff. :)")
 
                 elif msg_received == '/createevent':
-                    self.bot.sendMessage(chat_id, "Okay send me the details in the format EventName," \
-                                        "dd/mm/yy:hh:mm - dd/mm/yy/:hh:mm")
+                    self.bot.sendMessage(chat_id, "Okay send me the details in the format EventName, dd/mm/yy:hh:mm - dd/mm/yy/:hh:mm")
+
+                elif msg_received == '/quit':
+                    self.bot.sendMessage(chat_id, "Bye :(")
         
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
             else:
 
+                # If the bot knows reply the message
                 if BotReply().isValidtoReply(msg_received):
                     print(BotReply().reply_dict[msg_received])
-                 
+
+                    # With name?
                     if BotReply().isWithName(msg_received):
                         self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received]+', ' + msg['chat']['first_name']+' !')
 
                     else:
                         self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
                 else:
-                    self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'( ")
+                    self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
 
 
 class BotReply(API):
     """This is a class for Replies"""
     def __init__(self):
+        super().__init__(self)
         self.reply_dict = {
             'hi': 'Hi',
             'hello': 'Hello',
@@ -69,7 +76,7 @@ class BotReply(API):
             'good night': 1,
             'good day': 1,
         }
-    
+
     def isValidtoReply(self, msg):
         return msg in self.reply_dict
 
@@ -81,6 +88,7 @@ class BotCommand(API):
     """This is a class for Commands"""
 
     def __init__(self):
+        super().__init__()
         self.command_list = [
             '/start',
             '/createevent',

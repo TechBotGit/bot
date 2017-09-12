@@ -1,9 +1,6 @@
 import sys
 import time
-import telepot
 from telepot.loop import MessageLoop
-import splinter
-import os
 sys.path.append('../resources/modules')
 import BotClass as bc
 

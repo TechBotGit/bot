@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import telepot
@@ -19,12 +20,18 @@ def on_callback_query(msg):
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
     print('Callback Query:', query_id, from_id, query_data)
     bot.answerCallbackQuery(query_id, text='Got it')
-f=open("a.txt","r")
+
+cwd = os.path.dirname(sys.argv[0])
+path_file = cwd + '/a.txt'
+f = open(path_file, "r")
 TOKEN= (f.read())
 f.close()
 # get token from txt
 bot = telepot.Bot(TOKEN)
 MessageLoop(bot, {'chat': on_chat_message,'callback_query': on_callback_query}).run_as_thread()
+#content_type, chat_type, chat_id = telepot.glance(msg)
+#bot.sendMessage(,on_chat_message)
+#print(test)
 print('Listening ...')
 while 1:
     time.sleep(10)

@@ -1,5 +1,6 @@
 import splinter
 import selenium
+import os
 import sys
 import time
 import telepot
@@ -8,29 +9,49 @@ from splinter import Browser
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 #geckodriver must be installed!!!
-#browser = Browser('firefox')
-listofsem=list()
-def on_chat_message(msg):
-    content_type, chat_type, chat_id = telepot.glance(msg)
-    tuples=tuple(listofsem)
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Press me', callback_data='press')],[InlineKeyboardButton(text='Press me too', callback_data='press 2')]])
-    bot.sendMessage(chat_id, 'Use inline keyboard', reply_markup=keyboard)
 
+
+cek=0
+listofsem=list()
+returnsem=''
+
+
+def printtobotlistssem(msg):
+    content_type, chat_type, chat_id = telepot.glance(msg)
+    #tuples=tuple(listofsem)
+    inlines_keyboard=[[]]
+    for i in range(0,len(listofsem)) :
+        print(listofsem[i])
+        inlines_keyboard.append([InlineKeyboardButton(text=listofsem[i], callback_data=listofsem[i])])
+    keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+    bot.sendMessage(chat_id, 's', reply_markup=keyboard)
+    print(type(keyboard))
 def on_callback_query(msg):
     query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
     print('Callback Query:', query_id, from_id, query_data)
+    returnsem=query_data
+    cek=1
     bot.answerCallbackQuery(query_id, text='Got it')
 
+
+cwd = os.path.dirname(sys.argv[0])
+path_file = cwd + '/a.txt'
+f = open(path_file, "r")
+TOKEN= (f.read())
+f.close()
+bot = telepot.Bot(TOKEN)
+f=open("personal.txt","r")
+user=f.readline()
+password=f.readline()
 f=open("a.txt","r")
 TOKEN= (f.read())
 f.close()
 bot = telepot.Bot(TOKEN)
-    
 f=open("personal.txt","r")
 user=f.readline()
 password=f.readline()
 f.close()
-with Browser() as browser:
+with Browser(driver_name='firefox') as browser:
     # Visit URL
     url = "https://www.ntu.edu.sg/Students/Undergraduate/AcademicServices/CourseRegistration/Pages/default.aspx"
     browser.visit(url)
@@ -42,6 +63,7 @@ with Browser() as browser:
     browser.find_by_name('bOption').first.click()
     browser.fill('PIN',password)
     browser.find_by_name('bOption').first.click()
+    time.sleep(5)
     html_page=browser.html
     listsem = BeautifulSoup(html_page,'html.parser')
     #print(listsem)
@@ -54,13 +76,17 @@ with Browser() as browser:
         #print(type(getsem[0]['value']))
         getsem.pop(0)
     #print(type(listofsem))
+    if listofsem[len(listofsem)-1]=='Exit':
+        listofsem.pop(len(listofsem)-1)
     print(listofsem)
-    MessageLoop(bot, {'chat': on_chat_message,'callback_query': on_callback_query}).run_as_thread()
+    MessageLoop(bot, {'chat': printtobotlistssem,'callback_query': on_callback_query}).run_as_thread()
     print('Listening ...')
     while 1:
-        time.sleep(10)
-    if browser.is_element_present_by_value('2017-2018 Semester 1',5) :
-        browser.find_by_value('2017-2018 Semester 1').first.click()
+        if cek==1:
+            break
+    print("test")
+    if browser.is_element_present_by_value(returnsem,5) :
+        browser.find_by_value(returnsem).first.click()
     html_page=browser.html
     soup = BeautifulSoup(html_page,'html.parser')
     #print(soup)

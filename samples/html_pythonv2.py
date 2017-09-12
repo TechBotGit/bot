@@ -1,3 +1,7 @@
+import os
+import sys
+import time
+import telepot
 import splinter
 import selenium
 import time #for checking runtime
@@ -39,15 +43,16 @@ with Browser() as browser:
         browser.find_option_by_text(listofcourse[i]).first.click()
         browser.find_by_value('Load Class Schedule').first.click()
         #browser.windows.current=browser.windows[1]
-        for ii in browser.windows :
-            if ii.url=="https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
-                browser.windows.current=ii
-                html_page=browser.html
-                #print(html_page)
-                print(a,listofcourse[i])
-                a+=1
-                soup = BeautifulSoup(html_page,'html.parser')
-                ii.close()
+        while len(browser.windows)>1:
+            for ii in browser.windows :
+                if ii.url=="https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
+                    browser.windows.current=ii
+                    html_page=browser.html
+                    #print(html_page)
+                    print(a,listofcourse[i])
+                    a+=1
+                    soup = BeautifulSoup(html_page,'html.parser')
+                    ii.close()
         #browser.windows.current.close()
         #browser.windows.current = browser.windows[0]
         browser.back()

@@ -3,7 +3,6 @@ import os
 import telepot
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
-
 class API(object):
     """API Basic initialisation"""
     def __init__(self):
@@ -59,16 +58,22 @@ class API(object):
                                        
                     elif msg_received=='meetings':
                         self.bot.sendMessage(chat_id,BotReply().reply_dict[msg_received])
-                        inlines_keyboard=[[]]
+                        inlines_keyboard=[]
                         for i in range(len(PreformattedBotInlineMarkup().days)) :
-                            #print(days[i])
-                            inlines_keyboard.append([InlineKeyboardButton(text=PreformattedBotInlineMarkup().days[i],callbackquery=PreformattedBotInlineMarkup().days[i])])
+                            #print(PreformattedBotInlineMarkup().days[i])
+                            inlines_keyboard.append([InlineKeyboardButton(text=PreformattedBotInlineMarkup().days[i],callback_data=PreformattedBotInlineMarkup().days[i])])
+                        #print(inlines_keyboard)
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, 'Choose a day!', reply_markup=keyboard)
                     else:
                         self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
                 else:
                     self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
+    
+    def on_callback_query(self,msg):
+        query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
+        print('Callback Query:', query_id, from_id, query_data)
+        self.bot.answerCallbackQuery(query_id, text='Got it')
 
 
 class BotReply(API):

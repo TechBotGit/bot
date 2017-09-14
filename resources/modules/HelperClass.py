@@ -28,3 +28,18 @@ class StringParse(object):
             else:
                 semicolon.append(';')
                 continue
+
+
+class PreformattedBotInlineMarkup(API):
+    """This is a class for storing future fixed KeyboardMarkup"""
+    def __init__(self):
+        super().__init__()
+        self.days = [
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
+        ]

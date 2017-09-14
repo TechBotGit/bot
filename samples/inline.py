@@ -1,3 +1,4 @@
+import os
 import sys
 import os
 import time
@@ -31,6 +32,7 @@ token = (f.read())
 f.close()
 bot = telepot.Bot(token)
 MessageLoop(bot, {'chat': on_chat_message, 'callback_query': on_callback_query}).run_as_thread()
+
 print('Listening ...')
 while 1:
     time.sleep(10)

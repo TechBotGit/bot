@@ -1,64 +1,60 @@
+import os
+import sys
+import time
+import telepot
 import splinter
 import selenium
+import time #for checking runtime
 from bs4 import BeautifulSoup
 from splinter import Browser
 #geckodriver must be installed!!!
 #browser = Browser('firefox')
-f=open("personal.txt","r")
-user=f.readline()
-password=f.readline()
-f.close()
+start_time = time.time()
 with Browser() as browser:
-    # Visit URL
-    url = "https://www.ntu.edu.sg/Students/Undergraduate/AcademicServices/CourseRegistration/Pages/default.aspx"
+    url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
     browser.visit(url)
-    browser.click_link_by_partial_text('Print/Check Courses Registered')
-    browser.fill('UserName', user)
-    domain=browser.select('Domain', 'STUDENT')
-    if domain!='STUDENT':
-        browser.select('Domain', 'STUDENT')
-    browser.find_by_name('bOption').first.click()
-    browser.fill('PIN',password)
-    browser.find_by_name('bOption').first.click()
-    html_page=browser.html # no need anymore, can be deleted
-    #print(html_page) #debug catch html
-    #print(browser.url)#debug url
-    #print(html)
-    alls=browser.find_by_id("ui_body_container")
-    #bb= driver.find_elements_by_id("ui_body_container")
-    print(alls)
-    print(alls.value)
-    alls=alls.find_by_value("")
-    print(alls)
-    print(alls.value)
-    #print(alls.name)
-    z=0
-    for i in alls:
-        z+=1
-        print(z)
-        cur=alls.find_by_value("")
-        print(type(cur))
-        print(cur)
-        print(cur.value)
-        #print(cur.name)
-        #print(cur.value)
-        #print(cur.value)
-    #print(all)
-    while 1:
-        a=input()
-        break
-    if browser.is_element_present_by_value('2017-2018 Semester 1',5) :
-        browser.find_by_value('2017-2018 Semester 1').first.click()
     html_page=browser.html
-    print(browser.html)
-    print(browser.url)
-    #element = browser.find_by_css('value').first
-    #print(element.value)
-    #with open(html_page) as fp:
-     #   print("test")
-    soup = BeautifulSoup(html_page)
-    print(soup)
-    while 1:
-        a=input()
-        break
-    
+    list_of_course=BeautifulSoup(html_page,'html.parser')
+    #print(list_of_course)
+    #list2_of_course=list_of_course.find_all('select')
+    #print(list2_of_course)
+    #print(type(list2_of_course))
+    listofcourse=list()
+    list_of_course=list_of_course.find_all("option")
+    #convert beautifulsoup results to readable list
+    while len(list_of_course)>0 :
+        #if list_of_course[0].value=="":
+        #print(list_of_course[0].string)
+        stringtemp=list_of_course[0].string
+        if stringtemp.find("20")==-1 and stringtemp.find("---")==-1:
+            stringtemp=stringtemp.replace("\n","")
+            if stringtemp!="" and len(stringtemp)>1:
+                listofcourse.append(stringtemp)
+        #else:
+            #print(stringtemp)
+        list_of_course.pop(0)
+    print(listofcourse)
+    print(len(listofcourse))
+    a=0
+    for i in range(len(listofcourse)):
+        print(i)
+        #if browser.is_element_present_by_text(listofcourse[i]) :
+        print(listofcourse[i])
+        browser.find_option_by_text(listofcourse[i]).first.click()
+        browser.find_by_value('Load Class Schedule').first.click()
+        #browser.windows.current=browser.windows[1]
+        while len(browser.windows)>1:
+            for ii in browser.windows :
+                if ii.url=="https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
+                    browser.windows.current=ii
+                    html_page=browser.html
+                    #print(html_page)
+                    print(a,listofcourse[i])
+                    a+=1
+                    soup = BeautifulSoup(html_page,'html.parser')
+                    ii.close()
+        #browser.windows.current.close()
+        #browser.windows.current = browser.windows[0]
+        browser.back()
+    print("a=",a)
+print("--- %s seconds ---" % (time.time() - start_time))

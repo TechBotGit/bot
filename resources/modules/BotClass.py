@@ -58,8 +58,9 @@ class API(object):
             else:
                 
                 # Execute the command further
+                # This checks if the last msg['text'] is indeed a command
 
-                if '/createevent' in self.list_update_message:
+                if self.list_update_message[len(self.list_update_message) - 2] == '/createevent':
                     
                     try:
                         BotCommand().CreateEventCommand(msg['text'])
@@ -69,42 +70,45 @@ class API(object):
                     
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
-                            
-                # manual emoticons ONLY :p
-                if msg_received[0] == ':':
-                    
-                    if len(msg_received) <= 3:
-                        self.bot.sendMessage(chat_id, msg['text'])
-                    
-                    else:
-                        self.bot.sendMessage(chat_id, "What is that??? .-.")
-                elif msg_received.find('rude') != -1:
-                    self.bot.sendMessage(chat_id, BotReply().reply_dict['rude'])
                 
-                # If the bot knows reply the message
-                elif BotReply().isValidtoReply(msg_received):
-                    print(BotReply().reply_dict[msg_received])
-
-                    # With name?
-                    if BotReply().isWithName(msg_received):
-                        self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received] +', ' + msg['chat']['first_name']+' !')
-                                       
-                    elif msg_received == 'meetings':
-                        self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
-                        inlines_keyboard = []
-                        
-                        for i in range(len(hc.PreformattedBotInlineMarkup().days)):
-                            # print(hc.PreformattedBotInlineMarkup().days[i])
-                            inlines_keyboard.append([InlineKeyboardButton(text=hc.PreformattedBotInlineMarkup().days[i], callback_data=hc.PreformattedBotInlineMarkup().days[i])])
-                        # print(inlines_keyboard)
-                        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-                        self.bot.sendMessage(chat_id, 'Choose a day!', reply_markup=keyboard)
-                    
-                    else:
-                        self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
-              
                 else:
-                    self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
+                    
+                    # Below is not a command. It only makes the bot smarter
+                    # manual emoticons ONLY :p
+                    if msg_received[0] == ':':
+                        
+                        if len(msg_received) <= 3:
+                            self.bot.sendMessage(chat_id, msg['text'])
+                        
+                        else:
+                            self.bot.sendMessage(chat_id, "What is that??? .-.")
+                    elif msg_received.find('rude') != -1:
+                        self.bot.sendMessage(chat_id, BotReply().reply_dict['rude'])
+                    
+                    # If the bot knows reply the message
+                    elif BotReply().isValidtoReply(msg_received):
+                        print(BotReply().reply_dict[msg_received])
+
+                        # With name?
+                        if BotReply().isWithName(msg_received):
+                            self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received] +', ' + msg['chat']['first_name']+' !')
+                                        
+                        elif msg_received == 'meetings':
+                            self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
+                            inlines_keyboard = []
+                            
+                            for i in range(len(hc.PreformattedBotInlineMarkup().days)):
+                                # print(hc.PreformattedBotInlineMarkup().days[i])
+                                inlines_keyboard.append([InlineKeyboardButton(text=hc.PreformattedBotInlineMarkup().days[i], callback_data=hc.PreformattedBotInlineMarkup().days[i])])
+                            # print(inlines_keyboard)
+                            keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+                            self.bot.sendMessage(chat_id, 'Choose a day!', reply_markup=keyboard)
+                        
+                        else:
+                            self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
+                
+                    else:
+                        self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
     
     def on_callback_query(self, msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')

@@ -118,25 +118,24 @@ class BotReply(API):
             'course':"Feeling productive are we? Okay, let's get started",
             'meetings':"Feeling productive are we? Okay, let's get started",
         }
-        #dictionary is O(1), list is O(n), hence better use dictionary(much more faster when n is big)
-        self.reply_with_name = {
-            'hi': 1,
-            'hi bot': 1,
-            'hey':1,
-            'hello': 1,
-            'good morning': 1,
-            'good afternoon': 1,
-            'good evening': 1,
-            'good night': 1,
-            'good day': 1,
-            #'meetings':0
-        }
+        #  dictionary is O(1), list is O(n), hence better use dictionary(much more faster when n is big)
+        self.reply_with_name = [
+            'hi',
+            'hi bot',
+            'hey',
+            'hello',
+            'good morning',
+            'good afternoon',
+            'good evening',
+            'good night',
+            'good day',
+        ]
 
     def isValidtoReply(self, msg):
         return msg in self.reply_dict
 
     def isWithName(self, msg):
-        return (msg in self.reply_with_name.keys())
+        return msg in self.reply_with_name
 
 
 class BotCommand(API):

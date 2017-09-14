@@ -3,6 +3,7 @@ import telepot
 from telepot.loop import MessageLoop
 import sys
 import GoogleapiClass as gc
+import HelperClass as hc
 
 
 class API(object):
@@ -34,6 +35,7 @@ class API(object):
 
             # If the message is a valid command
             if BotCommand().isValidCommand(msg_received):
+                
                 if msg_received == '/start':
                     msg_reply = "Beep. You can start chatting with me now, or ask me to do stuff. :)"
                     self.bot.sendMessage(chat_id, msg_reply)
@@ -56,6 +58,7 @@ class API(object):
                 # Execute the command further
 
                 if '/createevent' in self.list_update_message:
+                    
                     try:
                         BotCommand().CreateEventCommand(msg['text'])
                     
@@ -75,7 +78,7 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
-                
+              
                 else:
                     self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
 
@@ -137,7 +140,7 @@ class BotCommand(API):
         return command in self.command_list
 
     def CreateEventCommand(self, str_text):
-        str_input = StringParse(str_text)
+        str_input = hc.StringParse(str_text)
         str_input.Parse()
         event_name = str_input.event_name
         location = str_input.location
@@ -146,35 +149,3 @@ class BotCommand(API):
 
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
-
-
-class StringParse(object):
-    """This is a class for string formatting to create google calendar event"""
-
-    def __init__(self, str_message):
-        self.str_message = str_message
-        self.event_name = ''
-        self.location = ''
-        self.start_date = ''
-        self.end_date = ''
-    
-    def Parse(self):
-        semicolon = []
-
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.event_name += l
-                    
-                elif len(semicolon) == 1:
-                    self.location += l
-                    
-                elif len(semicolon) == 2:
-                    self.start_date += l
-                    
-                elif len(semicolon) == 3:
-                    self.end_date += l
-
-            else:
-                semicolon.append(';')
-                continue

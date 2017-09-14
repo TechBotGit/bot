@@ -73,7 +73,7 @@ class API(object):
     def on_callback_query(self,msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
-        self.bot.answerCallbackQuery(query_id, text='Got it')
+        self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
 
 class BotReply(API):
@@ -118,7 +118,7 @@ class BotReply(API):
             'course':"Feeling productive are we? Okay, let's get started",
             'meetings':"Feeling productive are we? Okay, let's get started",
         }
-        #  dictionary is O(1), list is O(n), hence better use dictionary(much more faster when n is big)
+        #  Trivia: dictionary accessing time is close to O(1), while list is O(n), hence better use dictionary when n is big, won't affect if n is small tho
         self.reply_with_name = [
             'hi',
             'hi bot',

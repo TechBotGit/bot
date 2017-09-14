@@ -30,10 +30,9 @@ class StringParse(object):
                 continue
 
 
-class PreformattedBotInlineMarkup(API):
+class PreformattedBotInlineMarkup():
     """This is a class for storing future fixed KeyboardMarkup"""
     def __init__(self):
-        super().__init__()
         self.days = [
             'Sunday',
             'Monday',

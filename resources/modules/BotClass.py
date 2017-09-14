@@ -8,18 +8,23 @@ import GoogleapiClass as gc
 class API(object):
     """API Basic initialisation"""
     def __init__(self):
+        # Deploy Bot
         self.cwd = os.path.dirname(sys.argv[0])
         self.api_key = self.cwd + '/a.txt'
         f = open(self.api_key, 'r')
         self.token = f.read()
         f.close()
         self.bot = telepot.Bot(self.token)
-        self.update_id = None
+
+        # Important storage information
+        self.db_chat = {}
+        self.list_update_message = []
 
     def handleAPI(self, msg):
-        content_type, chat_type, chat_id = telepot.glance(msg)
-        print(content_type, chat_type, chat_id)  # debug msg received
+        content_type, self.chat_type, chat_id = telepot.glance(msg)
+        print(content_type, self.chat_type, chat_id)  # debug msg received
         response = self.bot.getUpdates()
+        self.StoreChat(response)
 
         if content_type == 'text':
 
@@ -47,24 +52,19 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
             else:
+                
+                # Execute the command further
 
-                if msg['text'] == 'Telegram Event;Nanyang Technological University;2017-09-20T14:00:00;2017-09-20T16:00:00':
-                    str_input = StringParse(msg['text'])
-                    str_input.Parse()
-                    event_name = str_input.event_name
-                    location = str_input.location
-                    start_date = str_input.start_date
-                    end_date = str_input.end_date
-                    
+                if '/createevent' in self.list_update_message:
                     try:
-                        gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+                        BotCommand().CreateEventCommand(msg['text'])
                     
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot create event!')
+                        self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
                     
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!!')
-                
+                        self.bot.sendMessage(chat_id, 'Successful!')
+                            
                 # If the bot knows reply the message
                 elif BotReply().isValidtoReply(msg_received):
                     print(BotReply().reply_dict[msg_received])
@@ -75,8 +75,19 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
+                
                 else:
                     self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
+
+    def StoreChat(self, update_object):
+        update_id = update_object[0]['update_id']
+        text = update_object[0]['message']['text']
+        
+        # A simple dictionary {update_id: 'text'}
+        self.db_chat[update_id] = text
+
+        # only the text
+        self.list_update_message = list(self.db_chat.values())
 
 
 class BotReply(API):
@@ -125,9 +136,20 @@ class BotCommand(API):
     def isValidCommand(self, command):
         return command in self.command_list
 
+    def CreateEventCommand(self, str_text):
+        str_input = StringParse(str_text)
+        str_input.Parse()
+        event_name = str_input.event_name
+        location = str_input.location
+        start_date = str_input.start_date
+        end_date = str_input.end_date
+
+        # Call the GoogleAPI class and create event
+        gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+
 
 class StringParse(object):
-    """This is a class for string formatting"""
+    """This is a class for string formatting to create google calendar event"""
 
     def __init__(self, str_message):
         self.str_message = str_message

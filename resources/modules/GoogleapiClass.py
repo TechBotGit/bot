@@ -12,6 +12,7 @@ import datetime
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+
 except ImportError:
     flags = None
 
@@ -28,19 +29,26 @@ class GoogleAPI(object):
     def get_credentials(self):
         home_dir = os.path.expanduser('~')
         credential_dir = os.path.join(home_dir, '.credentials')
+        
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
+        
         credential_path = os.path.join(credential_dir, 'calendar-python-quickstart.json')
         store = Storage(credential_path)
         credentials = store.get()
+        
         if not credentials or credentials.invalid:
             flow = client.flow_from_clientsecrets(self.CLIENT_SECRET_FILE, self.SCOPES)
             flow.user_agent = self.APPLICATION_NAME
+            
             if flags:
                 credentials = tools.run_flow(flow, store, flags)
+            
             else:  # Needed only for compatibility with Python 2.6
                 credentials = tools.run(flow, store)
+            
             print('Storing credentials to ' + credential_path)
+        
         return credentials
 
     def createEvent(self, summary, location, start, end):

@@ -42,7 +42,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "If you want to know your course schedule, type in Course. If you want to plan your meetings, type in Meetings. If you want to know anything about me, just type in whatever you want and hope I understand :)")
                 
                 elif msg_received == '/createevent':
-                    msg_reply = "Okay send me the details in following format: \n"
+                    msg_reply = "Okay send me the details in following format:"
                     str_format = "Event Name;location;yyyy-mm-ddThh:mm;yyyy-mm-ddThh:mm"
                     self.bot.sendMessage(chat_id, msg_reply)
                     self.bot.sendMessage(chat_id, str_format)

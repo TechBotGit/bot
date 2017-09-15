@@ -10,7 +10,7 @@ bot = bc.API().bot  # the bot object
 handle = bc.API().handleAPI  # APIhandler
 callbackquery = bc.API().on_callback_query
 
-MessageLoop(bot, {'chat': handle,'callback_query': callbackquery} ).run_as_thread()
+MessageLoop(bot, {'chat': handle, 'callback_query': callbackquery}).run_as_thread()
 print("Listening...")
 
 # Keep the program running.

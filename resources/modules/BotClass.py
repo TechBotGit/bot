@@ -35,7 +35,6 @@ class API(object):
 
             # If the message is a valid command
             if BotCommand().isValidCommand(msg_received):
-                #self.bot.sendMessage(chat_id,"test")
                 
                 if msg_received == '/start':
                     # self.bot.sendMessage(chat_id, "Beep. You can start chatting with me now, or ask me to do stuff. :)")

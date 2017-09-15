@@ -32,10 +32,10 @@ class API(object):
 
             # Convert the message to lower case
             msg_received = msg['text'].lower()
-            print(msg_received)
 
             # If the message is a valid command
             if BotCommand().isValidCommand(msg_received):
+                #self.bot.sendMessage(chat_id,"test")
                 
                 if msg_received == '/start':
                     # self.bot.sendMessage(chat_id, "Beep. You can start chatting with me now, or ask me to do stuff. :)")
@@ -49,6 +49,13 @@ class API(object):
                     self.bot.sendMessage(chat_id, str_format)
                     print(response)
 
+                elif msg_received == '/addindex':
+                    msg_reply = "Sure thing. Please type your details in following format: \n"
+                    str_format = "Course Name;Course Type(Full/Part Time);Index Number"
+                    self.bot.sendMessage(chat_id,msg_reply)
+                    self.bot.sendMessage(chat_id, str_format)
+                    print(response)
+                    
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")    
                 
@@ -71,6 +78,18 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
                 
+                elif self.list_update_message[len(self.list_update_message) - 2] == '/addindex':
+                    self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
+                    self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
+                    try:
+                        BotCommand().AddIndexCommand(msg['text'])
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
+
+                    else:
+                        self.bot.sendMessage(chat_id,"Successfully added! :)")
+
                 else:
                     
                     # Below is not a command. It only makes the bot smarter
@@ -196,6 +215,8 @@ class BotCommand(API):
         super().__init__()
         self.command_list = [
             '/start',
+            '/addindex',
+            '/removeindex',
             '/createevent',
             '/mergeevent',
             '/quit'
@@ -205,12 +226,19 @@ class BotCommand(API):
         return command in self.command_list
 
     def CreateEventCommand(self, str_text):
-        str_input = hc.StringParse(str_text)
+        str_input = hc.StringParseGoogleAPI(str_text)
         str_input.Parse()
         event_name = str_input.event_name
         location = str_input.location
         start_date = str_input.start_date
         end_date = str_input.end_date
-
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+
+    def AddIndexCommand(self,str_text):
+        str_input = hc.StringParseIndex(str_text)
+        str_input.Parse()
+        course_name = str_input.course_name
+        course_type = str_input.course_type
+        index = str_input.index
+        hc.splintergetdata().start(course_name,course_type,index)

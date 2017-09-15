@@ -36,9 +36,8 @@ class API(object):
 
             # If the message is a valid command
             if BotCommand().isValidCommand(msg_received):
-                
+
                 if msg_received == '/start':
-                    # self.bot.sendMessage(chat_id, "Beep. You can start chatting with me now, or ask me to do stuff. :)")
                     self.bot.sendMessage(chat_id, "Hi! I'm a bot that tells you your course schedule and plan your meetings! Feel free to ask me stuff :)")
                     self.bot.sendMessage(chat_id, "If you want to know your course schedule, type in Course. If you want to plan your meetings, type in Meetings. If you want to know anything about me, just type in whatever you want and hope I understand :)")
                 
@@ -50,7 +49,11 @@ class API(object):
                     print(response)
 
                 elif msg_received == '/quit':
-                    self.bot.sendMessage(chat_id, "Bye :(")    
+                    self.bot.sendMessage(chat_id, "Bye :(")
+
+                elif msg_received == '/isfree':
+                    self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
+                    self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
                 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
@@ -71,6 +74,17 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
                 
+                elif self.list_update_message[len(self.list_update_message) - 2] == '/isfree':
+                    
+                    try:
+                        isFree = BotCommand().IsFreeCommand(msg['text'])
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Cannot check! Make sure to enter the correct format!')
+                    
+                    else:
+                        
+                        self.bot.sendMessage(chat_id, isFree)
                 else:
                     
                     # Below is not a command. It only makes the bot smarter
@@ -198,6 +212,7 @@ class BotCommand(API):
             '/start',
             '/createevent',
             '/mergeevent',
+            '/isfree',
             '/quit'
         ]
 
@@ -206,7 +221,7 @@ class BotCommand(API):
 
     def CreateEventCommand(self, str_text):
         str_input = hc.StringParse(str_text)
-        str_input.Parse()
+        str_input.ParseEvent()
         event_name = str_input.event_name
         location = str_input.location
         start_date = str_input.start_date
@@ -214,3 +229,13 @@ class BotCommand(API):
 
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+
+    def IsFreeCommand(self, str_text):
+        str_input = hc.StringParse(str_text)
+        str_input.ParseDateRange()
+        start_date_query = str_input.start_date
+        end_date_query = str_input.end_date
+
+        # Call the GoogleAPI class and check isFree
+        query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
+        return gc.GoogleAPI().isFree(query)

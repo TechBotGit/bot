@@ -39,7 +39,7 @@ class StringParse(object):
         tz_obj_date = tz.localize(obj_date)
         iso_date = tz_obj_date.isoformat()
         return iso_date
-    
+
     def ParseDateRange(self):
         semicolon = []
         for l in self.str_message:

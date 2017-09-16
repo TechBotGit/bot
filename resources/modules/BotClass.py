@@ -19,9 +19,9 @@ class API(object):
         self.bot = telepot.Bot(self.token)
 
         # Important storage information
-        self.db_chat = {}
-        self.list_update_message = []
-
+        self._db_chat = {}
+        self._list_update_message = []
+    
     def handleAPI(self, msg):
         content_type, self.chat_type, chat_id = telepot.glance(msg)
         print(content_type, self.chat_type, chat_id)  # debug msg received
@@ -35,7 +35,7 @@ class API(object):
             print(msg_received)
 
             # If the message is a valid command
-            if BotCommand().isValidCommand(msg_received):
+            if BotCommand(msg_received).isValidCommand():
 
                 if msg_received == '/start':
                     self.bot.sendMessage(chat_id, "Hi! I'm a bot that tells you your course schedule and plan your meetings! Feel free to ask me stuff :)")
@@ -61,12 +61,14 @@ class API(object):
             else:
                 
                 # Execute the command further
+                # Create the Command Object first
+                BotCommandObject = BotCommand(msg['text'])
+                
                 # This checks if the last msg['text'] is indeed a command
-
-                if self.list_update_message[len(self.list_update_message) - 2] == '/createevent':
+                if self.list_update_message[-2] == '/createevent':
                     
                     try:
-                        BotCommand().CreateEventCommand(msg['text'])
+                        BotCommandObject.CreateEventCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
@@ -74,17 +76,23 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
                 
-                elif self.list_update_message[len(self.list_update_message) - 2] == '/isfree':
-                    
+                elif self.list_update_message[-2] == '/isfree':
                     try:
-                        isFree = BotCommand().IsFreeCommand(msg['text'])
+
+                        isFree = BotCommandObject.IsFreeCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot check! Make sure to enter the correct format!')
                     
                     else:
-                        
                         self.bot.sendMessage(chat_id, isFree)
+                        if isFree:
+                            self.bot.sendMessage(chat_id, 'You are free on this time interval')
+                        else:
+                            start_busy = BotCommandObject.start_busy
+                            end_busy = BotCommandObject.end_busy
+                            self.bot.sendMessage(chat_id, 'You are busy on this interval!')
+                            self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
                 else:
                     
                     # Below is not a command. It only makes the bot smarter
@@ -138,6 +146,22 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
+
+    @property
+    def db_chat(self):
+        return self._db_chat
+
+    @property
+    def list_update_message(self):
+        return self._list_update_message
+
+    @db_chat.setter
+    def db_chat(self, value):
+        self._db_chat = value
+
+    @list_update_message.setter
+    def list_update_message(self, value):
+        self._list_update_message = value
 
 
 class BotReply(API):
@@ -206,7 +230,7 @@ class BotReply(API):
 class BotCommand(API):
     """This is a class for Commands"""
 
-    def __init__(self):
+    def __init__(self, str_text):
         super().__init__()
         self.command_list = [
             '/start',
@@ -215,12 +239,17 @@ class BotCommand(API):
             '/isfree',
             '/quit'
         ]
+        self.str_text = str_text
+        
+        # Updatable
+        self._start_busy = None
+        self._end_busy = None
 
-    def isValidCommand(self, command):
-        return command in self.command_list
+    def isValidCommand(self):
+        return self.str_text in self.command_list
 
-    def CreateEventCommand(self, str_text):
-        str_input = hc.StringParse(str_text)
+    def CreateEventCommand(self):
+        str_input = hc.StringParse(self.str_text)
         str_input.ParseEvent()
         event_name = str_input.event_name
         location = str_input.location
@@ -230,12 +259,35 @@ class BotCommand(API):
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
 
-    def IsFreeCommand(self, str_text):
-        str_input = hc.StringParse(str_text)
+    def IsFreeCommand(self):
+        str_input = hc.StringParse(self.str_text)
         str_input.ParseDateRange()
         start_date_query = str_input.start_date
         end_date_query = str_input.end_date
 
         # Call the GoogleAPI class and check isFree
         query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
-        return gc.GoogleAPI().isFree(query)
+
+        isFree = gc.GoogleAPI().isFree(query)
+        # Get the query's busy info
+        if not isFree:
+            info_busy = gc.GoogleAPI().BusyInfo(query)
+            self.start_busy = info_busy[0]
+            self.end_busy = info_busy[1]
+        return isFree
+
+    @property
+    def start_busy(self):
+        return self._start_busy
+
+    @property
+    def end_busy(self):
+        return self._end_busy
+
+    @start_busy.setter
+    def start_busy(self, value):
+        self._start_busy = value
+
+    @end_busy.setter
+    def end_busy(self, value):
+        self._end_busy = value

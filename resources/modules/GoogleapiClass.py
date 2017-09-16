@@ -108,3 +108,9 @@ class GoogleAPI(object):
 
     def isFree(self, query):
         return len(query['calendars']['primary']['busy']) == 0
+   
+    def BusyInfo(self, query):
+        busy = query['calendars']['primary']['busy']
+        start_busy = busy[0]['start']
+        end_busy = busy[0]['end']
+        return start_busy, end_busy

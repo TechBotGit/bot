@@ -50,7 +50,7 @@ class API(object):
                 elif msg_received == '/addindex':
                     msg_reply = "Sure thing. Please type your details in following format: \n"
                     str_format = "Course Name;Course Type(Full/Part Time);Index Number"
-                    self.bot.sendMessage(chat_id,msg_reply)
+                    self.bot.sendMessage(chat_id, msg_reply)
                     self.bot.sendMessage(chat_id, str_format)
                     print(response)
                     
@@ -71,7 +71,7 @@ class API(object):
                 BotCommandObject = BotCommand(msg['text'])
                 
                 # This checks if the last msg['text'] is indeed a command
-                if self.list_update_message[-2] == '/createevent':
+                if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
                     
                     try:
                         BotCommandObject.CreateEventCommand()
@@ -82,7 +82,7 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
                 
-                elif self.list_update_message[-2] == '/isfree':
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
 
                         isFree = BotCommandObject.IsFreeCommand()
@@ -100,7 +100,7 @@ class API(object):
                             self.bot.sendMessage(chat_id, 'You are busy on this interval!')
                             self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
                 
-                elif self.list_update_message[-2] == '/addindex':
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addindex':
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')

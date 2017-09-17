@@ -30,18 +30,11 @@ path_file = cwd + '/a.txt'
 f = open(path_file, "r")
 token = (f.read())
 f.close()
-<<<<<<< HEAD
-# f=open("a.txt","r")
-# TOKEN= (f.read())
-# f.close()
-# get token from txt
 bot = telepot.Bot(token)
 MessageLoop(bot, {'chat': on_chat_message,'callback_query': on_callback_query}).run_as_thread()
-=======
 bot = telepot.Bot(token)
 MessageLoop(bot, {'chat': on_chat_message, 'callback_query': on_callback_query}).run_as_thread()
 
->>>>>>> 1ea44c9a5b55daa122eb4ba96aed9f0fc1758282
 print('Listening ...')
 while 1:
     time.sleep(10)

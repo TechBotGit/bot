@@ -1,11 +1,10 @@
 # Python cache files (if any)
 __pycache__/
 
-# ok la ignore this file below
-a.txt
-personal.txt
+# All txt files
+*.txt
 
-#logging file
+# logging file
 geckodriver.log
 
 # IDE settings
@@ -13,5 +12,5 @@ geckodriver.log
 .vscode/
 .idea/
 
-# Remove any api
+# All api
 *.json

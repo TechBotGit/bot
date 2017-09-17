@@ -147,8 +147,7 @@ Input the details of your event according to the format above.
 The bot will return **Successful!** if your event creation is successful.
 
 **NOTE: the 'T' indicates a separation between the date and time of the event.
-You must include the 'T' in your input.
-**
+You must include the 'T' in your input.**
 
 ### 3.3 Check If You Are Free At A Certain Time
 

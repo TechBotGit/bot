@@ -89,8 +89,8 @@ class GoogleAPI(object):
         service = discovery.build('calendar', 'v3', http=http)
         
         # Parsing date
-        iso_date_start = hc.StringParse(str_date_start).ParseDate()
-        iso_date_end = hc.StringParse(str_date_end).ParseDate()
+        iso_date_start = hc.StringParseGoogleAPI(str_date_start).ParseDate()
+        iso_date_end = hc.StringParseGoogleAPI(str_date_end).ParseDate()
 
         # query details
         query = {

@@ -39,6 +39,7 @@ class StringParseGoogleAPI(object):
             else:
                 semicolon.append(';')
                 continue
+    
     def ParseDate(self):
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')
         tz = pytz.timezone('Asia/Singapore')
@@ -58,14 +59,16 @@ class StringParseGoogleAPI(object):
                 semicolon.append(';')
                 continue
 
+
 class StringParseIndex(object):
     def __init__(self, str_message):
         self.str_message = str_message
         self.course_name = ''
         self.course_type = ''
         self.index = ''
+    
     def Parse(self):
-        semicolon=[]
+        semicolon = []
         for l in self.str_message:
             if l != ';':
                 if len(semicolon) == 0:
@@ -77,16 +80,16 @@ class StringParseIndex(object):
                 elif len(semicolon) == 2:
                     self.index += l
 
-            elif l==' ':
+            elif l == ' ':
                 continue
                 
             else:
                 semicolon.append(';')
                 continue
             
-        if len(semicolon)<2:
+        if len(semicolon) < 2:
             1/0
-        self.course_type=self.course_type.lower()
+        self.course_type = self.course_type.lower()
         if self.course_type.find('full') != -1 and self.course_type.find('part') == -1:
             self.course_type = 'F'
         elif self.course_type.find('part') != -1 and self.course_type.find('full') == -1:
@@ -106,23 +109,25 @@ class PreformattedBotInlineMarkup():
             'Saturday'
         ]
 
+
 class splintergetdata():
     def __init__(self):
         self.url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
-        #if necessary
-    def start(self,Course_code,Type_course,index_number):
+        # if necessary
+    
+    def start(self, Course_code, Type_course, index_number):
         with Browser() as browser:
             browser.visit(self.url)
-            browser.fill("r_subj_code",Course_code)
-            browser.choose("r_search_type",Type_course)
+            browser.fill("r_subj_code", Course_code)
+            browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            #while len(browser.windows)>0:
-            for ii in browser.windows :
-                if ii.url=="https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
-                    browser.windows.current=ii
-                    html_page=browser.html
-                    #print(html_page)
-                    soup = BeautifulSoup(html_page,'html.parser')
-                    #print(soup)
+            # while len(browser.windows)>0:
+            for ii in browser.windows:
+                if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
+                    browser.windows.current = ii
+                    html_page = browser.html
+                    # print(html_page)
+                    soup = BeautifulSoup(html_page, 'html.parser')
+                    # print(soup)
                 ii.close()
         print('Success')

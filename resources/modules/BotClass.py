@@ -22,6 +22,22 @@ class API(object):
         self._db_chat = {}
         self._list_update_message = []
     
+    @property
+    def db_chat(self):
+        return self._db_chat
+
+    @property
+    def list_update_message(self):
+        return self._list_update_message
+
+    @db_chat.setter
+    def db_chat(self, value):
+        self._db_chat = value
+
+    @list_update_message.setter
+    def list_update_message(self, value):
+        self._list_update_message = value
+    
     def handleAPI(self, msg):
         content_type, self.chat_type, chat_id = telepot.glance(msg)
         print(content_type, self.chat_type, chat_id)  # debug msg received
@@ -167,22 +183,6 @@ class API(object):
         # only the text
         self.list_update_message = list(self.db_chat.values())
 
-    @property
-    def db_chat(self):
-        return self._db_chat
-
-    @property
-    def list_update_message(self):
-        return self._list_update_message
-
-    @db_chat.setter
-    def db_chat(self, value):
-        self._db_chat = value
-
-    @list_update_message.setter
-    def list_update_message(self, value):
-        self._list_update_message = value
-
 
 class BotReply(API):
     """This is a class for Replies"""
@@ -267,6 +267,22 @@ class BotCommand(API):
         self._start_busy = None
         self._end_busy = None
 
+    @property
+    def start_busy(self):
+        return self._start_busy
+
+    @property
+    def end_busy(self):
+        return self._end_busy
+
+    @start_busy.setter
+    def start_busy(self, value):
+        self._start_busy = value
+
+    @end_busy.setter
+    def end_busy(self, value):
+        self._end_busy = value
+    
     def isValidCommand(self):
         return self.str_text in self.command_list
 
@@ -296,22 +312,6 @@ class BotCommand(API):
             self.start_busy = info_busy[0]
             self.end_busy = info_busy[1]
         return isFree
-
-    @property
-    def start_busy(self):
-        return self._start_busy
-
-    @property
-    def end_busy(self):
-        return self._end_busy
-
-    @start_busy.setter
-    def start_busy(self, value):
-        self._start_busy = value
-
-    @end_busy.setter
-    def end_busy(self, value):
-        self._end_busy = value
 
     def AddIndexCommand(self, str_text):
         str_input = hc.StringParseIndex(str_text)

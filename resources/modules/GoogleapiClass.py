@@ -1,13 +1,13 @@
 from __future__ import print_function
-import httplib2
-import os
-
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
+import httplib2
+import os
 import datetime
+import HelperClass as hc
 
 try:
     import argparse
@@ -82,3 +82,35 @@ class GoogleAPI(object):
 
         event = service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
+    
+    def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
+        credentials = self.get_credentials()
+        http = credentials.authorize(httplib2.Http())
+        service = discovery.build('calendar', 'v3', http=http)
+        
+        # Parsing date
+        iso_date_start = hc.StringParse(str_date_start).ParseDate()
+        iso_date_end = hc.StringParse(str_date_end).ParseDate()
+
+        # query details
+        query = {
+            'timeMin': iso_date_start,
+            'timeMax': iso_date_end,
+            'timeZone': 'Asia/Singapore',
+            'items': [
+                {
+                    'id': 'primary'
+                }
+            ]
+        }
+        query = service.freebusy().query(body=query).execute()
+        return query
+
+    def isFree(self, query):
+        return len(query['calendars']['primary']['busy']) == 0
+   
+    def BusyInfo(self, query):
+        busy = query['calendars']['primary']['busy']
+        start_busy = busy[0]['start']
+        end_busy = busy[0]['end']
+        return start_busy, end_busy

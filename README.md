@@ -63,25 +63,28 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 
 ## Chapter 1 Introduction
 
-### 1.1 Overview
+#### 1.1 Overview
 
-### 1.2 System Requirements
+#### 1.2 System Requirements
 
 ## Chapter 2 Getting Started
 
-### 2.1 IDLE Python 3.6
+#### 2.1 IDLE Python 3.6
 
-### 2.2 Visual Studio Code 1.15.1 Python 3.6
+#### 2.2 Visual Studio Code 1.15.1 Python 3.6
 
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time
 
-### 3.1 Inputting Your Index 
+#### 3.1 Inputting Your Index 
 
-### 3.2 Creating New Event
+#### 3.2 Creating New Event
 
-### 3.3 Check If You Are Free at A Certain Time 
+#### 3.3 Check If You Are Free at A Certain Time 
 
-### 3.4 Choose Meeting Time According to Bot Recommendation
+#### 3.4 Choose Meeting Time According to Bot Recommendation
+
+
+
 
 ## Chapter 1 Introduction
 

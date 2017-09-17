@@ -1,6 +1,5 @@
 import sys
 import time
-import telepot
 from telepot.loop import MessageLoop
 sys.path.append('../resources/modules')
 import BotClass as bc

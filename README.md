@@ -72,7 +72,6 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time
 
 ### 3.1 Inputting Your Index 
-!!!!(/addindex : course code; full/part time ; index)
 
 ### 3.2 Creating New Event
 
@@ -119,6 +118,14 @@ You can then talk to the bot and ask it to arrange your meet
 
 ### 3.1 Inputting Your Index
 
+You can input your index in the bot. This way, the bot can tell you what courses you have throughout the day. To input your course's index, you must first type in **/addindex**
+The bot will reply in the following manner:
+```
+Sure thing. Please type your details in following format:
+
+Course Name;Course Type(Full/Part Time);Index Number
+```
+
 ### 3.2 Creating New Event
 
 You can create new events through the bot and the bot will input it in your Google Calendar for you.
@@ -127,7 +134,7 @@ The bot will respond in the following manner:
 ```
 Okay send me the details in following format:
 
-Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss**
+Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss
 ```
 Input the details of your event according to the format above.
 The bot will return **Successful!** if your event creation is successful.

@@ -121,7 +121,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
                     try:
-                        BotCommand().AddIndexCommand(msg['text'])
+                        BotCommand(msg['text']).AddIndexCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
@@ -313,8 +313,8 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-    def AddIndexCommand(self, str_text):
-        str_input = hc.StringParseIndex(str_text)
+    def AddIndexCommand(self):
+        str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         course_name = str_input.course_name
         course_type = str_input.course_type

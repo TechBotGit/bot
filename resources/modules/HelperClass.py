@@ -3,6 +3,8 @@ import splinter
 import selenium
 import datetime
 import pytz
+import os
+import sys
 
 from bs4 import BeautifulSoup
 from splinter import Browser
@@ -160,7 +162,7 @@ class StringParseIndex(object):
             self.course_type = 'P'
 
 
-class PreformattedBotInlineMarkup():
+class PreformattedBotInlineMarkup(object):
     """This is a class for storing future fixed KeyboardMarkup"""
     def __init__(self):
         self.days = [
@@ -174,13 +176,17 @@ class PreformattedBotInlineMarkup():
         ]
 
 
-class splintergetdata():
+class splintergetdata(object):
     def __init__(self):
         self.url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
-        # if necessary
-    
+        self.cwd = os.path.dirname(sys.argv[0])
+        self.browser_file = self.cwd + "/../resources/browser.txt"
+        f = open(self.browser_file, 'r')
+        self.browser_used = f.read()
+        f.close()
+
     def start(self, Course_code, Type_course, index_number):
-        with Browser() as browser:
+        with Browser(self.browser_used) as browser:
             browser.visit(self.url)
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)

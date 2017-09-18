@@ -39,8 +39,8 @@ class API(object):
         self._list_update_message = value
     
     def handleAPI(self, msg):
-        content_type, self.chat_type, chat_id = telepot.glance(msg)
-        print(content_type, self.chat_type, chat_id)  # debug msg received
+        content_type, chat_type, chat_id = telepot.glance(msg)
+        print(content_type, chat_type, chat_id)  # debug msg received
         response = self.bot.getUpdates()
         self.StoreChat(response)
 

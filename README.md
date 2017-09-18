@@ -39,19 +39,19 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 
 ## Contents
 
-### Chapter 1 Introduction
+### [Chapter 1 Introduction](#chapter-1-introduction-1)
 
 #### 1.1 Overview
 
 #### 1.2 System Requirements
 
-### Chapter 2 Getting Started
+### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
 #### 2.1 IDLE Python 3.6
 
 #### 2.2 Visual Studio Code 1.15.1 Python 3.6
 
-### Chapter 3 Inputing Course Indexes and Finding Common Free Time
+### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
 #### 3.1 Inputting Your Index 
 

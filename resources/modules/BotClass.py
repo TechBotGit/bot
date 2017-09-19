@@ -134,6 +134,7 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
+                        #BotCommand(msg['text']).AddIndexCommand() #debug purpose
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -147,7 +148,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, sucess)
                 
                 else:
-                    
+
                     # Below is not a command. It only makes the bot smarter
                     # manual emoticons ONLY :p
                     if msg_received[0] == ':':

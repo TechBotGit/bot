@@ -47,15 +47,15 @@ def createEvent():
 
     # Event Details
     event = {
-        'summary': 'Meeting Bot',
+        'summary': 'Meeting Bot Recursive',
         'location': 'Nanyang Technological University',
         'description': 'Let us be a TechBot',
         'start': {
-            'dateTime': '2017-09-10T10:00:00',
+            'dateTime': '2017-06-01T10:00:00',
             'timeZone': 'Asia/Singapore',
         },
         'end': {
-            'dateTime': '2017-09-10T14:00:00',
+            'dateTime': '2017-06-01T14:00:00',
             'timeZone': 'Asia/Singapore',
         },
         'attendees': [
@@ -67,6 +67,11 @@ def createEvent():
                 {'method': 'email', 'minutes': 60}
             ],
         },
+        'recurrence': [
+            "EXDATE;TZID=Asia/Singapore;VALUE=DATE:20170610T100000",
+            "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
+            "RRULE:FREQ=DAILY;UNTIL=20170628;INTERVAL=3"
+        ]
     }
 
     event = service.events().insert(calendarId='primary', body=event).execute()

@@ -21,6 +21,15 @@ class StringParseGoogleAPI(object):
         self._start_date = ''
         self._end_date = ''
 
+        # for STARS Property
+        self._course_code = ''
+        self._location_course = ''
+        self._class_type = ''
+        self._start_time = ''
+        self._end_time = ''
+        self._first_recess_week = ''
+        self._first_week = ''
+
     @property
     def event_name(self):
         return self._event_name
@@ -36,7 +45,35 @@ class StringParseGoogleAPI(object):
     @property
     def end_date(self):
         return self._end_date
+
+    @property
+    def course_code(self):
+        return self._course_code
+
+    @property
+    def location_course(self):
+        return self._location_course
+
+    @property
+    def class_type(self):
+        return self._class_type
     
+    @property
+    def start_time(self):
+        return self._start_time
+
+    @property
+    def end_time(self):
+        return self._end_time
+
+    @property
+    def first_recess_week(self):
+        return self._first_recess_week
+
+    @property
+    def first_week(self):
+        return self._first_week
+
     @event_name.setter
     def event_name(self, value):
         self._event_name = value
@@ -56,6 +93,41 @@ class StringParseGoogleAPI(object):
     def end_date(self, value):
         self._end_date = value
         return self._end_date
+
+    @course_code.setter
+    def course_code(self, value):
+        self._course_code = value
+        return self._course_code
+
+    @location_course.setter
+    def location_course(self, value):
+        self._location_course = value
+        return self._location_course
+    
+    @class_type.setter
+    def class_type(self, value):
+        self._class_type = value
+        return self._class_type
+    
+    @start_time.setter
+    def start_time(self, value):
+        self._start_time = value
+        return self._start_time
+
+    @end_time.setter
+    def end_time(self, value):
+        self._end_time = value
+        return self._end_time
+
+    @first_recess_week.setter
+    def first_recess_week(self, value):
+        self._first_recess_week = value
+        return self._first_recess_week
+
+    @first_week.setter
+    def first_week(self, value):
+        self._first_week = value
+        return self._first_week
     
     def ParseEvent(self):
         semicolon = []
@@ -106,7 +178,7 @@ class StringParseGoogleAPI(object):
                 continue
         return date_no_colon
 
-    def ParseDateWeek(self, initial='2017-08-14'):
+    def ParseDateWeek(self):
         """To exclude any week"""
         hour_start, minute_start, second_start = self.str_message.split(':')
         year_week, month_week, day_week = initial.split('-')
@@ -136,6 +208,14 @@ class StringParseGoogleAPI(object):
 
         date_string_complete = ','.join(date_list_no_colon)
         return date_string_complete
+
+    def ParseIndexInput(self):
+        course_code, location_course, class_type, start_time, end_time = self.str_message.split(';')
+        self.course_code = course_code
+        self.location_course = location_course
+        self.class_type = class_type
+        self.start_time = start_time
+        self.end_time = end_time
 
 
 class StringParseIndex(object):

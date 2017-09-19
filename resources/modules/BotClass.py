@@ -314,25 +314,6 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-<<<<<<< HEAD
-    @property
-    def start_busy(self):
-        return self._start_busy
-
-    @property
-    def end_busy(self):
-        return self._end_busy
-
-    @start_busy.setter
-    def start_busy(self, value):
-        self._start_busy = value
-
-    @end_busy.setter
-    def end_busy(self, value):
-        self._end_busy = value
-
-=======
->>>>>>> 42c354272aa4f86e67728209bd736ee3f28ed70c
     def AddIndexCommand(self):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()

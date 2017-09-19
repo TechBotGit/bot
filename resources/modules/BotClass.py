@@ -138,14 +138,13 @@ class API(object):
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
-                        sucess = BotCommandObject.ScheduleIndexCommand()
+                        BotCommandObject.ScheduleIndexCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot schedule index! Make sure you have entered the correct format!')
 
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
-                        self.bot.sendMessage(chat_id, sucess)
                 
                 else:
 

@@ -210,12 +210,14 @@ class StringParseGoogleAPI(object):
         return date_string_complete
 
     def ParseIndexInput(self):
-        course_code, location_course, class_type, start_time, end_time = self.str_message.split(';')
+        course_code, location_course, class_type, start_time, end_time, first_recess_week, first_week = self.str_message.split(';')
         self.course_code = course_code
         self.location_course = location_course
         self.class_type = class_type
         self.start_time = start_time
         self.end_time = end_time
+        self.first_recess_week = first_recess_week
+        self.first_week = first_week
 
 
 class StringParseIndex(object):

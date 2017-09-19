@@ -106,6 +106,28 @@ class StringParseGoogleAPI(object):
                 continue
         return date_no_colon
 
+    def ParseDateRecess(self, initial_recess):
+        """To exclude the recess week"""
+        hour_start, minute_start, second_start = self.str_message.split(':')
+        date_list = []
+        date_list_no_colon = []
+        date_string_complete = ''
+
+        for day_plus in range(7):
+            a = datetime.datetime(2017, 10, initial_recess+day_plus, int(hour_start), int(minute_start))
+            a = a.isoformat()
+            date_list.append(a)
+
+        for item in date_list:
+            date_string = ''
+            for c in item:
+                if c != '-' and c != ':':
+                    date_string += c
+            date_list_no_colon.append(date_string)
+
+        date_string_complete = ','.join(date_list_no_colon)
+        return date_string_complete
+
 
 class StringParseIndex(object):
     

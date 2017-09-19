@@ -97,6 +97,15 @@ class StringParseGoogleAPI(object):
                 semicolon.append(';')
                 continue
     
+    def ParseDateNoColon(self):
+        date_no_colon = ''
+        for l in self.str_message:
+            if l != ':':
+                date_no_colon += l
+            else:
+                continue
+        return date_no_colon
+
 
 class StringParseIndex(object):
     

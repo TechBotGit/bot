@@ -178,10 +178,10 @@ class StringParseGoogleAPI(object):
                 continue
         return date_no_colon
 
-    def ParseDateWeek(self):
+    def ParseDateWeek(self, start_week):
         """To exclude any week"""
         hour_start, minute_start, second_start = self.str_message.split(':')
-        year_week, month_week, day_week = initial.split('-')
+        year_week, month_week, day_week = start_week.split('-')
         
         hour_start = int(hour_start)
         minute_start = int(minute_start)

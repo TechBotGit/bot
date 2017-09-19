@@ -77,6 +77,12 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
                 
+                elif msg_received == '/scheduleindex':
+                    self.bot.sendMessage(chat_id, "Please Enter your index using the following format: ")
+                    self.bot.sendMessage(chat_id, "CourseCode;Location;LAB/LEC/TUT;start_time;end_time;first_recess_week, fist_week")
+                    self.bot.sendMessage(chat_id, 'For example: ')
+                    self.bot.sendMessage(chat_id, 'CZ1005;HWLAB3;LAB;14:30:00;16:30:00;2017-10-2;2017-8-14')
+
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
@@ -129,6 +135,17 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
 
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
+                    try:
+                        sucess = BotCommandObject.ScheduleIndexCommand()
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Cannot schedule index! Make sure you have entered the correct format!')
+
+                    else:
+                        self.bot.sendMessage(chat_id, "Successfully added! :)")
+                        self.bot.sendMessage(chat_id, sucess)
+                
                 else:
                     
                     # Below is not a command. It only makes the bot smarter
@@ -259,6 +276,7 @@ class BotCommand(API):
             '/createevent',
             '/mergeevent',
             '/isfree',
+            '/scheduleindex',
             '/quit'
         ]
         self.str_text = str_text
@@ -320,3 +338,17 @@ class BotCommand(API):
         course_type = str_input.course_type
         index = str_input.index
         hc.splintergetdata().start(course_name, course_type, index)
+
+    def ScheduleIndexCommand(self):
+        str_input = hc.StringParseGoogleAPI(self.str_text)
+        str_input.ParseIndexInput()
+        
+        course_code = str_input.course_code
+        location_course = str_input.location_course
+        class_type = str_input.class_type
+        start_time = str_input.start_time
+        end_time = str_input.end_time
+        first_recess_week = str_input.first_recess_week
+        first_week = str_input.first_week
+
+        gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_recess_week, first_week)

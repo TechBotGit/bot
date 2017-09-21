@@ -31,7 +31,7 @@ for iterator in range(1,len(rows)):
 
 for iterator in range(len(first_columns)):
     if first_columns[iterator].text==index_num:
-        #print(first_columns[iterator].text)
+        # print(first_columns[iterator].text)
         for iterator2 in range(iterator,len(first_columns)):
             if first_columns[iterator2].text!='' and first_columns[iterator2].text!=index_num:
                 finish=True

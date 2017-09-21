@@ -30,6 +30,16 @@ pip install --upgrade google-api-python-client
 brew install chromedriver
 ```
 
+### **6. Panda Package**
+```
+pip install pandas
+```
+
+### **6. Panda Package**
+```
+pip install openpyxl
+```
+
 ## Setting Up Google API
 ### **Turn on the Google API of your account**
 Refer to the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python).

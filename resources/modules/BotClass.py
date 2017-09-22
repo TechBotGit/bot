@@ -99,7 +99,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
                     self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
                     self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, '2017-10-2;2017-8-14')
+                    self.bot.sendMessage(chat_id, '2017-8-14;2017-10-2')
                 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")

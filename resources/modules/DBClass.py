@@ -17,6 +17,7 @@ class DB(object):
         self.sheet['A1'] = 'chat_id'
         self.sheet['B1'] = 'first_week'
         self.sheet['C1'] = 'first_recess_week'
+        self.sheet['D1'] = 'student_type'
         
         # If file doesn't exist, create it
         if not os.path.isfile(self.path_file):
@@ -71,5 +72,3 @@ class DB(object):
                         break
                     break
         return result
-                    
-                    

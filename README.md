@@ -30,12 +30,8 @@ pip install --upgrade google-api-python-client
 brew install chromedriver
 ```
 
-### **6. Panda Package**
-```
-pip install pandas
-```
 
-### **6. Panda Package**
+### **6. openpyxl Package**
 ```
 pip install openpyxl
 ```

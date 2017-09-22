@@ -51,3 +51,25 @@ class DB(object):
         for i in range(1, len(self.sheet_update['A'])):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
+    
+    def table_query(self, chat_id, first_week=None, first_recess_week=None):
+        """Query table in database
+            set first_week to True to get the first_week
+            set first_recess_week to True to get the first_recess_week
+            Either first_week or first_recess_week must be True
+        """
+        for row in self.sheet_update.iter_rows():
+            for cell in row:
+                if cell.value == chat_id:
+                    if first_week and not first_recess_week:
+                        result = self.sheet_update.cell(row=cell.row, column=2).value
+                    elif first_recess_week and not first_week:
+                        result = self.sheet_update.cell(row=cell.row, column=3).value
+                    else:
+                        print('Must set first_week or first_recess_week to True')
+                        raise ValueError
+                        break
+                    break
+        return result
+                    
+                    

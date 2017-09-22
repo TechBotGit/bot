@@ -6,7 +6,6 @@ from oauth2client.file import Storage
 
 import httplib2
 import os
-import datetime
 import HelperClass as hc
 
 try:
@@ -128,7 +127,7 @@ class GoogleAPI(object):
 
         event = service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
-    
+   
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
         credentials = self.get_credentials()
         http = credentials.authorize(httplib2.Http())

@@ -1,4 +1,3 @@
-import pandas as pd
 import os
 import sys
 from openpyxl import load_workbook, Workbook
@@ -57,9 +56,9 @@ class DB(object):
         return chat_id in self.chat_id_list
 
     def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
-        """Query table in database
-        Set the requested data parameter to True to retrieve it.
-        returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
+        """Query table in database \n
+        Set the requested data parameter to True to retrieve it. \n
+        Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
        
         arg_list = [first_week, first_recess_week, student_type, index_list]
         result_list = []

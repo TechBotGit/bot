@@ -70,16 +70,13 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
-                    if self.fullorparttime!='F' or self.fullorparttime!='P':
-                        print(self.fullorparttime)
-                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
-                        self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
-                    else:
-                        msg_reply = "Please type your details in following format: \n"
-                        str_format = "Course Name;Index Number"
-                        self.bot.sendMessage(chat_id, msg_reply)
-                        self.bot.sendMessage(chat_id, str_format)
-                        print(response)
+                    # if self.fullorparttime!='F' or self.fullorparttime!='P':
+                    #     print(self.fullorparttime)
+                    #     self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
+                    #     self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
+                    # else:
+                    self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
+                    print(response)
                     
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -156,15 +153,15 @@ class API(object):
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
-                    try:
+                    """"try:
                         BotCommandObject.AddIndexCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")
-                        #BotCommand(msg['text']).AddIndexCommand() #debug purpose
+                        self.bot.sendMessage(chat_id, "Successfully added! :)")"""
+                    BotCommandObject.AddIndexCommand(chat_id) #debug purpose
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     # BotCommandObject.ScheduleIndexCommand(chat_id)
@@ -228,6 +225,7 @@ class API(object):
     def on_callback_query(self, msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
+        print(msg)
         self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
     def StoreChat(self, update_object):
@@ -327,6 +325,7 @@ class BotCommand(API):
         # Updatable
         self._start_busy = None
         self._end_busy = None
+        self.getdata = hc.splintergetdata()#property not yet added!!!
 
     @property
     def start_busy(self):
@@ -374,13 +373,21 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-    def AddIndexCommand(self):
+    def AddIndexCommand(self,chat_id):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         course_name = str_input.course_name
         course_type = 'F'
         index = str_input.index
-        hc.splintergetdata().start(course_name, course_type, index)
+        self.getdata.start(course_name, course_type)
+        self.getdata.parsedatahml()
+        inlines_keyboard = []
+        for i in range(len(self.getdata.indexlist)):
+            # print(hc.PreformattedBotInlineMarkup().days[i])
+            inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
+        # print(inlines_keyboard)
+        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+        self.bot.sendMessage(chat_id, 'Please choose your index!', reply_markup=keyboard)
 
 
     def SetTypeStudent(self):

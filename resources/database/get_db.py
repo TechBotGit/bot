@@ -13,10 +13,10 @@ filename = "database.xlsx"
 wb = load_workbook(filename)
 sheet = wb.active
 chat_id_test = 200158786
-# print("iter_cols()")
-# for col in sheet.iter_cols():
-#     for cell in col:
-#         print(cell.value)
+print("iter_cols()")
+for col in sheet.iter_cols():
+    for cell in col:
+        print(cell.value)
 
 print('---------------')
 print("iter_rows()")
@@ -24,5 +24,7 @@ for row in sheet.iter_rows():
     for cell in row:
         if cell.value == chat_id_test:
             print(cell.row)
-            print(sheet.cell(row=cell.row,column=2).value)
+            sheet.cell(row=cell.row, column=4, value='FullTime')
             break
+
+wb.save(filename)

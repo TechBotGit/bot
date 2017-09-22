@@ -167,7 +167,6 @@ class API(object):
                         #BotCommand(msg['text']).AddIndexCommand() #debug purpose
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
-                    # BotCommandObject.ScheduleIndexCommand(chat_id)
                     try:
                         BotCommandObject.ScheduleIndexCommand(chat_id)
                     
@@ -180,12 +179,14 @@ class API(object):
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
                     except ValueError:
-                        self.bot.sendMessage(chat_id, 'Your data has been previously recorded in our database!')
-
+                        """A message if the data has been previously recorded in the database"""
+                        self.bot.sendMessage(chat_id, 'Overiding current data...')
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
-                        self.bot.sendMessage(chat_id, 'Your first week and first recess week are recorded in our database!')
-                    
+
+                    finally:
+                        self.bot.sendMessage(chat_id, 'Your data are sucessfully recorded in our database!')
+                
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -382,12 +383,12 @@ class BotCommand(API):
         index = str_input.index
         hc.splintergetdata().start(course_name, course_type, index)
 
-
     def SetTypeStudent(self):
         str_input = hc.StringParseStudentType(self.str_text)
         str_input.ParseInput()
-        print(self.str_text)
+        # print(self.str_text)
         course_type = str_input.course_type
+        print(course_type)
         #this part should be edited once database is available
 
     def ScheduleIndexCommand(self, chat_id):
@@ -400,8 +401,8 @@ class BotCommand(API):
         start_time = str_input.start_time
         end_time = str_input.end_time
         
-        first_week = db.DB().table_query(chat_id, first_week=True)
-        first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)
+        first_week = db.DB().table_query(chat_id, first_week=True)[0]
+        first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)[1]
 
         gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_week, first_recess_week)
 
@@ -412,4 +413,3 @@ class BotCommand(API):
         excel = db.DB()
         # Update the exel file
         excel.update(chat_id, first_week, first_recess_week)
-

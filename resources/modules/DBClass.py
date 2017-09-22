@@ -18,6 +18,7 @@ class DB(object):
         self.sheet['B1'] = 'first_week'
         self.sheet['C1'] = 'first_recess_week'
         self.sheet['D1'] = 'student_type'
+        self.sheet['E1'] = 'index_list'
         
         # If file doesn't exist, create it
         if not os.path.isfile(self.path_file):
@@ -38,37 +39,50 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week, first_recess_week):
+    def update(self, chat_id, first_week, first_recess_week, student_type=None, index_list=None):
         """Update exisiting workbook"""
         if not self.isChatidExist(chat_id):
-            update_list = [chat_id, first_week, first_recess_week]
+            update_list = [chat_id, first_week, first_recess_week, student_type, index_list]
             self.sheet_update.append(update_list)
             self.wb_update.save(self.path_file)
         else:
-            print('chat_id already exists')
+            print('Updating existing table')
+            self.set_table_query(chat_id, first_week, first_recess_week, student_type, index_list)
+            self.wb_update.save(self.path_file)
             raise ValueError
 
     def isChatidExist(self, chat_id):
         for i in range(1, len(self.sheet_update['A'])):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
-    
-    def table_query(self, chat_id, first_week=None, first_recess_week=None):
+
+    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
         """Query table in database
-            set first_week to True to get the first_week
-            set first_recess_week to True to get the first_recess_week
-            Either first_week or first_recess_week must be True
-        """
+        Set the requested data parameter to True to retrieve it.
+        returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
+       
+        arg_list = [first_week, first_recess_week, student_type, index_list]
+        result_list = []
         for row in self.sheet_update.iter_rows():
             for cell in row:
                 if cell.value == chat_id:
-                    if first_week and not first_recess_week:
-                        result = self.sheet_update.cell(row=cell.row, column=2).value
-                    elif first_recess_week and not first_week:
-                        result = self.sheet_update.cell(row=cell.row, column=3).value
-                    else:
-                        print('Must set first_week or first_recess_week to True')
-                        raise ValueError
-                        break
+                    for i in range(len(arg_list)):
+                        if arg_list[i] is not None:
+                            result = self.sheet_update.cell(row=cell.row, column=i + 2).value
+                            result_list.append(result)
+                        else:
+                            result_list.append(None)
                     break
-        return result
+                break
+        return result_list
+    
+    def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+        arg_list = [first_week, first_recess_week, student_type, index_list]
+        for row in self.sheet_update.iter_rows():
+            for cell in row:
+                if cell.value == chat_id:
+                    for i in range(len(arg_list)):
+                        if arg_list[i] is not None:
+                            self.sheet_update.cell(row=cell.row, column=i + 2, value=arg_list[i])
+                    break
+                break

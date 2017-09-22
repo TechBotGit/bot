@@ -3,8 +3,11 @@ import sys
 import telepot
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+
+# Custom Class
 import GoogleapiClass as gc
 import HelperClass as hc
+import DBClass as db
 
 
 class API(object):
@@ -50,7 +53,7 @@ class API(object):
 
             # If the message is a valid command
             if BotCommand(msg_received).isValidCommand():
-
+                # Send users a message related to the command
                 if msg_received == '/start':
                     self.bot.sendMessage(chat_id, "Hi! I'm a bot that tells you your course schedule and plan your meetings! Feel free to ask me stuff :)")
                     self.bot.sendMessage(chat_id, "If you want to know your course schedule, type in Course. If you want to plan your meetings, type in Meetings. If you want to know anything about me, just type in whatever you want and hope I understand :)")
@@ -89,7 +92,14 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Please Enter your index using the following format: ")
                     self.bot.sendMessage(chat_id, "CourseCode;Location;LAB/LEC/TUT;start_time;end_time;first_recess_week, fist_week")
                     self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, 'CZ1005;HWLAB3;LAB;14:30:00;16:30:00;2017-10-2;2017-8-14')
+
+                    self.bot.sendMessage(chat_id, 'CZ1005;HWLAB3;LAB;14:30:00;16:30:00')
+                
+                elif msg_received == '/addfirstweek':
+                    self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
+                    self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
+                    self.bot.sendMessage(chat_id, 'For example: ')
+                    self.bot.sendMessage(chat_id, '2017-10-2;2017-8-14')
                 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
@@ -157,15 +167,25 @@ class API(object):
                         #BotCommand(msg['text']).AddIndexCommand() #debug purpose
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
+                    # BotCommandObject.ScheduleIndexCommand(chat_id)
                     try:
-                        BotCommandObject.ScheduleIndexCommand()
+                        BotCommandObject.ScheduleIndexCommand(chat_id)
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot schedule index! Make sure you have entered the correct format!')
 
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
-                
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
+                    try:
+                        BotCommandObject.AddFirstWeek(chat_id)
+                    except ValueError:
+                        self.bot.sendMessage(chat_id, 'Your data has been previously recorded in our database!')
+
+                    else:
+                        self.bot.sendMessage(chat_id, 'Captured!')
+                        self.bot.sendMessage(chat_id, 'Your first week and first recess week are recorded in our database!')
+                    
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -204,7 +224,7 @@ class API(object):
                 
                     else:
                         self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
-    
+
     def on_callback_query(self, msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
@@ -299,6 +319,7 @@ class BotCommand(API):
             '/createevent',
             '/isfree',
             '/scheduleindex',
+            '/addfirstweek',
             '/quit'
         ]
         self.str_text = str_text
@@ -361,6 +382,7 @@ class BotCommand(API):
         index = str_input.index
         hc.splintergetdata().start(course_name, course_type, index)
 
+
     def SetTypeStudent(self):
         str_input = hc.StringParseStudentType(self.str_text)
         str_input.ParseInput()
@@ -368,7 +390,7 @@ class BotCommand(API):
         course_type = str_input.course_type
         #this part should be edited once database is available
 
-    def ScheduleIndexCommand(self):
+    def ScheduleIndexCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseIndexInput()
         
@@ -377,8 +399,17 @@ class BotCommand(API):
         class_type = str_input.class_type
         start_time = str_input.start_time
         end_time = str_input.end_time
-        first_recess_week = str_input.first_recess_week
-        first_week = str_input.first_week
+        
+        first_week = db.DB().table_query(chat_id, first_week=True)
+        first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)
 
-        gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_recess_week, first_week)
+        gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_week, first_recess_week)
+
+    def AddFirstWeek(self, chat_id):
+        first_week, first_recess_week = self.str_text.split(';')
+        
+        # Initialize db
+        excel = db.DB()
+        # Update the exel file
+        excel.update(chat_id, first_week, first_recess_week)
 

@@ -82,14 +82,14 @@ class GoogleAPI(object):
         event = service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
 
-    def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_recess_week_date, first_week_date):
+    def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week):
         credentials = self.get_credentials()
         http = credentials.authorize(httplib2.Http())
         service = discovery.build('calendar', 'v3', http=http)
 
         # Splitting strings
         hour_start, min_start, sec_start = start_time.split(':')
-        year_fw, month_fw, day_fw = first_week_date.split('-')
+        year_fw, month_fw, day_fw = first_week.split('-')
         
         # Combining strings
         first_date = year_fw + month_fw + day_fw
@@ -97,8 +97,8 @@ class GoogleAPI(object):
         first_event = first_date + 'T' + first_time
 
         # Ignore any particular week
-        recess_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_recess_week_date)
-        first_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_week_date)
+        ignore_recess_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_recess_week)
+        ignore_first_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_week)
 
         # Event Details
         event = {
@@ -106,11 +106,11 @@ class GoogleAPI(object):
             'location': location,
             'description': desc,
             'start': {
-                'dateTime': first_week_date + "T" + start_time,
+                'dateTime': first_week + "T" + start_time,
                 'timeZone': 'Asia/Singapore',
             },
             'end': {
-                'dateTime': first_week_date + "T" + end_time,
+                'dateTime': first_week + "T" + end_time,
                 'timeZone': 'Asia/Singapore',
             },
             'reminders': {
@@ -120,7 +120,7 @@ class GoogleAPI(object):
                 ],
             },
             'recurrence': [
-                "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + recess_week,
+                "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + ignore_recess_week,
                 # "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
                 "RRULE:FREQ=WEEKLY;COUNT=7;BYDAY=MO;INTERVAL=2"
             ]

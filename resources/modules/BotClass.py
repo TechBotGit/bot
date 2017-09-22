@@ -3,8 +3,11 @@ import sys
 import telepot
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Custom Class
 import GoogleapiClass as gc
 import HelperClass as hc
+import DBClass as db
 
 
 class API(object):
@@ -51,7 +54,7 @@ class API(object):
 
             # If the message is a valid command
             if BotCommand(msg_received).isValidCommand():
-
+                # Send users a message related to the command
                 if msg_received == '/start':
                     self.bot.sendMessage(chat_id, "Hi! I'm a bot that tells you your course schedule and plan your meetings! Feel free to ask me stuff :)")
                     self.bot.sendMessage(chat_id, "If you want to know your course schedule, type in Course. If you want to plan your meetings, type in Meetings. If you want to know anything about me, just type in whatever you want and hope I understand :)")
@@ -82,7 +85,13 @@ class API(object):
                     self.bot.sendMessage(chat_id, "CourseCode;Location;LAB/LEC/TUT;start_time;end_time;first_recess_week, fist_week")
                     self.bot.sendMessage(chat_id, 'For example: ')
                     self.bot.sendMessage(chat_id, 'CZ1005;HWLAB3;LAB;14:30:00;16:30:00;2017-10-2;2017-8-14')
-
+                
+                elif msg_received == '/addfirstweek':
+                    self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
+                    self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
+                    self.bot.sendMessage(chat_id, 'For example: ')
+                    self.bot.sendMessage(chat_id, '2017-10-2;2017-8-14')
+                
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
@@ -145,7 +154,16 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
-                
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
+                    try:
+                        BotCommandObject.AddFirstWeek(chat_id)
+                    except ValueError:
+                        self.bot.sendMessage(chat_id, 'Your data has been previously recorded in our database!')
+
+                    else:
+                        self.bot.sendMessage(chat_id, 'Captured!')
+                        self.bot.sendMessage(chat_id, 'Your first week and first recess week are recorded in our database!')
+                    
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -277,6 +295,7 @@ class BotCommand(API):
             '/mergeevent',
             '/isfree',
             '/scheduleindex',
+            '/addfirstweek',
             '/quit'
         ]
         self.str_text = str_text
@@ -352,3 +371,11 @@ class BotCommand(API):
         first_week = str_input.first_week
 
         gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_recess_week, first_week)
+
+    def AddFirstWeek(self, chat_id):
+        first_week, first_recess_week = self.str_text.split(';')
+
+        # Initialize db
+        excel = db.DB()
+        # Update the exel file
+        excel.update(chat_id, first_week, first_recess_week)

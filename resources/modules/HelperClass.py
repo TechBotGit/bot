@@ -225,16 +225,11 @@ class StringParseIndex(object):
     def __init__(self, str_message):
         self.str_message = str_message
         self._course_name = ''
-        self._course_type = ''
         self._index = ''
     
     @property
     def course_name(self):
         return self._course_name
-
-    @property
-    def course_type(self):
-        return self._course_type
 
     @property
     def index(self):
@@ -244,11 +239,6 @@ class StringParseIndex(object):
     def course_name(self, value):
         self._course_name = value
         return self._course_name
-
-    @course_type.setter
-    def course_type(self, value):
-        self._course_type = value
-        return self._course_type
 
     @index.setter
     def index(self, value):
@@ -261,11 +251,8 @@ class StringParseIndex(object):
             if l != ';':
                 if len(semicolon) == 0:
                     self.course_name += l
-                   
-                elif len(semicolon) == 1:
-                    self.course_type += l
                     
-                elif len(semicolon) == 2:
+                elif len(semicolon) == 1:
                     self.index += l
 
             elif l == ' ':
@@ -275,14 +262,32 @@ class StringParseIndex(object):
                 semicolon.append(';')
                 continue
             
-        if len(semicolon) < 2:
+        if len(semicolon) < 1:
             1/0
-        self.course_type = self.course_type.lower()
-        if self.course_type.find('full') != -1 and self.course_type.find('part') == -1:
-            self.course_type = 'F'
-        elif self.course_type.find('part') != -1 and self.course_type.find('full') == -1:
-            self.course_type = 'P'
+        
 
+class StringParseStudentType(object):
+    def __init__(self,str_message):
+        self.str_message= str_message
+        self._course_type= ''
+    
+    @property
+    def course_type(self):
+        return self._course_type
+
+    @course_type.setter
+    def course_type(self, value):
+        self._course_type = value
+        return self._course_type
+
+    def ParseInput(self):
+        self._course_type = self.str_message.lower()
+        if self._course_type.find('full') != -1 and self._course_type.find('part') == -1:
+            self._course_type = 'F'
+        elif self._course_type.find('part') != -1 and self._course_type.find('full') == -1:
+            self._course_type = 'P'
+        else:
+            1/0
 
 class PreformattedBotInlineMarkup(object):
     """This is a class for storing future fixed KeyboardMarkup"""

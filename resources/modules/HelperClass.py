@@ -331,7 +331,6 @@ class splintergetdata(object):
         self.parsedatahtml(soup,index_number)
         print('Success')
 
-
     def parsedatahtml(self,soup, index_number):
         finish=False
         print(soup)

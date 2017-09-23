@@ -125,14 +125,14 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:
-                        BotCommandObject.SetTypeStudent()
+                        BotCommandObject.SetTypeStudent(chat_id)
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Wrong format!')
                     
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!',reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-                    #BotCommandObject.SetTypeStudent()
+                    # BotCommandObject.SetTypeStudent()
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
@@ -181,11 +181,10 @@ class API(object):
                     except ValueError:
                         """A message if the data has been previously recorded in the database"""
                         self.bot.sendMessage(chat_id, 'Overiding current data...')
+                        self.bot.sendMessage(chat_id, 'Your data is sucessfully updated in our database!')
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
-
-                    finally:
-                        self.bot.sendMessage(chat_id, 'Your data are sucessfully recorded in our database!')
+                        self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
                 
                 else:
 
@@ -383,13 +382,16 @@ class BotCommand(API):
         index = str_input.index
         hc.splintergetdata().start(course_name, course_type, index)
 
-    def SetTypeStudent(self):
+    def SetTypeStudent(self, chat_id):
         str_input = hc.StringParseStudentType(self.str_text)
         str_input.ParseInput()
         # print(self.str_text)
         course_type = str_input.course_type
         print(course_type)
-        #this part should be edited once database is available
+        excel = db.DB()
+        excel.update(chat_id, student_type=course_type)
+        
+        # this part should be edited once database is available
 
     def ScheduleIndexCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
@@ -412,4 +414,4 @@ class BotCommand(API):
         # Initialize db
         excel = db.DB()
         # Update the exel file
-        excel.update(chat_id, first_week, first_recess_week)
+        excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)

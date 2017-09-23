@@ -38,7 +38,7 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week, first_recess_week, student_type=None, index_list=None):
+    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
         """Update exisiting workbook"""
         if not self.isChatidExist(chat_id):
             update_list = [chat_id, first_week, first_recess_week, student_type, index_list]
@@ -76,6 +76,10 @@ class DB(object):
         return result_list
     
     def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+        """Query table to set data with the corresponding chat_id \n
+        Set the optional argument to the value that you want to set \n
+        Example: set_table_query(<chat_id>, first_week='2017-8-14')
+        """
         arg_list = [first_week, first_recess_week, student_type, index_list]
         for row in self.sheet_update.iter_rows():
             for cell in row:

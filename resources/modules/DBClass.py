@@ -55,8 +55,11 @@ class DB(object):
         return chat_id in self.chat_id_list
     
     def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
-        # arg_list = [first_week, first_recess_week, student_type, index_list]
-        # record_exist_list = []
+        """Description: Check if a particular record exists in the database \n
+        Usage: Set the optional parameter to be True to retrieve the data \n
+        Return: Boolean
+        Note: Only 1 optional parameter can be set to True at a time
+        """
         result = None
         for row in self.sheet_update.iter_rows():
             for cell in row:
@@ -73,9 +76,10 @@ class DB(object):
         return result is not None
     
     def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
-        """Query table in database \n
-        Set the requested data parameter to True to retrieve it. \n
-        Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
+        """Description: Query table in database \n
+        Usage: Set the requested data parameter to True to retrieve it. \n
+        Return: list \n
+        Note: Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
        
         arg_list = [first_week, first_recess_week, student_type, index_list]
         result_list = []
@@ -93,9 +97,10 @@ class DB(object):
         return result_list
     
     def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
-        """Query table to set data with the corresponding chat_id \n
-        Set the optional argument to the value that you want to set \n
-        Example: set_table_query(<chat_id>, first_week='2017-8-14')
+        """Description: Query table to set data with the corresponding chat_id \n
+        Usage: Set the optional argument to the value that you want to set \n
+        Example: set_table_query(<chat_id>, first_week='2017-8-14') \n
+        Return: None
         """
         arg_list = [first_week, first_recess_week, student_type, index_list]
         for row in self.sheet_update.iter_rows():

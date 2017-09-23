@@ -71,9 +71,14 @@ class API(object):
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
                     check_db = db.DB()
-                    if not check_db.isRecordExist(chat_id, student_type=True):
-                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
-                        self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
+                    first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
+                    first_recess_week_exist = check_db.isRecordExist(chat_id, first_recess_week=True)
+                    student_type_exist = check_db.isRecordExist(chat_id, student_type=True)
+                    is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
+                    if not all(is_satisfied):
+                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
+                        self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
+                        self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
                     else:
                         msg_reply = "Please type your details in following format: \n"
                         str_format = "Course Name;Index Number"

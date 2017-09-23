@@ -43,12 +43,11 @@ class DB(object):
         if not self.isChatidExist(chat_id):
             update_list = [chat_id, first_week, first_recess_week, student_type, index_list]
             self.sheet_update.append(update_list)
-            self.wb_update.save(self.path_file)
         else:
             print('Updating existing table')
             self.set_table_query(chat_id, first_week, first_recess_week, student_type, index_list)
-            self.wb_update.save(self.path_file)
-            raise ValueError
+
+        self.wb_update.save(self.path_file)
 
     def isChatidExist(self, chat_id):
         for i in range(1, len(self.sheet_update['A'])):

@@ -178,10 +178,11 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
-                    except ValueError:
-                        """A message if the data has been previously recorded in the database"""
-                        self.bot.sendMessage(chat_id, 'Overiding current data...')
-                        self.bot.sendMessage(chat_id, 'Your data is sucessfully updated in our database!')
+                    except:
+                        self.bot.sendMessage(chat_id, "Database error!")
+                        # """A message if the data has been previously recorded in the database"""
+                        # self.bot.sendMessage(chat_id, 'Overiding current data...')
+                        # self.bot.sendMessage(chat_id, 'Your data is sucessfully updated in our database!')
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
                         self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')

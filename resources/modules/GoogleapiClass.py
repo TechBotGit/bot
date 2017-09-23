@@ -6,7 +6,6 @@ from oauth2client.file import Storage
 
 import httplib2
 import os
-import datetime
 import HelperClass as hc
 
 try:
@@ -79,10 +78,56 @@ class GoogleAPI(object):
                 ],
             },
         }
+        event = service.events().insert(calendarId='primary', body=event).execute()
+        print('Event created: %s' % (event.get('htmlLink')))
+
+    def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week):
+        credentials = self.get_credentials()
+        http = credentials.authorize(httplib2.Http())
+        service = discovery.build('calendar', 'v3', http=http)
+
+        # Splitting strings
+        hour_start, min_start, sec_start = start_time.split(':')
+        year_fw, month_fw, day_fw = first_week.split('-')
+        
+        # Combining strings
+        first_date = year_fw + month_fw + day_fw
+        first_time = hour_start + min_start + sec_start
+        first_event = first_date + 'T' + first_time
+
+        # Ignore any particular week
+        ignore_recess_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_recess_week)
+        ignore_first_week = hc.StringParseGoogleAPI(start_time).ParseDateWeek(first_week)
+
+        # Event Details
+        event = {
+            'summary': summary,
+            'location': location,
+            'description': desc,
+            'start': {
+                'dateTime': first_week + "T" + start_time,
+                'timeZone': 'Asia/Singapore',
+            },
+            'end': {
+                'dateTime': first_week + "T" + end_time,
+                'timeZone': 'Asia/Singapore',
+            },
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 60}
+                ],
+            },
+            'recurrence': [
+                "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + ignore_recess_week,
+                # "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
+                "RRULE:FREQ=WEEKLY;COUNT=7;BYDAY=MO;INTERVAL=2"
+            ]
+        }
 
         event = service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
-    
+   
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
         credentials = self.get_credentials()
         http = credentials.authorize(httplib2.Http())

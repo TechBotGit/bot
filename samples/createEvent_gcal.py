@@ -1,6 +1,7 @@
 from __future__ import print_function
 import httplib2
 import os
+import sys
 
 from apiclient import discovery
 from oauth2client import client
@@ -8,6 +9,9 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 import datetime
+
+sys.path.append('../resources/modules')
+from HelperClass import StringParseGoogleAPI
 
 try:
     import argparse
@@ -40,33 +44,50 @@ def get_credentials():
     return credentials
 
 
-def createEvent():
+def createEvent(summary, location, desc, start_time, end_time):
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
+    
+    first_week_date = "2017-08-14"
+    
+    # Splitting strings
+    hour_start, min_start, sec_start = start_time.split(':')
+    year_fw, month_fw, day_fw = first_week_date.split('-')
+    
+    # Combining strings
+    first_date = year_fw + month_fw + day_fw
+    first_time = hour_start + min_start + sec_start
+    first_event = first_date + 'T' + first_time
 
+    # Ignore any particular week
+    recess_week = StringParseGoogleAPI(start_time).ParseDateWeek('2017-10-2')
+    first_week = StringParseGoogleAPI(start_time).ParseDateWeek()
+    
     # Event Details
     event = {
-        'summary': 'Meeting Bot',
-        'location': 'Nanyang Technological University',
-        'description': 'Let us be a TechBot',
+        'summary': summary,
+        'location': location,
+        'description': desc,
         'start': {
-            'dateTime': '2017-09-10T10:00:00',
+            'dateTime': first_week_date + "T" + start_time,
             'timeZone': 'Asia/Singapore',
         },
         'end': {
-            'dateTime': '2017-09-10T14:00:00',
+            'dateTime': first_week_date + "T" + end_time,
             'timeZone': 'Asia/Singapore',
         },
-        'attendees': [
-            {'email': 'jasoncobalagi@gmail.com'}
-        ],
         'reminders': {
             'useDefault': False,
             'overrides': [
                 {'method': 'email', 'minutes': 60}
             ],
         },
+        'recurrence': [
+            "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + recess_week,
+            # "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
+            "RRULE:FREQ=WEEKLY;COUNT=7;BYDAY=MO;INTERVAL=2"
+        ]
     }
 
     event = service.events().insert(calendarId='primary', body=event).execute()
@@ -74,4 +95,4 @@ def createEvent():
 
 
 if __name__ == '__main__':
-    createEvent()
+    createEvent('CZ1005', 'HWLAB3', 'LABORATORY', '14:30:00', '16:30:00')

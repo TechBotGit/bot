@@ -70,8 +70,8 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
-                    if self.fullorparttime!='F' or self.fullorparttime!='P':
-                        print(self.fullorparttime)
+                    check_db = db.DB()
+                    if not check_db.isRecordExist(chat_id, student_type=True):
                         self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
                         self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
                     else:
@@ -375,9 +375,10 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-    def AddIndexCommand(self):
+    def AddIndexCommand(self, chat_id):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
+        
         course_name = str_input.course_name
         course_type = 'F'
         index = str_input.index
@@ -392,8 +393,6 @@ class BotCommand(API):
         excel = db.DB()
         excel.update(chat_id, student_type=course_type)
         
-        # this part should be edited once database is available
-
     def ScheduleIndexCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseIndexInput()

@@ -53,7 +53,25 @@ class DB(object):
         for i in range(1, len(self.sheet_update['A'])):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
-
+    
+    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+        # arg_list = [first_week, first_recess_week, student_type, index_list]
+        # record_exist_list = []
+        result = None
+        for row in self.sheet_update.iter_rows():
+            for cell in row:
+                if cell.value == chat_id:
+                    if first_week:
+                        result = self.sheet_update.cell(row=cell.row, column=2).value
+                    elif first_recess_week:
+                        result = self.sheet_update.cell(row=cell.row, column=3).value
+                    elif student_type:
+                        result = self.sheet_update.cell(row=cell.row, column=4).value
+                    elif index_list:
+                        result = self.sheet_update.cell(row=cell.row, column=5).value
+                    break
+        return result is not None
+    
     def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
         """Query table in database \n
         Set the requested data parameter to True to retrieve it. \n

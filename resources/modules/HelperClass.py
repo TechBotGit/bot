@@ -232,24 +232,11 @@ class StringParseIndex(object):
         return self._index
 
     def Parse(self):
-        semicolon = []
         for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.course_name += l
-                    
-                elif len(semicolon) == 1:
-                    self.index += l
-
-            elif l == ' ':
+            if l == ' ':
                 continue
-                
             else:
-                semicolon.append(';')
-                continue
-            
-        if len(semicolon) < 1:
-            1/0
+                self.course_name += l
         
 
 class StringParseStudentType(object):
@@ -273,7 +260,7 @@ class StringParseStudentType(object):
         elif self._course_type.find('part') != -1 and self._course_type.find('full') == -1:
             self._course_type = 'P'
         else:
-            1/0
+            raise ValueError
 
 
 class PreformattedBotInlineMarkup(object):
@@ -299,8 +286,11 @@ class splintergetdata(object):
         self.browser_used = f.read()
         f.close()
         self.data=[[],[],[],[],[],[],[]]
+        self.indexlist=[]
+        self.soup = ''
+        #only for initialization, duck typing will change its format later XD
 
-    def start(self, Course_code, Type_course, index_number):
+    def start(self, Course_code, Type_course):
         with Browser(self.browser_used) as browser:
             browser.visit(self.url)
             browser.fill("r_subj_code", Course_code)
@@ -312,16 +302,15 @@ class splintergetdata(object):
                     browser.windows.current = ii
                     html_page = browser.html
                     # print(html_page)
-                    soup = BeautifulSoup(html_page, 'html.parser')
+                    self.soup = BeautifulSoup(html_page, 'html.parser')
+                    #had to declare soup self here :'(
                     # print(soup)
                     #ii.close()
-        self.parsedatahtml(soup,index_number)
         print('Success')
 
-    def parsedatahtml(self,soup, index_number):
-        finish=False
-        print(soup)
-        tables = soup.find('table',border=True)
+    
+    def parsedatahml(self):
+        tables = self.soup.find('table',border=True)
         rows = tables.find_all('tr')
         #print(rows)
         for iterator in range (1,len(rows)):
@@ -329,10 +318,24 @@ class splintergetdata(object):
                 #print(rows[iterator].find_all('td')[columns])
                 self.data[columns].append(rows[iterator].find_all('td')[columns])
                 #print (self.data[columns][iterator])
+            if self.data[0][-1].text!='':
+                    self.indexlist.append(self.data[0][-1].text)
+        #print(self.indexlist)
         #print (self.data)
-        for iterator in range(len(self.data[columns])):
+        #print(type(self.data))
+        return self.data
+
+class chooseindex(object):
+    def __init__(self):
+         self.data=[[],[],[],[],[],[],[]]
+
+    def selectindex(self,index_number,parsedlist):
+        self.data=parsedlist
+        finish=False
+        #print(soup)
+        for iterator in range(len(self.data[0])):
             if self.data[0][iterator].text==index_number:
-                for iterator2 in range(iterator,len(self.data[columns])):
+                for iterator2 in range(iterator,len(self.data[0])):
                     if self.data[0][iterator2].text!='' and self.data[0][iterator2].text!=index_number:
                         finish=True
                         break

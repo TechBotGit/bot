@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import telepot
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -8,6 +9,8 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, Reply
 import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
+
+#for passing da object
 
 
 class API(object):
@@ -23,7 +26,9 @@ class API(object):
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
-    
+        #additional information for index
+        self._indexchosen=''
+        self._parseddataindex=[[],[],[],[],[],[],[]]
     @property
     def db_chat(self):
         return self._db_chat
@@ -32,6 +37,14 @@ class API(object):
     def list_update_message(self):
         return self._list_update_message
 
+    @property
+    def indexchosen(self):
+        return self._indexchosen
+    
+    @property
+    def parseddataindex(self):
+        return self._parseddataindex
+
     @db_chat.setter
     def db_chat(self, value):
         self._db_chat = value
@@ -39,7 +52,15 @@ class API(object):
     @list_update_message.setter
     def list_update_message(self, value):
         self._list_update_message = value
-    
+
+    @indexchosen.setter
+    def indexchosen(self, value):
+        self._indexchosen = value
+
+    @parseddataindex.setter
+    def parseddataindex(self, value):
+        self._parseddataindex = value
+
     def handleAPI(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print(content_type, chat_type, chat_id)  # debug msg received
@@ -70,6 +91,7 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
+                    print(response)
                     check_db = db.DB()
                     first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
                     first_recess_week_exist = check_db.isRecordExist(chat_id, first_recess_week=True)
@@ -80,10 +102,7 @@ class API(object):
                         self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
                         self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
                     else:
-                        msg_reply = "Please type your details in following format: \n"
-                        str_format = "Course Name;Index Number"
-                        self.bot.sendMessage(chat_id, msg_reply)
-                        self.bot.sendMessage(chat_id, str_format)
+                        self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
                     
                 elif msg_received == '/quit':
@@ -114,7 +133,7 @@ class API(object):
                 # Execute the command further
                 # Create the Command Object first
                 BotCommandObject = BotCommand(msg['text'])
-                
+                #to prevent crashing as it separates the variables so literally it can run parallelly
                 # This checks if the last msg['text'] is indeed a command
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
                     
@@ -123,7 +142,7 @@ class API(object):
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
-                    
+                    # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
                 
@@ -162,13 +181,18 @@ class API(object):
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
                     try:
-                        BotCommandObject.AddIndexCommand()
+                        self.indexchosen=''
+                        BotCommandObject.AddIndexCommand(chat_id)
+                        self.parseddataindex=BotCommandObject.parseddataindex
                     
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
+                        self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")
+                        self.bot.sendMessage(chat_id, "Course code successfully accessed")
+                    #few lines below are for debug purpose
+                    #passingobject=BotCommandObject
+                    #BotCommandObject.getdata.selectindex(self.indexchosen)
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -230,7 +254,20 @@ class API(object):
     def on_callback_query(self, msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
-        self.bot.answerCallbackQuery(query_id, text='Got it :)')
+        print(query_data)
+        if msg['message']['text'].find('Please choose your index below')!=-1:
+            try:
+                self.indexchosen=query_data
+                #print(query_data)
+                BotFindIndexObject=hc.chooseindex()
+                BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            except:
+                self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
+                self.bot.answerCallbackQuery(query_id, text='Error! :(')
+            else:
+                self.bot.answerCallbackQuery(query_id, text='Index added! :)')
+        else:
+            self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
     def StoreChat(self, update_object):
         update_id = update_object[0]['update_id']
@@ -241,7 +278,7 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
-
+#RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
 
 class BotReply(API):
     """This is a class for Replies"""
@@ -308,7 +345,7 @@ class BotReply(API):
 
 class BotCommand(API):
     """This is a class for Commands"""
-
+    
     def __init__(self, str_text):
         super().__init__()
         self.command_list = [
@@ -329,6 +366,7 @@ class BotCommand(API):
         # Updatable
         self._start_busy = None
         self._end_busy = None
+        self.getdata = hc.splintergetdata()#property not yet added!!!
 
     @property
     def start_busy(self):
@@ -376,14 +414,24 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-    def AddIndexCommand(self, chat_id):
+    def AddIndexCommand(self,chat_id):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         
         course_name = str_input.course_name
         course_type = 'F'
         index = str_input.index
-        hc.splintergetdata().start(course_name, course_type, index)
+        self.getdata.start(course_name, course_type)
+        self.parseddataindex=self.getdata.parsedatahml()
+        #print(self.parseddataindex)
+        #print(type(self.parseddataindex))
+        inlines_keyboard = []
+        for i in range(len(self.getdata.indexlist)):
+            # print(hc.PreformattedBotInlineMarkup().days[i])
+            inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
+        # print(inlines_keyboard)
+        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+        self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
 
     def SetTypeStudent(self, chat_id):
         str_input = hc.StringParseStudentType(self.str_text)

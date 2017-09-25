@@ -325,10 +325,11 @@ class splintergetdata(object):
         #print(type(self.data))
         return self.data
 
+
 class chooseindex(object):
     def __init__(self):
-         self.data=[[],[],[],[],[],[],[]]
-         self.dict = {
+        self.data=[[],[],[],[],[],[],[]]
+        self.dict = {
             'course_code': [],
             'type': [],
             'group': [],
@@ -341,7 +342,6 @@ class chooseindex(object):
     def selectindex(self,index_number,parsedlist):
         self.data=parsedlist
         finish=False
-        #print(soup)
         for iterator in range(len(self.data[0])):
             if self.data[0][iterator].text==index_number:
                 for iterator2 in range(iterator,len(self.data[0])):
@@ -355,8 +355,7 @@ class chooseindex(object):
                     self.dict["time"].append(self.data[4][iterator2].text)
                     self.dict["venue"].append(self.data[5][iterator2].text)
                     self.dict["remark"].append(self.data[6][iterator2].text)
-                    #for columns in range(0,7):
-                        #print(self.data[columns][iterator2].text)
+
             if finish:
                 break
-        print(self.dict)     
+        return self.dict

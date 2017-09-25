@@ -285,7 +285,9 @@ class API(object):
             self.indexchosen=query_data
             #print(query_data)
             BotFindIndexObject=hc.chooseindex()
-            BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            BotCommand(' ').get_schedule_data(complete_data)
+            
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
@@ -298,7 +300,8 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
-#RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
+# RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
+
 
 class BotReply(API):
     """This is a class for Replies"""
@@ -483,3 +486,6 @@ class BotCommand(API):
         excel = db.DB()
         # Update the exel file
         excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
+    
+    def get_schedule_data(self, dictionary):
+        print(dictionary)

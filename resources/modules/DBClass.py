@@ -17,7 +17,7 @@ class DB(object):
         self.sheet['B1'] = 'first_week'
         self.sheet['C1'] = 'first_recess_week'
         self.sheet['D1'] = 'student_type'
-        self.sheet['E1'] = 'index_list'
+        self.sheet['E1'] = 'course_code_list'
         
         # If file doesn't exist, create it
         if not os.path.isfile(self.path_file):
@@ -38,14 +38,14 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
         """Update exisiting workbook"""
         if not self.isChatidExist(chat_id):
-            update_list = [chat_id, first_week, first_recess_week, student_type, index_list]
+            update_list = [chat_id, first_week, first_recess_week, student_type, course_code_list]
             self.sheet_update.append(update_list)
         else:
             print('Updating existing table')
-            self.set_table_query(chat_id, first_week, first_recess_week, student_type, index_list)
+            self.set_table_query(chat_id, first_week, first_recess_week, student_type, course_code_list)
 
         self.wb_update.save(self.path_file)
 
@@ -54,7 +54,7 @@ class DB(object):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
     
-    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
         """Description: Check if a particular record exists in the database \n
         Usage: Set the optional parameter to be True to retrieve the data \n
         Return: Boolean
@@ -70,18 +70,18 @@ class DB(object):
                         result = self.sheet_update.cell(row=cell.row, column=3).value
                     elif student_type:
                         result = self.sheet_update.cell(row=cell.row, column=4).value
-                    elif index_list:
+                    elif course_code_list:
                         result = self.sheet_update.cell(row=cell.row, column=5).value
                     break
         return result is not None
     
-    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
         """Description: Query table in database \n
         Usage: Set the requested data parameter to True to retrieve it. \n
         Return: list \n
         Note: Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
        
-        arg_list = [first_week, first_recess_week, student_type, index_list]
+        arg_list = [first_week, first_recess_week, student_type, course_code_list]
         result_list = []
         for row in self.sheet_update.iter_rows():
             for cell in row:
@@ -96,13 +96,13 @@ class DB(object):
                 break
         return result_list
     
-    def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, index_list=None):
+    def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
         """Description: Query table to set data with the corresponding chat_id \n
         Usage: Set the optional argument to the value that you want to set \n
         Example: set_table_query(<chat_id>, first_week='2017-8-14') \n
         Return: None
         """
-        arg_list = [first_week, first_recess_week, student_type, index_list]
+        arg_list = [first_week, first_recess_week, student_type, course_code_list]
         for row in self.sheet_update.iter_rows():
             for cell in row:
                 if cell.value == chat_id:

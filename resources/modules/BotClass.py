@@ -91,13 +91,23 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
-                    # if self.fullorparttime!='F' or self.fullorparttime!='P':
-                    #     print(self.fullorparttime)
-                    #     self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
-                    #     self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
-                    # else:
                     self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                     print(response)
+                    check_db = db.DB()
+                    first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
+                    first_recess_week_exist = check_db.isRecordExist(chat_id, first_recess_week=True)
+                    student_type_exist = check_db.isRecordExist(chat_id, student_type=True)
+                    is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
+                    if not all(is_satisfied):
+                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
+                        self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
+                        self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
+                    else:
+                        msg_reply = "Please type your details in following format: \n"
+                        str_format = "Course Name;Index Number"
+                        self.bot.sendMessage(chat_id, msg_reply)
+                        self.bot.sendMessage(chat_id, str_format)
+                        print(response)
                     
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -143,14 +153,14 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:
-                        BotCommandObject.SetTypeStudent()
+                        BotCommandObject.SetTypeStudent(chat_id)
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Wrong format!')
                     
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!',reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-                    #BotCommandObject.SetTypeStudent()
+                    # BotCommandObject.SetTypeStudent()
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
@@ -174,18 +184,17 @@ class API(object):
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
-                    """"try:
-                        BotCommandObject.AddIndexCommand()
+                    try:
+                        self.indexchosen=''
+                        BotCommandObject.AddIndexCommand(chat_id)
+                        self.parseddataindex=BotCommandObject.parseddataindex
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")"""
+                        self.bot.sendMessage(chat_id, "Successfully added! :)")
                     #few lines below are for debug purpose
-                    self.indexchosen=''
-                    BotCommandObject.AddIndexCommand(chat_id)
-                    self.parseddataindex=BotCommandObject.parseddataindex
                     #passingobject=BotCommandObject
                     #BotCommandObject.getdata.selectindex(self.indexchosen)
 
@@ -201,14 +210,11 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
-                    except ValueError:
-                        """A message if the data has been previously recorded in the database"""
-                        self.bot.sendMessage(chat_id, 'Overiding current data...')
+                    except:
+                        self.bot.sendMessage(chat_id, "Database error!")
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
-
-                    finally:
-                        self.bot.sendMessage(chat_id, 'Your data are sucessfully recorded in our database!')
+                        self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
                 
                 else:
 
@@ -409,6 +415,7 @@ class BotCommand(API):
     def AddIndexCommand(self,chat_id):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
+        
         course_name = str_input.course_name
         course_type = 'F'
         index = str_input.index
@@ -424,14 +431,15 @@ class BotCommand(API):
         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
         self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
 
-    def SetTypeStudent(self):
+    def SetTypeStudent(self, chat_id):
         str_input = hc.StringParseStudentType(self.str_text)
         str_input.ParseInput()
         # print(self.str_text)
         course_type = str_input.course_type
         print(course_type)
-        #this part should be edited once database is available
-
+        excel = db.DB()
+        excel.update(chat_id, student_type=course_type)
+        
     def ScheduleIndexCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseIndexInput()
@@ -453,4 +461,4 @@ class BotCommand(API):
         # Initialize db
         excel = db.DB()
         # Update the exel file
-        excel.update(chat_id, first_week, first_recess_week)
+        excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)

@@ -127,25 +127,30 @@ class StringParseGoogleAPI(object):
         return self._first_week
     
     def ParseEvent(self):
-        semicolon = []
+        
+        str_input= self.str_message.split(';')
+        if len(str_input)!=4:
+            raise ValueError
+        for i in range(len(str_input)):
+            if i==0:
+                self.event_name=str_input[i]
 
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.event_name += l
+            elif i==1:
+                self.location=str_input[i]
 
-                elif len(semicolon) == 1:
-                    self.location += l
-                
-                elif len(semicolon) == 2:
-                    self.start_date += l
-
-                elif len(semicolon) == 3:
-                    self.end_date += l
-
-            else:
-                semicolon.append(';')
-                continue
+            elif i==2:
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.start_date = iso_date
+            
+            elif i==3:
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.end_date = iso_date
 
     def ParseDate(self):
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')

@@ -81,9 +81,10 @@ class API(object):
                 
                 elif msg_received == '/createevent':
                     msg_reply = "Okay send me the details in following format:"
-                    str_format = "Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss"
+                    str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
                     self.bot.sendMessage(chat_id, msg_reply)
                     self.bot.sendMessage(chat_id, str_format)
+                    self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
                     print(response)
 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
@@ -137,14 +138,16 @@ class API(object):
                 # This checks if the last msg['text'] is indeed a command
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
                     
-                    try:
+                    """"try:
                         BotCommandObject.CreateEventCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
                     # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!')
+                        self.bot.sendMessage(chat_id, 'Successful!')"""
+                    #for debugging
+                    BotCommandObject.CreateEventCommand()
                 
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
@@ -399,6 +402,7 @@ class BotCommand(API):
         location = str_input.location
         start_date = str_input.start_date
         end_date = str_input.end_date
+        print(event_name,location,start_date,end_date)
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
 
@@ -459,7 +463,7 @@ class BotCommand(API):
         
         first_week = db.DB().table_query(chat_id, first_week=True)[0]
         first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)[1]
-
+        
         gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_week, first_recess_week)
 
     def AddFirstWeek(self, chat_id):

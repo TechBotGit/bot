@@ -328,6 +328,15 @@ class splintergetdata(object):
 class chooseindex(object):
     def __init__(self):
          self.data=[[],[],[],[],[],[],[]]
+         self.dict = {
+            'course_code': [],
+            'type': [],
+            'group': [],
+            'day': [],
+            'time': [],
+            'venue': [],
+            'remark': []
+        }
 
     def selectindex(self,index_number,parsedlist):
         self.data=parsedlist
@@ -339,7 +348,15 @@ class chooseindex(object):
                     if self.data[0][iterator2].text!='' and self.data[0][iterator2].text!=index_number:
                         finish=True
                         break
-                    for columns in range(0,7):
-                        print(self.data[columns][iterator2].text)
+                    self.dict["course_code"].append(self.data[0][iterator2].text)
+                    self.dict["type"].append(self.data[1][iterator2].text)
+                    self.dict["group"].append(self.data[2][iterator2].text)
+                    self.dict["day"].append(self.data[3][iterator2].text)
+                    self.dict["time"].append(self.data[4][iterator2].text)
+                    self.dict["venue"].append(self.data[5][iterator2].text)
+                    self.dict["remark"].append(self.data[6][iterator2].text)
+                    #for columns in range(0,7):
+                        #print(self.data[columns][iterator2].text)
             if finish:
                 break
+        print(self.dict)     

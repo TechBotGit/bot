@@ -204,7 +204,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Course code successfully accessed")
+                        self.bot.sendMessage(chat_id, "Course code successfully accessed. Please do the instructions above :)")
                     #few lines below are for debug purpose
                     #passingobject=BotCommandObject
                     #BotCommandObject.getdata.selectindex(self.indexchosen)
@@ -271,16 +271,21 @@ class API(object):
         print('Callback Query:', query_id, from_id, query_data)
         print(query_data)
         if msg['message']['text'].find('Please choose your index below')!=-1:
-            try:
+            """"try:
                 self.indexchosen=query_data
                 #print(query_data)
                 BotFindIndexObject=hc.chooseindex()
                 BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             except:
-                self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
+                self.bot.sendMessage(from_id, 'Error occured! Please try again...')
             else:
-                self.bot.answerCallbackQuery(query_id, text='Index added! :)')
+                self.bot.answerCallbackQuery(query_id, text='Index added! :)')"""
+            #below is for debugging only
+            self.indexchosen=query_data
+            #print(query_data)
+            BotFindIndexObject=hc.chooseindex()
+            BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 

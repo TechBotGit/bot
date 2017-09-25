@@ -333,19 +333,26 @@ class splintergetdata(object):
                 #print (self.data[columns][iterator])
             if self.data[0][-1].text!='':
                     self.indexlist.append(self.data[0][-1].text)
-        print(self.indexlist)
+        #print(self.indexlist)
         #print (self.data)
+        #print(type(self.data))
+        return self.data
 
-    def selectindex(self,index_number):
+class chooseindex(object):
+    def __init__(self):
+         self.data=[[],[],[],[],[],[],[]]
+
+    def selectindex(self,index_number,parsedlist):
+        self.data=parsedlist
         finish=False
         #print(soup)
-        for iterator in range(len(self.data[columns])):
+        for iterator in range(len(self.data[0])):
             if self.data[0][iterator].text==index_number:
-                for iterator2 in range(iterator,len(self.data[columns])):
+                for iterator2 in range(iterator,len(self.data[0])):
                     if self.data[0][iterator2].text!='' and self.data[0][iterator2].text!=index_number:
                         finish=True
                         break
                     for columns in range(0,7):
-                        print(self.data[columns][iterator2].text)
+                        #print(self.data[columns][iterator2].text)
             if finish:
                 break

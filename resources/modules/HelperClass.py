@@ -21,7 +21,7 @@ class StringParseGoogleAPI(object):
         # for STARS Property
         self._course_code = ''
         self._location_course = ''
-        self._class_type = ''
+        self._course_type = ''
         self._start_time = ''
         self._end_time = ''
         self._first_recess_week = ''
@@ -52,8 +52,8 @@ class StringParseGoogleAPI(object):
         return self._location_course
 
     @property
-    def class_type(self):
-        return self._class_type
+    def course_type(self):
+        return self._course_type
     
     @property
     def start_time(self):
@@ -101,10 +101,10 @@ class StringParseGoogleAPI(object):
         self._location_course = value
         return self._location_course
     
-    @class_type.setter
-    def class_type(self, value):
-        self._class_type = value
-        return self._class_type
+    @course_type.setter
+    def course_type(self, value):
+        self._course_type = value
+        return self._course_type
     
     @start_time.setter
     def start_time(self, value):
@@ -198,10 +198,10 @@ class StringParseGoogleAPI(object):
         return date_string_complete
 
     def ParseIndexInput(self):
-        course_code, location_course, class_type, start_time, end_time = self.str_message.split(';')
+        course_code, location_course, course_type, start_time, end_time = self.str_message.split(';')
         self.course_code = course_code
         self.location_course = location_course
-        self.class_type = class_type
+        self.course_type = course_type
         self.start_time = start_time
         self.end_time = end_time
 
@@ -210,21 +210,21 @@ class StringParseIndex(object):
     
     def __init__(self, str_message):
         self.str_message = str_message
-        self._course_name = ''
+        self._course_code = ''
         self._index = ''
     
     @property
-    def course_name(self):
-        return self._course_name
+    def course_code(self):
+        return self._course_code
 
     @property
     def index(self):
         return self._index
 
-    @course_name.setter
-    def course_name(self, value):
-        self._course_name = value
-        return self._course_name
+    @course_code.setter
+    def course_code(self, value):
+        self._course_code = value
+        return self._course_code
 
     @index.setter
     def index(self, value):
@@ -236,7 +236,7 @@ class StringParseIndex(object):
             if l == ' ':
                 continue
             else:
-                self.course_name += l
+                self.course_code += l
         
 
 class StringParseStudentType(object):
@@ -330,13 +330,13 @@ class chooseindex(object):
     def __init__(self):
         self.data=[[],[],[],[],[],[],[]]
         self.dict = {
-            'course_code': [],
-            'type': [],
-            'group': [],
+            'course_index': [],
+            'course_type': [],
+            'course_group': [],
             'day': [],
             'time': [],
-            'venue': [],
-            'remark': []
+            'location': [],
+            'recurrence': []
         }
 
     def selectindex(self,index_number,parsedlist):
@@ -348,13 +348,13 @@ class chooseindex(object):
                     if self.data[0][iterator2].text!='' and self.data[0][iterator2].text!=index_number:
                         finish=True
                         break
-                    self.dict["course_code"].append(self.data[0][iterator2].text)
-                    self.dict["type"].append(self.data[1][iterator2].text)
-                    self.dict["group"].append(self.data[2][iterator2].text)
+                    self.dict["course_index"].append(self.data[0][iterator2].text)
+                    self.dict["course_type"].append(self.data[1][iterator2].text)
+                    self.dict["course_group"].append(self.data[2][iterator2].text)
                     self.dict["day"].append(self.data[3][iterator2].text)
                     self.dict["time"].append(self.data[4][iterator2].text)
-                    self.dict["venue"].append(self.data[5][iterator2].text)
-                    self.dict["remark"].append(self.data[6][iterator2].text)
+                    self.dict["location"].append(self.data[5][iterator2].text)
+                    self.dict["recurrence"].append(self.data[6][iterator2].text)
 
             if finish:
                 break

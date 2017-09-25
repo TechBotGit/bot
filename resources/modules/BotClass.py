@@ -26,9 +26,10 @@ class API(object):
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
-        # additional information for index
-        self._indexchosen=''
-        self._parseddataindex=[[],[],[],[],[],[],[]]
+        
+        # additional information for course codes and indexes
+        self._indexchosen = ''
+        self._parseddataindex = [[],[],[],[],[],[],[]]
 
         # Error raising
         self._error = 0
@@ -52,6 +53,7 @@ class API(object):
     @property
     def error(self):
         return self._error
+    
     @db_chat.setter
     def db_chat(self, value):
         self._db_chat = value
@@ -118,7 +120,7 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
-                        self.error = 0
+                        self.error = 0  # no error occured
                     
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -198,7 +200,7 @@ class API(object):
                     try:
                         self.indexchosen=''
                         BotCommandObject.AddIndexCommand(chat_id)
-                        self.parseddataindex=BotCommandObject.parseddataindex
+                        self.parseddataindex = BotCommandObject.parseddataindex
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
@@ -441,11 +443,12 @@ class BotCommand(API):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         
-        course_name = str_input.course_name
-        index = str_input.index
+        global course_code  # set course_code to global!
+        course_code = str_input.course_code
+        # index = str_input.index
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
-        self.getdata.start(course_name, student_type)
+        self.getdata.start(course_code, student_type)
         self.parseddataindex=self.getdata.parsedatahml()
         inlines_keyboard = []
         for i in range(len(self.getdata.indexlist)):
@@ -470,14 +473,14 @@ class BotCommand(API):
         
         course_code = str_input.course_code
         location_course = str_input.location_course
-        class_type = str_input.class_type
+        course_type = str_input.course_type
         start_time = str_input.start_time
         end_time = str_input.end_time
         
         first_week = db.DB().table_query(chat_id, first_week=True)[0]
         first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)[1]
 
-        gc.GoogleAPI().CreateEventIndex(course_code, location_course, class_type, start_time, end_time, first_week, first_recess_week)
+        gc.GoogleAPI().CreateEventIndex(course_code, location_course, course_type, start_time, end_time, first_week, first_recess_week)
 
     def AddFirstWeek(self, chat_id):
         first_week, first_recess_week = self.str_text.split(';')
@@ -488,4 +491,15 @@ class BotCommand(API):
         excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
     
     def get_schedule_data(self, dictionary):
+        value_list = list(dictionary.values())
+        key_list = list(dictionary.keys())
+        event_list = []
         print(dictionary)
+        print(course_code)
+        for i in range(len(value_list[0])):
+            print('Value list index', i)
+            for key in key_list:
+                print(dictionary[key][i])
+                event_list.append(dictionary[key][i])
+            print('------------')
+        print(event_list)

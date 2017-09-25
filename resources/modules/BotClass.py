@@ -26,9 +26,13 @@ class API(object):
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
-        #additional information for index
+        # additional information for index
         self._indexchosen=''
         self._parseddataindex=[[],[],[],[],[],[],[]]
+
+        # Error raising
+        self._error = 0
+    
     @property
     def db_chat(self):
         return self._db_chat
@@ -44,7 +48,10 @@ class API(object):
     @property
     def parseddataindex(self):
         return self._parseddataindex
-
+    
+    @property
+    def error(self):
+        return self._error
     @db_chat.setter
     def db_chat(self, value):
         self._db_chat = value
@@ -60,6 +67,11 @@ class API(object):
     @parseddataindex.setter
     def parseddataindex(self, value):
         self._parseddataindex = value
+
+    @error.setter
+    def error(self, value):
+        self._error = value
+        return self._error
 
     def handleAPI(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
@@ -98,12 +110,15 @@ class API(object):
                     student_type_exist = check_db.isRecordExist(chat_id, student_type=True)
                     is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
                     if not all(is_satisfied):
+                        # any of the requirements are not satisfied
                         self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
                         self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
                         self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
+                        self.error = 1  # explicitly telling that there is an error
                     else:
                         self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
+                        self.error = 0
                     
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -176,7 +191,7 @@ class API(object):
                             self.bot.sendMessage(chat_id, 'You are busy on this interval!')
                             self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
                 
-                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addindex':
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addindex' and not self.error:
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
@@ -419,12 +434,11 @@ class BotCommand(API):
         str_input.Parse()
         
         course_name = str_input.course_name
-        course_type = 'F'
         index = str_input.index
-        self.getdata.start(course_name, course_type)
+        excel = db.DB()
+        student_type = excel.table_query(chat_id, student_type=True)[2]
+        self.getdata.start(course_name, student_type)
         self.parseddataindex=self.getdata.parsedatahml()
-        #print(self.parseddataindex)
-        #print(type(self.parseddataindex))
         inlines_keyboard = []
         for i in range(len(self.getdata.indexlist)):
             # print(hc.PreformattedBotInlineMarkup().days[i])

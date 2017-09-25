@@ -23,7 +23,7 @@ class API(object):
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
-        #additional information for index
+    
     @property
     def db_chat(self):
         return self._db_chat
@@ -169,7 +169,6 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "Successfully added! :)")
-                        #BotCommand(msg['text']).AddIndexCommand() #debug purpose
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -185,9 +184,6 @@ class API(object):
                         BotCommandObject.AddFirstWeek(chat_id)
                     except:
                         self.bot.sendMessage(chat_id, "Database error!")
-                        # """A message if the data has been previously recorded in the database"""
-                        # self.bot.sendMessage(chat_id, 'Overiding current data...')
-                        # self.bot.sendMessage(chat_id, 'Your data is sucessfully updated in our database!')
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
                         self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')

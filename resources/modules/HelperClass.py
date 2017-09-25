@@ -169,15 +169,6 @@ class StringParseGoogleAPI(object):
                 semicolon.append(';')
                 continue
     
-    def ParseDateNoColon(self):
-        date_no_colon = ''
-        for l in self.str_message:
-            if l != ':':
-                date_no_colon += l
-            else:
-                continue
-        return date_no_colon
-
     def ParseDateWeek(self, start_week):
         """To exclude any week"""
         hour_start, minute_start, second_start = self.str_message.split(':')
@@ -216,8 +207,6 @@ class StringParseGoogleAPI(object):
         self.class_type = class_type
         self.start_time = start_time
         self.end_time = end_time
-        # self.first_recess_week = first_recess_week
-        # self.first_week = first_week
 
 
 class StringParseIndex(object):
@@ -288,6 +277,7 @@ class StringParseStudentType(object):
             self._course_type = 'P'
         else:
             1/0
+
 
 class PreformattedBotInlineMarkup(object):
     """This is a class for storing future fixed KeyboardMarkup"""

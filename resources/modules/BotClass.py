@@ -91,7 +91,6 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
-                    self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                     print(response)
                     check_db = db.DB()
                     first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
@@ -103,10 +102,7 @@ class API(object):
                         self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
                         self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
                     else:
-                        msg_reply = "Please type your details in following format: \n"
-                        str_format = "Course Name;Index Number"
-                        self.bot.sendMessage(chat_id, msg_reply)
-                        self.bot.sendMessage(chat_id, str_format)
+                        self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
                     
                 elif msg_received == '/quit':
@@ -190,10 +186,10 @@ class API(object):
                         self.parseddataindex=BotCommandObject.parseddataindex
                     
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
+                        self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")
+                        self.bot.sendMessage(chat_id, "Course code successfully accessed")
                     #few lines below are for debug purpose
                     #passingobject=BotCommandObject
                     #BotCommandObject.getdata.selectindex(self.indexchosen)
@@ -260,10 +256,16 @@ class API(object):
         print('Callback Query:', query_id, from_id, query_data)
         print(query_data)
         if msg['message']['text'].find('Please choose your index below')!=-1:
-            self.indexchosen=query_data
-            #print(query_data)
-            BotFindIndexObject=hc.chooseindex()
-            BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            try:
+                self.indexchosen=query_data
+                #print(query_data)
+                BotFindIndexObject=hc.chooseindex()
+                BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            except:
+                self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
+                self.bot.answerCallbackQuery(query_id, text='Error! :(')
+            else:
+                self.bot.answerCallbackQuery(query_id, text='Index added! :)')
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 

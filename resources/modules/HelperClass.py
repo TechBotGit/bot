@@ -260,7 +260,7 @@ class StringParseStudentType(object):
         elif self._course_type.find('part') != -1 and self._course_type.find('full') == -1:
             self._course_type = 'P'
         else:
-            1/0
+            raise ValueError
 
 
 class PreformattedBotInlineMarkup(object):

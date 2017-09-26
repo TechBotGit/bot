@@ -98,6 +98,9 @@ class API(object):
                     self.bot.sendMessage(chat_id, str_format)
                     self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
                     print(response)
+                
+                elif msg_received == '/deleteevent':
+                    self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
@@ -177,10 +180,21 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot create event! Please try again')
                     # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!')
+                        self.bot.sendMessage(chat_id, 'Successful! Your event ID is ' + trial[3] + '.\n Please refer to this Event ID for further information.')
                     # for debugging
                     # iso = BotCommandObject.CreateEventCommand()
                 
+                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/deleteevent'):
+                    
+                    try:
+                        BotCommandObject.DeleteEventCommand()
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Error occured! Have you entered the correct event ID?')
+                    
+                    else:
+                        self.bot.sendMessage(chat_id, 'Successful!')
+
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:
@@ -396,6 +410,7 @@ class BotCommand(API):
             '/st',
             '/setstudentype',
             '/createevent',
+            '/deleteevent',
             '/isfree',
             '/scheduleindex',
             '/addfirstweek',
@@ -445,8 +460,12 @@ class BotCommand(API):
             return (0,start_date_pretty,end_date_pretty)
             # raise ZeroDivisionError
         # Call the GoogleAPI class and create event
-        gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
-        return (1,start_date_pretty,end_date_pretty)
+        current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+        return (1,start_date_pretty,end_date_pretty,current_event_id)
+
+    def DeleteEventCommand(self):
+        str_input = self.str_text
+        gc.GoogleAPI().deleteEvent(str_input)
 
     def IsFreeCommand(self):
         str_input = hc.StringParseGoogleAPI(self.str_text)

@@ -1,6 +1,3 @@
-import telepot
-import splinter
-import selenium
 import datetime
 import pytz
 import os
@@ -20,6 +17,8 @@ class StringParseGoogleAPI(object):
         self._location = ''
         self._start_date = ''
         self._end_date = ''
+        self._start_time_cantik = ''
+        self._end_time_cantik = ''
 
         # for STARS Property
         self._course_code = ''
@@ -73,6 +72,14 @@ class StringParseGoogleAPI(object):
     @property
     def first_week(self):
         return self._first_week
+
+    @property
+    def start_time_cantik(self):
+        return self._start_time_cantik
+
+    @property
+    def end_time_cantik(self):
+        return self._end_time_cantik
 
     @event_name.setter
     def event_name(self, value):
@@ -128,27 +135,45 @@ class StringParseGoogleAPI(object):
     def first_week(self, value):
         self._first_week = value
         return self._first_week
+
+    @start_time.setter
+    def start_time_cantik(self, value):
+        self._start_time_cantik = value
+        return self._start_time_cantik
+
+    @end_time.setter
+    def end_time_cantik(self, value):
+        self._end_time_cantik = value
+        return self._end_time_cantik
     
     def ParseEvent(self):
-        semicolon = []
+        str_input= self.str_message.split(';')
+        if len(str_input)!=4:
+            raise ValueError
+        for i in range(len(str_input)):
+            if i==0:
+                self.event_name=str_input[i]
 
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.event_name += l
+            elif i==1:
+                self.location=str_input[i]
 
-                elif len(semicolon) == 1:
-                    self.location += l
-                
-                elif len(semicolon) == 2:
-                    self.start_date += l
-
-                elif len(semicolon) == 3:
-                    self.end_date += l
-
-            else:
-                semicolon.append(';')
-                continue
+            elif i==2:
+                self.start_time_cantik = str_input[i]
+                print(self.start_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.start_date = iso_date
+            
+            elif i==3:
+                self.end_time_cantik = str_input[i]
+                print(self.end_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.end_date = iso_date
 
     def ParseDate(self):
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')
@@ -169,15 +194,6 @@ class StringParseGoogleAPI(object):
                 semicolon.append(';')
                 continue
     
-    def ParseDateNoColon(self):
-        date_no_colon = ''
-        for l in self.str_message:
-            if l != ':':
-                date_no_colon += l
-            else:
-                continue
-        return date_no_colon
-
     def ParseDateWeek(self, start_week):
         """To exclude any week"""
         hour_start, minute_start, second_start = self.str_message.split(':')
@@ -216,8 +232,6 @@ class StringParseGoogleAPI(object):
         self.class_type = class_type
         self.start_time = start_time
         self.end_time = end_time
-        # self.first_recess_week = first_recess_week
-        # self.first_week = first_week
 
 
 class StringParseIndex(object):
@@ -246,24 +260,11 @@ class StringParseIndex(object):
         return self._index
 
     def Parse(self):
-        semicolon = []
         for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.course_name += l
-                    
-                elif len(semicolon) == 1:
-                    self.index += l
-
-            elif l == ' ':
+            if l == ' ':
                 continue
-                
             else:
-                semicolon.append(';')
-                continue
-            
-        if len(semicolon) < 1:
-            1/0
+                self.course_name += l
         
 
 class StringParseStudentType(object):
@@ -287,7 +288,8 @@ class StringParseStudentType(object):
         elif self._course_type.find('part') != -1 and self._course_type.find('full') == -1:
             self._course_type = 'P'
         else:
-            1/0
+            raise ValueError
+
 
 class PreformattedBotInlineMarkup(object):
     """This is a class for storing future fixed KeyboardMarkup"""
@@ -312,8 +314,11 @@ class splintergetdata(object):
         self.browser_used = f.read()
         f.close()
         self.data=[[],[],[],[],[],[],[]]
+        self.indexlist=[]
+        self.soup = ''
+        #only for initialization, duck typing will change its format later XD
 
-    def start(self, Course_code, Type_course, index_number):
+    def start(self, Course_code, Type_course):
         with Browser(self.browser_used) as browser:
             browser.visit(self.url)
             browser.fill("r_subj_code", Course_code)
@@ -325,17 +330,15 @@ class splintergetdata(object):
                     browser.windows.current = ii
                     html_page = browser.html
                     # print(html_page)
-                    soup = BeautifulSoup(html_page, 'html.parser')
+                    self.soup = BeautifulSoup(html_page, 'html.parser')
+                    #had to declare soup self here :'(
                     # print(soup)
                     #ii.close()
-        self.parsedatahtml(soup,index_number)
         print('Success')
 
-
-    def parsedatahtml(self,soup, index_number):
-        finish=False
-        print(soup)
-        tables = soup.find('table',border=True)
+    
+    def parsedatahml(self):
+        tables = self.soup.find('table',border=True)
         rows = tables.find_all('tr')
         #print(rows)
         for iterator in range (1,len(rows)):
@@ -343,14 +346,45 @@ class splintergetdata(object):
                 #print(rows[iterator].find_all('td')[columns])
                 self.data[columns].append(rows[iterator].find_all('td')[columns])
                 #print (self.data[columns][iterator])
+            if self.data[0][-1].text!='':
+                    self.indexlist.append(self.data[0][-1].text)
+        #print(self.indexlist)
         #print (self.data)
-        for iterator in range(len(self.data[columns])):
+        #print(type(self.data))
+        return self.data
+
+class chooseindex(object):
+    def __init__(self):
+         self.data=[[],[],[],[],[],[],[]]
+         self.dict = {
+            'course_code': [],
+            'type': [],
+            'group': [],
+            'day': [],
+            'time': [],
+            'venue': [],
+            'remark': []
+        }
+
+    def selectindex(self,index_number,parsedlist):
+        self.data=parsedlist
+        finish=False
+        #print(soup)
+        for iterator in range(len(self.data[0])):
             if self.data[0][iterator].text==index_number:
-                for iterator2 in range(iterator,len(self.data[columns])):
+                for iterator2 in range(iterator,len(self.data[0])):
                     if self.data[0][iterator2].text!='' and self.data[0][iterator2].text!=index_number:
                         finish=True
                         break
-                    for columns in range(0,7):
-                        print(self.data[columns][iterator2].text)
+                    self.dict["course_code"].append(self.data[0][iterator2].text)
+                    self.dict["type"].append(self.data[1][iterator2].text)
+                    self.dict["group"].append(self.data[2][iterator2].text)
+                    self.dict["day"].append(self.data[3][iterator2].text)
+                    self.dict["time"].append(self.data[4][iterator2].text)
+                    self.dict["venue"].append(self.data[5][iterator2].text)
+                    self.dict["remark"].append(self.data[6][iterator2].text)
+                    #for columns in range(0,7):
+                        #print(self.data[columns][iterator2].text)
             if finish:
                 break
+        print(self.dict)     

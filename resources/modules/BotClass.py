@@ -1,6 +1,8 @@
 import os
 import sys
+import time
 import telepot
+import datetime
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
@@ -8,6 +10,8 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, Reply
 import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
+
+#for passing da object
 
 
 class API(object):
@@ -23,7 +27,12 @@ class API(object):
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
-        #additional information for index
+        # additional information for index
+        self._indexchosen=''
+        self._parseddataindex=[[],[],[],[],[],[],[]]
+        # Error raising
+        self._error = 0
+    
     @property
     def db_chat(self):
         return self._db_chat
@@ -32,6 +41,17 @@ class API(object):
     def list_update_message(self):
         return self._list_update_message
 
+    @property
+    def indexchosen(self):
+        return self._indexchosen
+    
+    @property
+    def parseddataindex(self):
+        return self._parseddataindex
+    
+    @property
+    def error(self):
+        return self._error
     @db_chat.setter
     def db_chat(self, value):
         self._db_chat = value
@@ -39,7 +59,20 @@ class API(object):
     @list_update_message.setter
     def list_update_message(self, value):
         self._list_update_message = value
-    
+
+    @indexchosen.setter
+    def indexchosen(self, value):
+        self._indexchosen = value
+
+    @parseddataindex.setter
+    def parseddataindex(self, value):
+        self._parseddataindex = value
+
+    @error.setter
+    def error(self, value):
+        self._error = value
+        return self._error
+
     def handleAPI(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print(content_type, chat_type, chat_id)  # debug msg received
@@ -60,9 +93,10 @@ class API(object):
                 
                 elif msg_received == '/createevent':
                     msg_reply = "Okay send me the details in following format:"
-                    str_format = "Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss"
+                    str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
                     self.bot.sendMessage(chat_id, msg_reply)
                     self.bot.sendMessage(chat_id, str_format)
+                    self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
                     print(response)
 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
@@ -70,16 +104,22 @@ class API(object):
 
                 elif msg_received == '/addindex':
                     self.bot.sendMessage(chat_id,'Sure thing.\n')
-                    if self.fullorparttime!='F' or self.fullorparttime!='P':
-                        print(self.fullorparttime)
-                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what student you are.\n')
-                        self.bot.sendMessage(chat_id,'Please type /setstudenttype or /st and run this command again later. Sorry for the inconvennience :(\n')
+                    print(response)
+                    check_db = db.DB()
+                    first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
+                    first_recess_week_exist = check_db.isRecordExist(chat_id, first_recess_week=True)
+                    student_type_exist = check_db.isRecordExist(chat_id, student_type=True)
+                    is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
+                    if not all(is_satisfied):
+                        # any of the requirements are not satisfied
+                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
+                        self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
+                        self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
+                        self.error = 1  # explicitly telling that there is an error
                     else:
-                        msg_reply = "Please type your details in following format: \n"
-                        str_format = "Course Name;Index Number"
-                        self.bot.sendMessage(chat_id, msg_reply)
-                        self.bot.sendMessage(chat_id, str_format)
+                        self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
+                        self.error = 0
                     
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -109,30 +149,49 @@ class API(object):
                 # Execute the command further
                 # Create the Command Object first
                 BotCommandObject = BotCommand(msg['text'])
-                
+                #to prevent crashing as it separates the variables so literally it can run parallelly
                 # This checks if the last msg['text'] is indeed a command
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
                     
                     try:
-                        BotCommandObject.CreateEventCommand()
-                    
-                    except:
+                        trial = BotCommandObject.CreateEventCommand()
+                        1 / trial[0]
+
+                    except ValueError:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
                     
+                    except ZeroDivisionError:
+                        query = gc.GoogleAPI().FreeBusyQuery(trial[1],trial[2])
+                        info_busy = gc.GoogleAPI().BusyInfo(query)
+                        start_busy = info_busy[0]
+                        end_busy = info_busy[1]
+                        start_busy = start_busy[:19]
+                        end_busy = end_busy[:19]
+                        start_busy = datetime.datetime.strptime(start_busy,"%Y-%m-%dT%H:%M:%S")
+                        start_busy = start_busy.strftime("%Y-%m-%d %H:%M")
+                        end_busy = datetime.datetime.strptime(end_busy,"%Y-%m-%dT%H:%M:%S")
+                        end_busy = end_busy.strftime("%Y-%m-%d %H:%M")
+                        self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on '+start_busy+' until '+end_busy+' !')
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Cannot create event! Please try again')
+                    # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!')
+                    #for debugging
+                    #iso = BotCommandObject.CreateEventCommand()
                 
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:
-                        BotCommandObject.SetTypeStudent()
+                        BotCommandObject.SetTypeStudent(chat_id)
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Wrong format!')
                     
                     else:
                         self.bot.sendMessage(chat_id, 'Successful!',reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-                    #BotCommandObject.SetTypeStudent()
+                    # BotCommandObject.SetTypeStudent()
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
@@ -152,19 +211,23 @@ class API(object):
                             self.bot.sendMessage(chat_id, 'You are busy on this interval!')
                             self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
                 
-                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addindex':
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addindex' and not self.error:
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
                     try:
-                        BotCommandObject.AddIndexCommand()
+                        self.indexchosen=''
+                        BotCommandObject.AddIndexCommand(chat_id)
+                        self.parseddataindex=BotCommandObject.parseddataindex
                     
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot add index! Make sure you have entered the correct format!')
+                        self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")
-                        #BotCommand(msg['text']).AddIndexCommand() #debug purpose
+                        self.bot.sendMessage(chat_id, "Course code successfully accessed. Please do the instructions above :)")
+                    #few lines below are for debug purpose
+                    #passingobject=BotCommandObject
+                    #BotCommandObject.getdata.selectindex(self.indexchosen)
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -178,14 +241,11 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
-                    except ValueError:
-                        """A message if the data has been previously recorded in the database"""
-                        self.bot.sendMessage(chat_id, 'Overiding current data...')
+                    except:
+                        self.bot.sendMessage(chat_id, "Database error!")
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
-
-                    finally:
-                        self.bot.sendMessage(chat_id, 'Your data are sucessfully recorded in our database!')
+                        self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
                 
                 else:
 
@@ -229,7 +289,25 @@ class API(object):
     def on_callback_query(self, msg):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
-        self.bot.answerCallbackQuery(query_id, text='Got it :)')
+        print(query_data)
+        if msg['message']['text'].find('Please choose your index below')!=-1:
+            try:
+                self.indexchosen=query_data
+                #print(query_data)
+                BotFindIndexObject=hc.chooseindex()
+                BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            except:
+                self.bot.answerCallbackQuery(query_id, text='Error! :(')
+                self.bot.sendMessage(from_id, 'Error occured! Please try again...')
+            else:
+                self.bot.answerCallbackQuery(query_id, text='Index added! :)')
+            #below is for debugging only
+            # self.indexchosen=query_data
+            # #print(query_data)
+            # BotFindIndexObject=hc.chooseindex()
+            # BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+        else:
+            self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
     def StoreChat(self, update_object):
         update_id = update_object[0]['update_id']
@@ -240,7 +318,7 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
-
+#RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
 
 class BotReply(API):
     """This is a class for Replies"""
@@ -307,7 +385,7 @@ class BotReply(API):
 
 class BotCommand(API):
     """This is a class for Commands"""
-
+    
     def __init__(self, str_text):
         super().__init__()
         self.command_list = [
@@ -328,6 +406,7 @@ class BotCommand(API):
         # Updatable
         self._start_busy = None
         self._end_busy = None
+        self.getdata = hc.splintergetdata()#property not yet added!!!
 
     @property
     def start_busy(self):
@@ -354,9 +433,20 @@ class BotCommand(API):
         event_name = str_input.event_name
         location = str_input.location
         start_date = str_input.start_date
+        start_date_pretty = str_input._start_time_cantik
+        end_date_pretty = str_input._end_time_cantik
         end_date = str_input.end_date
+        #print("beep",start_date_pretty,end_date_pretty)
+        query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
+        isFree = gc.GoogleAPI().isFree(query)
+        # Get the query's busy info
+        if not isFree:
+            print("not free!")
+            return (0,start_date_pretty,end_date_pretty)
+            #raise ZeroDivisionError
         # Call the GoogleAPI class and create event
         gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+        return (1,start_date_pretty,end_date_pretty)
 
     def IsFreeCommand(self):
         str_input = hc.StringParseGoogleAPI(self.str_text)
@@ -375,22 +465,32 @@ class BotCommand(API):
             self.end_busy = info_busy[1]
         return isFree
 
-    def AddIndexCommand(self):
+    def AddIndexCommand(self,chat_id):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         course_name = str_input.course_name
-        course_type = 'F'
         index = str_input.index
-        hc.splintergetdata().start(course_name, course_type, index)
+        excel = db.DB()
+        student_type = excel.table_query(chat_id, student_type=True)[2]
+        self.getdata.start(course_name, student_type)
+        self.parseddataindex=self.getdata.parsedatahml()
+        inlines_keyboard = []
+        for i in range(len(self.getdata.indexlist)):
+            # print(hc.PreformattedBotInlineMarkup().days[i])
+            inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
+        # print(inlines_keyboard)
+        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+        self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
 
-    def SetTypeStudent(self):
+    def SetTypeStudent(self, chat_id):
         str_input = hc.StringParseStudentType(self.str_text)
         str_input.ParseInput()
         # print(self.str_text)
         course_type = str_input.course_type
         print(course_type)
-        #this part should be edited once database is available
-
+        excel = db.DB()
+        excel.update(chat_id, student_type=course_type)
+        
     def ScheduleIndexCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseIndexInput()
@@ -412,4 +512,4 @@ class BotCommand(API):
         # Initialize db
         excel = db.DB()
         # Update the exel file
-        excel.update(chat_id, first_week, first_recess_week)
+        excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)

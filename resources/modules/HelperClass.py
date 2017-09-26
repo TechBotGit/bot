@@ -28,8 +28,17 @@ class StringParseGoogleAPI(object):
         self._first_week = ''
 
         # For recurrence property
+        self._day = []
         self._occuring_week = []
         self._ignored_week = []
+        self.format_day = {
+            'MON': 'MO',
+            'TUE': 'TU',
+            'WED': 'WE',
+            'THU': 'TH',
+            'FRI': 'FR',
+            'SAT': 'SA'
+        }
 
     @property
     def event_name(self):
@@ -75,6 +84,10 @@ class StringParseGoogleAPI(object):
     def first_week(self):
         return self._first_week
     
+    @property
+    def day(self):
+        return self._day
+
     @property
     def occuring_week(self):
         return self._occuring_week
@@ -138,6 +151,10 @@ class StringParseGoogleAPI(object):
         self._first_week = value
         return self._first_week
     
+    @day.setter
+    def day(self, value):
+        self._day = self.format_day[value]
+
     @occuring_week.setter
     def occuring_week(self, value):
         self._occuring_week.append(value)
@@ -145,7 +162,7 @@ class StringParseGoogleAPI(object):
 
     @ignored_week.setter
     def ignored_week(self, value):
-        self._ignored_week.append(value)
+        self._ignored_week = value
         return self._ignored_week
 
     def ParseEvent(self):
@@ -239,6 +256,35 @@ class StringParseGoogleAPI(object):
         self.course_type = course_type
         self.start_time = start_time
         self.end_time = end_time
+    
+    def week_range(self, string, lst):
+        start, end = string.split('-')
+        start = int(start)
+        end = int(end)
+        for i in range(start, end + 1):
+            lst.append(i)
+    
+    def ParseOccurIgnoreWeek(self):
+        query_recur = self.str_message
+        if query_recur.count('-') == 0:
+            # Separate the delimiter
+            self.occuring_week = query_recur.split(',')
+
+            # Convert everything to integer
+            self.occuring_week = list(map(int, self.occuring_week))
+
+        else:
+            if query_recur.count(',') == 0:
+                self.week_range(query_recur, self.occuring_week)
+            else:
+                helper_list = query_recur.split(',')
+                for i in range(len(helper_list)):
+                    if helper_list[i].count('-') == 0:  # NO DASH
+                        self.occuring_week.append(int(helper_list[i]))
+                    else:
+                        self.week_range(helper_list[i], self.occuring_week)
+
+        self.ignored_week = [x for x in range(1, 14) if x not in self.occuring_week]
 
 
 class StringParseIndex(object):
@@ -393,7 +439,3 @@ class chooseindex(object):
             if finish:
                 break
         return self.dict
-
-
-class ReccurEvent(object):
-    def __init__(self):

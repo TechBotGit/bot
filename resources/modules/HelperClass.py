@@ -29,8 +29,8 @@ class StringParseGoogleAPI(object):
 
         # For recurrence property
         self._day = []
-        self._occuring_week = []
-        self._ignored_week = []
+        self.occuring_week = []
+        self.ignored_week = []
         self.format_day = {
             'MON': 'MO',
             'TUE': 'TU',
@@ -39,6 +39,7 @@ class StringParseGoogleAPI(object):
             'FRI': 'FR',
             'SAT': 'SA'
         }
+        self.date_string_complete = ' '
 
     @property
     def event_name(self):
@@ -88,13 +89,13 @@ class StringParseGoogleAPI(object):
     def day(self):
         return self._day
 
-    @property
-    def occuring_week(self):
-        return self._occuring_week
+    # @property
+    # def occuring_week(self):
+    #     return self._occuring_week
 
-    @property
-    def ignored_week(self):
-        return self._ignored_week
+    # @property
+    # def ignored_week(self):
+    #     return self._ignored_week
 
     @event_name.setter
     def event_name(self, value):
@@ -155,15 +156,15 @@ class StringParseGoogleAPI(object):
     def day(self, value):
         self._day = self.format_day[value]
 
-    @occuring_week.setter
-    def occuring_week(self, value):
-        self._occuring_week.append(value)
-        return self._occuring_week
+    # @occuring_week.setter
+    # def occuring_week(self, value):
+    #     self._occuring_week.append(value)
+    #     return self._occuring_week
 
-    @ignored_week.setter
-    def ignored_week(self, value):
-        self._ignored_week = value
-        return self._ignored_week
+    # @ignored_week.setter
+    # def ignored_week(self, value):
+    #     self._ignored_week = value
+    #     return self._ignored_week
 
     def ParseEvent(self):
         semicolon = []
@@ -232,7 +233,7 @@ class StringParseGoogleAPI(object):
         
         date_list = []
         date_list_no_colon = []
-        date_string_complete = ''
+        # date_string_complete = ''
 
         for day_plus in range(7):
             a = datetime.datetime(year_week, month_week, day_week + day_plus, hour_start, minute_start)
@@ -246,8 +247,7 @@ class StringParseGoogleAPI(object):
                     date_string += c
             date_list_no_colon.append(date_string)
 
-        date_string_complete = ','.join(date_list_no_colon)
-        return date_string_complete
+        self.date_string_complete = ','.join(date_list_no_colon)
 
     def ParseIndexInput(self):
         course_code, location_course, course_type, start_time, end_time = self.str_message.split(';')
@@ -264,27 +264,54 @@ class StringParseGoogleAPI(object):
         for i in range(start, end + 1):
             lst.append(i)
     
-    def ParseOccurIgnoreWeek(self):
+    def ParseOccurIgnoreWeek(self, start_week, start_time):
         query_recur = self.str_message
-        if query_recur.count('-') == 0:
-            # Separate the delimiter
-            self.occuring_week = query_recur.split(',')
+        start = 1
+        end = 13
+        date_list = []
+        date_list_no_colon = []
+        helper_list = []
+        if query_recur != '':
+            query_recur = query_recur.replace('Wk', '')
+            if query_recur.count('-') == 0:
+                # Separate the delimiter
+                self.occuring_week = query_recur.split(',')
 
-            # Convert everything to integer
-            self.occuring_week = list(map(int, self.occuring_week))
+                # Convert everything to integer
+                self.occuring_week = list(map(int, self.occuring_week))
 
-        else:
-            if query_recur.count(',') == 0:
-                self.week_range(query_recur, self.occuring_week)
             else:
-                helper_list = query_recur.split(',')
-                for i in range(len(helper_list)):
-                    if helper_list[i].count('-') == 0:  # NO DASH
-                        self.occuring_week.append(int(helper_list[i]))
-                    else:
-                        self.week_range(helper_list[i], self.occuring_week)
+                if query_recur.count(',') == 0:
+                    self.week_range(query_recur, self.occuring_week)
+                else:
+                    helper_list = query_recur.split(',')
+                    for i in range(len(helper_list)):
+                        if helper_list[i].count('-') == 0:  # NO DASH
+                            self.occuring_week.append(int(helper_list[i]))
+                        else:
+                            self.week_range(helper_list[i], self.occuring_week)
+        else:
+            for i in range(start, end + 1):
+                self.occuring_week.append(i)
 
         self.ignored_week = [x for x in range(1, 14) if x not in self.occuring_week]
+        for free_week in self.ignored_week:
+            if free_week > 7:
+                free_week += 1
+            start_week_obj = datetime.datetime.strptime(start_week + start_time, '%Y-%m-%d%H:%M:%S') + datetime.timedelta(days=7 * (free_week - 1))
+            for day_plus in range(7):
+                increment_day = start_week_obj + datetime.timedelta(days=day_plus)
+                increment_day = increment_day.isoformat()
+                date_list.append(increment_day)
+
+        for item in date_list:
+            date_string = ''
+            for c in item:
+                if c != '-' and c != ':':
+                    date_string += c
+            date_list_no_colon.append(date_string)
+
+        self.date_string_complete = ','.join(date_list_no_colon)
 
 
 class StringParseIndex(object):

@@ -516,35 +516,41 @@ class IndexToGoogle(API):
             # Change the time format
             time = self.index_dictionary['time'][i]
             formated_time = ParseObject.ParseDateIndex(time)
-            time = formated_time
+            self.index_dictionary['time'][i] = formated_time
 
             # Change the day format
             day = self.index_dictionary['day'][i]
             # Setting the value
             ParseObject.day = day
             # Assign it to the list
-            day = ParseObject.day
+            self.index_dictionary['day'][i] = ParseObject.day
             for key in key_list:
                 event_list[i].append(self.index_dictionary[key][i])
         return event_list
 
     def PreCreateEventIndex(self, evt_list):
         """Description: preparation to add the event from evt_list to Google Calendar"""
-        event1 = evt_list[0]
-        course_index = event1[0]
-        course_type = event1[1]
-        course_group = event1[2]
-        day = event1[3]
-        start_time = event1[4][0]
-        end_time = event1[4][1]
-        location = event1[5]
-        recurrence = event1[6]
-        first_week = db.DB().table_query(self.chat_id, first_week=True)[0]
-        first_recess_week = db.DB().table_query(self.chat_id, first_recess_week=True)[1]
+        for i in range(len(evt_list)):
+            event1 = evt_list[i]
+            course_index = event1[0]
+            course_type = event1[1]
+            course_group = event1[2]
+            day = event1[3]
+            start_time = event1[4][0]
+            end_time = event1[4][1]
+            location = event1[5]
+            recurrence = event1[6]
+            first_week = db.DB().table_query(self.chat_id, first_week=True)[0]
+            first_recess_week = db.DB().table_query(self.chat_id, first_recess_week=True)[1]
 
-        # Concatenate together
-        event_summary = " ".join([course_code, course_type])
-        event_desc = " ".join([course_index, course_group])
-        
-        # CreateEventIndex
-        gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence)
+            # Concatenate together
+            event_summary = " ".join([course_code, course_type])
+            event_desc = " ".join([course_index, course_group])
+
+            # Recurrence Parsing
+            recurrenceObject = hc.StringParseGoogleAPI(recurrence)
+            recurrenceObject.ParseOccurIgnoreWeek(first_week, start_time)
+            recurrence_string = recurrenceObject.date_string_complete
+
+            # CreateEventIndex
+            gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day)

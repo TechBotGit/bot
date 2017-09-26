@@ -27,6 +27,10 @@ class StringParseGoogleAPI(object):
         self._first_recess_week = ''
         self._first_week = ''
 
+        # For recurrence property
+        self._occuring_week = []
+        self._ignored_week = []
+
     @property
     def event_name(self):
         return self._event_name
@@ -70,6 +74,14 @@ class StringParseGoogleAPI(object):
     @property
     def first_week(self):
         return self._first_week
+    
+    @property
+    def occuring_week(self):
+        return self._occuring_week
+
+    @property
+    def ignored_week(self):
+        return self._ignored_week
 
     @event_name.setter
     def event_name(self, value):
@@ -126,6 +138,16 @@ class StringParseGoogleAPI(object):
         self._first_week = value
         return self._first_week
     
+    @occuring_week.setter
+    def occuring_week(self, value):
+        self._occuring_week.append(value)
+        return self._occuring_week
+
+    @ignored_week.setter
+    def ignored_week(self, value):
+        self._ignored_week.append(value)
+        return self._ignored_week
+
     def ParseEvent(self):
         semicolon = []
 
@@ -371,3 +393,7 @@ class chooseindex(object):
             if finish:
                 break
         return self.dict
+
+
+class ReccurEvent(object):
+    def __init__(self):

@@ -270,8 +270,8 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Sorry, I don't know what to reply such conversation yet. :'(")
 
     def on_callback_query(self, msg):
-        query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
-        print('Callback Query:', query_id, from_id, query_data)
+        query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
+        print('Callback Query:', query_id, chat_id, query_data)
         print(query_data)
         if msg['message']['text'].find('Please choose your index below') != -1:
             """"try:
@@ -289,7 +289,11 @@ class API(object):
             # print(query_data)
             BotFindIndexObject=hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
-            event_list = BotCommandObject.get_event(complete_data)
+            
+            # Initialize pre requisite before adding to Google Calendar
+            toGoogle = IndexToGoogle(complete_data)
+            event_list = toGoogle.get_event()
+            toGoogle.PreCreateEventIndex(event_list)
             
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
@@ -492,23 +496,29 @@ class BotCommand(API):
         # Update the exel file
         excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
     
-    def get_event(self, dictionary):
-        """Description: Get each event data from the parsed HTML
-        Usage: Fill the paramater dictionary, i.e. the dictionary of data
+
+class IndexToGoogle(API):
+    """Description: the main class to integrate indexes with Google Calendar"""
+    def __init__(self, index_dictionary):
+        super().__init__()
+        self.index_dictionary = index_dictionary
+    
+    def get_event(self):
+        """Description: Get each a list event data from the parsed HTML
         Return: list
         """
-        value_list = list(dictionary.values())
-        key_list = list(dictionary.keys())
+        value_list = list(self.index_dictionary.values())
+        key_list = list(self.index_dictionary.keys())
         event_list = [[] for event in range(len(value_list[0]))]  # initialize list of lists
-        print(dictionary)
-        print(course_code)
         for i in range(len(value_list[0])):
             # Change the time format
-            time = dictionary['time'][i]
-            formated_time = hc.StringParseGoogleAPI(self.str_text).ParseDateIndex(time)
-            dictionary['time'][i] = formated_time
-
+            time = self.index_dictionary['time'][i]
+            formated_time = hc.StringParseGoogleAPI(self.index_dictionary).ParseDateIndex(time)
+            self.index_dictionary['time'][i] = formated_time
             for key in key_list:
-                print(dictionary[key][i])
-                event_list[i].append(dictionary[key][i])
-        print(event_list)
+                event_list[i].append(self.index_dictionary[key][i])
+        return event_list
+
+    def PreCreateEventIndex(self, evt_list):
+        """Description: preparation to add the event from evt_list to Google Calendar"""
+        print(evt_list)

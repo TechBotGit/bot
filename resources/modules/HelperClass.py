@@ -148,6 +148,7 @@ class StringParseGoogleAPI(object):
                 continue
 
     def ParseDate(self):
+        """Description: For freebusy query"""
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')
         tz = pytz.timezone('Asia/Singapore')
         tz_obj_date = tz.localize(obj_date)
@@ -155,6 +156,7 @@ class StringParseGoogleAPI(object):
         return iso_date
 
     def ParseDateRange(self):
+        """Description: For isFree command"""
         semicolon = []
         for l in self.str_message:
             if l != ';':
@@ -166,8 +168,19 @@ class StringParseGoogleAPI(object):
                 semicolon.append(';')
                 continue
     
+    def ParseDateIndex(self, date_string_range):
+        """Description: to parse a date range from HTML, e.g. 1430-1530 into 14:30:00 and 15:30:00
+        Return: tuple (start, end)
+        """
+        start_time, end_time = date_string_range.split('-')
+        obj_start_time = datetime.datetime.strptime(start_time, '%H%M')
+        obj_end_time = datetime.datetime.strptime(end_time, '%H%M')
+        str_start_time = obj_start_time.strftime('%H:%M:%S')
+        str_end_time = obj_end_time.strftime('%H:%M:%S')
+        return str_start_time, str_end_time
+
     def ParseDateWeek(self, start_week):
-        """To exclude any week"""
+        """Description: To exclude any week"""
         hour_start, minute_start, second_start = self.str_message.split(':')
         year_week, month_week, day_week = start_week.split('-')
         
@@ -308,7 +321,6 @@ class splintergetdata(object):
                     #ii.close()
         print('Success')
 
-    
     def parsedatahml(self):
         tables = self.soup.find('table',border=True)
         rows = tables.find_all('tr')

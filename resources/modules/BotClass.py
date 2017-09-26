@@ -1,6 +1,6 @@
 import os
 import sys
-import time
+# import time
 import telepot
 from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -149,6 +149,7 @@ class API(object):
                 
                 # Execute the command further
                 # Create the Command Object first
+                global BotCommandObject
                 BotCommandObject = BotCommand(msg['text'])
                 #to prevent crashing as it separates the variables so literally it can run parallelly
                 # This checks if the last msg['text'] is indeed a command
@@ -272,7 +273,7 @@ class API(object):
         query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, from_id, query_data)
         print(query_data)
-        if msg['message']['text'].find('Please choose your index below')!=-1:
+        if msg['message']['text'].find('Please choose your index below') != -1:
             """"try:
                 self.indexchosen=query_data
                 #print(query_data)
@@ -283,12 +284,12 @@ class API(object):
                 self.bot.sendMessage(from_id, 'Error occured! Please try again...')
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index added! :)')"""
-            #below is for debugging only
-            self.indexchosen=query_data
-            #print(query_data)
+            # Below is for debugging only
+            self.indexchosen = query_data
+            # print(query_data)
             BotFindIndexObject=hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
-            BotCommand(' ').get_schedule_data(complete_data)
+            event_list = BotCommandObject.get_event(complete_data)
             
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
@@ -468,6 +469,7 @@ class BotCommand(API):
         excel.update(chat_id, student_type=course_type)
         
     def ScheduleIndexCommand(self, chat_id):
+        """Important: Soon to be depreciated """
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseIndexInput()
         
@@ -490,16 +492,23 @@ class BotCommand(API):
         # Update the exel file
         excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
     
-    def get_schedule_data(self, dictionary):
+    def get_event(self, dictionary):
+        """Description: Get each event data from the parsed HTML
+        Usage: Fill the paramater dictionary, i.e. the dictionary of data
+        Return: list
+        """
         value_list = list(dictionary.values())
         key_list = list(dictionary.keys())
-        event_list = []
+        event_list = [[] for event in range(len(value_list[0]))]  # initialize list of lists
         print(dictionary)
         print(course_code)
         for i in range(len(value_list[0])):
-            print('Value list index', i)
+            # Change the time format
+            time = dictionary['time'][i]
+            formated_time = hc.StringParseGoogleAPI(self.str_text).ParseDateIndex(time)
+            dictionary['time'][i] = formated_time
+
             for key in key_list:
                 print(dictionary[key][i])
-                event_list.append(dictionary[key][i])
-            print('------------')
+                event_list[i].append(dictionary[key][i])
         print(event_list)

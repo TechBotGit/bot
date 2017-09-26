@@ -17,6 +17,8 @@ class StringParseGoogleAPI(object):
         self._location = ''
         self._start_date = ''
         self._end_date = ''
+        self._start_time_cantik = ''
+        self._end_time_cantik = ''
 
         # for STARS Property
         self._course_code = ''
@@ -70,6 +72,14 @@ class StringParseGoogleAPI(object):
     @property
     def first_week(self):
         return self._first_week
+
+    @property
+    def start_time_cantik(self):
+        return self._start_time_cantik
+
+    @property
+    def end_time_cantik(self):
+        return self._end_time_cantik
 
     @event_name.setter
     def event_name(self, value):
@@ -125,27 +135,45 @@ class StringParseGoogleAPI(object):
     def first_week(self, value):
         self._first_week = value
         return self._first_week
+
+    @start_time.setter
+    def start_time_cantik(self, value):
+        self._start_time_cantik = value
+        return self._start_time_cantik
+
+    @end_time.setter
+    def end_time_cantik(self, value):
+        self._end_time_cantik = value
+        return self._end_time_cantik
     
     def ParseEvent(self):
-        semicolon = []
+        str_input= self.str_message.split(';')
+        if len(str_input)!=4:
+            raise ValueError
+        for i in range(len(str_input)):
+            if i==0:
+                self.event_name=str_input[i]
 
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.event_name += l
+            elif i==1:
+                self.location=str_input[i]
 
-                elif len(semicolon) == 1:
-                    self.location += l
-                
-                elif len(semicolon) == 2:
-                    self.start_date += l
-
-                elif len(semicolon) == 3:
-                    self.end_date += l
-
-            else:
-                semicolon.append(';')
-                continue
+            elif i==2:
+                self.start_time_cantik = str_input[i]
+                print(self.start_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.start_date = iso_date
+            
+            elif i==3:
+                self.end_time_cantik = str_input[i]
+                print(self.end_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.end_date = iso_date
 
     def ParseDate(self):
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')

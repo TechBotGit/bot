@@ -152,14 +152,12 @@ class API(object):
                         info_busy = gc.GoogleAPI().BusyInfo(query)
                         start_busy = info_busy[0]
                         end_busy = info_busy[1]
-                        
-                        #start_busy = datetime.datetime.strptime(start_busy,)
-                        #start_busy.strftime("%Y-%m-%d %H:%M:%S")
-                        #end_busy = datetime.datetime.strptime(end_busy,)
-                        #end_busy.strftime("%Y-%m-%d %H:%M:%S")
-                        #print(start_busy,end_busy)
-                        #self.bot.sendMessage(chat_id,start_busy)
-                        #self.bot.sendMessage(chat_id,end_busy)
+                        start_busy = start_busy[:19]
+                        end_busy = end_busy[:19]
+                        start_busy = datetime.datetime.strptime(start_busy,"%Y-%m-%dT%H:%M:%S")
+                        start_busy = start_busy.strftime("%Y-%m-%d %H:%M")
+                        end_busy = datetime.datetime.strptime(end_busy,"%Y-%m-%dT%H:%M:%S")
+                        end_busy = end_busy.strftime("%Y-%m-%d %H:%M")
                         self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on '+start_busy+' until '+end_busy+' !')
                     
                     except:

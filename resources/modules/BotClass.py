@@ -291,7 +291,7 @@ class API(object):
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             
             # Initialize pre requisite before adding to Google Calendar
-            toGoogle = IndexToGoogle(complete_data)
+            toGoogle = IndexToGoogle(chat_id, complete_data)
             event_list = toGoogle.get_event()
             toGoogle.PreCreateEventIndex(event_list)
             
@@ -499,9 +499,10 @@ class BotCommand(API):
 
 class IndexToGoogle(API):
     """Description: the main class to integrate indexes with Google Calendar"""
-    def __init__(self, index_dictionary):
+    def __init__(self, chat_id, index_dictionary):
         super().__init__()
         self.index_dictionary = index_dictionary
+        self.chat_id = chat_id
     
     def get_event(self):
         """Description: Get each a list event data from the parsed HTML
@@ -521,4 +522,17 @@ class IndexToGoogle(API):
 
     def PreCreateEventIndex(self, evt_list):
         """Description: preparation to add the event from evt_list to Google Calendar"""
-        print(evt_list)
+        event1 = evt_list[0]
+        course_index = event1[0]
+        course_type = event1[1]
+        course_group = event1[2]
+        day = event1[3]
+        start_time = event1[4][0]
+        end_time = event1[4][1]
+        location = event1[5]
+        recurrence = event1[6]
+        first_week = db.DB().table_query(self.chat_id, first_week=True)[0]
+        first_recess_week = db.DB().table_query(self.chat_id, first_recess_week=True)[1]
+
+        # CreateEventIndex
+        gc.GoogleAPI().CreateEventIndex(course_code + course_type, location, course_index + course_group, start_time, end_time, first_week, first_recess_week)

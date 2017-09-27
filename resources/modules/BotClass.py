@@ -547,10 +547,14 @@ class IndexToGoogle(API):
             event_summary = " ".join([course_code, course_type])
             event_desc = " ".join([course_index, course_group])
 
+            ignore_first_event = False
+            if (recurrence.count('1') != 0 and day != 'MO') or recurrence.count('1') == 0:
+                ignore_first_event = True
+            
             # Recurrence Parsing
             recurrenceObject = hc.StringParseGoogleAPI(recurrence)
             recurrenceObject.ParseOccurIgnoreWeek(first_week, start_time)
             recurrence_string = recurrenceObject.date_string_complete
 
             # CreateEventIndex
-            gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day)
+            gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day, ignore_first_event)

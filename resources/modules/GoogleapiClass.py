@@ -59,7 +59,7 @@ class GoogleAPI(object):
         event = {
             'summary': summary,
             'location': location,
-            'description': 'Let us be a TechBot',
+            'description': 'Created by TechBot',
             'start': {
                 'dateTime': start,
                 'timeZone': 'Asia/Singapore',
@@ -80,6 +80,7 @@ class GoogleAPI(object):
         }
         event = service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
+        return event.get('id')
 
     def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week):
         credentials = self.get_credentials()
@@ -159,3 +160,9 @@ class GoogleAPI(object):
         start_busy = busy[0]['start']
         end_busy = busy[0]['end']
         return start_busy, end_busy
+
+    def deleteEvent(self,InputtedeventID):
+        credentials = self.get_credentials()
+        http = credentials.authorize(httplib2.Http())
+        service = discovery.build('calendar', 'v3', http=http)
+        service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()

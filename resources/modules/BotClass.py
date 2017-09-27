@@ -3,7 +3,6 @@ import sys
 import time
 import telepot
 import datetime
-from telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
 # Custom Class
@@ -11,7 +10,7 @@ import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
 
-#for passing da object
+# for passing da object
 
 
 class API(object):
@@ -52,6 +51,7 @@ class API(object):
     @property
     def error(self):
         return self._error
+    
     @db_chat.setter
     def db_chat(self, value):
         self._db_chat = value
@@ -98,6 +98,9 @@ class API(object):
                     self.bot.sendMessage(chat_id, str_format)
                     self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
                     print(response)
+                
+                elif msg_received == '/deleteevent':
+                    self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
@@ -149,7 +152,7 @@ class API(object):
                 # Execute the command further
                 # Create the Command Object first
                 BotCommandObject = BotCommand(msg['text'])
-                #to prevent crashing as it separates the variables so literally it can run parallelly
+                # to prevent crashing as it separates the variables so literally it can run parallelly
                 # This checks if the last msg['text'] is indeed a command
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
                     
@@ -171,16 +174,27 @@ class API(object):
                         start_busy = start_busy.strftime("%Y-%m-%d %H:%M")
                         end_busy = datetime.datetime.strptime(end_busy,"%Y-%m-%dT%H:%M:%S")
                         end_busy = end_busy.strftime("%Y-%m-%d %H:%M")
-                        self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on '+start_busy+' until '+end_busy+' !')
+                        self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on ' + start_busy + ' until ' + end_busy + ' !')
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Please try again')
                     # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!')
-                    #for debugging
-                    #iso = BotCommandObject.CreateEventCommand()
+                        self.bot.sendMessage(chat_id, 'Successful! Your event ID is ' + trial[3] + '.\n Please refer to this Event ID for further information.')
+                    # for debugging
+                    # iso = BotCommandObject.CreateEventCommand()
                 
+                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/deleteevent'):
+                    
+                    try:
+                        BotCommandObject.DeleteEventCommand()
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Error occured! Have you entered the correct event ID?')
+                    
+                    else:
+                        self.bot.sendMessage(chat_id, 'Successful!')
+
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:
@@ -225,9 +239,9 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "Course code successfully accessed. Please do the instructions above :)")
-                    #few lines below are for debug purpose
-                    #passingobject=BotCommandObject
-                    #BotCommandObject.getdata.selectindex(self.indexchosen)
+                    # few lines below are for debug purpose
+                    # passingobject=BotCommandObject
+                    # BotCommandObject.getdata.selectindex(self.indexchosen)
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -267,7 +281,7 @@ class API(object):
 
                         # With name?
                         if BotReply().isWithName(msg_received):
-                            self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received] +', ' + msg['chat']['first_name']+' !')
+                            self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received] +', ' + msg['chat']['first_name'] + ' !')
                                         
                         elif msg_received == 'meetings':
                             self.bot.sendMessage(chat_id, BotReply().reply_dict[msg_received])
@@ -293,7 +307,7 @@ class API(object):
         if msg['message']['text'].find('Please choose your index below')!=-1:
             try:
                 self.indexchosen=query_data
-                #print(query_data)
+                # print(query_data)
                 BotFindIndexObject=hc.chooseindex()
                 BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             except:
@@ -301,7 +315,7 @@ class API(object):
                 self.bot.sendMessage(from_id, 'Error occured! Please try again...')
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index added! :)')
-            #below is for debugging only
+            # below is for debugging only
             # self.indexchosen=query_data
             # #print(query_data)
             # BotFindIndexObject=hc.chooseindex()
@@ -318,7 +332,8 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
-#RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
+# RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
+
 
 class BotReply(API):
     """This is a class for Replies"""
@@ -362,8 +377,7 @@ class BotReply(API):
             'course': "Feeling productive are we? Okay, let's get started",
             'meetings': "Feeling productive are we? Okay, let's get started",
         }
-        #  Trivia: dictionary accessing time is close to O(1), while list is O(n), 
-        #  hence better use dictionary when n is big, won't affect if n is small tho
+        #  Trivia: dictionary accessing time is close to O(1), while list is O(n), hence better use dictionary when n is big, won't affect if n is small tho
         self.reply_with_name = [
             'hi',
             'hi bot',
@@ -396,6 +410,7 @@ class BotCommand(API):
             '/st',
             '/setstudentype',
             '/createevent',
+            '/deleteevent',
             '/isfree',
             '/scheduleindex',
             '/addfirstweek',
@@ -406,7 +421,7 @@ class BotCommand(API):
         # Updatable
         self._start_busy = None
         self._end_busy = None
-        self.getdata = hc.splintergetdata()#property not yet added!!!
+        self.getdata = hc.splintergetdata()  # property not yet added!!!
 
     @property
     def start_busy(self):
@@ -433,20 +448,24 @@ class BotCommand(API):
         event_name = str_input.event_name
         location = str_input.location
         start_date = str_input.start_date
-        start_date_pretty = str_input._start_time_cantik
-        end_date_pretty = str_input._end_time_cantik
+        start_date_pretty = str_input.start_time_cantik
+        end_date_pretty = str_input.end_time_cantik
         end_date = str_input.end_date
-        #print("beep",start_date_pretty,end_date_pretty)
+        # print("beep",start_date_pretty,end_date_pretty)
         query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
         isFree = gc.GoogleAPI().isFree(query)
         # Get the query's busy info
         if not isFree:
             print("not free!")
             return (0,start_date_pretty,end_date_pretty)
-            #raise ZeroDivisionError
+            # raise ZeroDivisionError
         # Call the GoogleAPI class and create event
-        gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
-        return (1,start_date_pretty,end_date_pretty)
+        current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+        return (1,start_date_pretty,end_date_pretty,current_event_id)
+
+    def DeleteEventCommand(self):
+        str_input = self.str_text
+        gc.GoogleAPI().deleteEvent(str_input)
 
     def IsFreeCommand(self):
         str_input = hc.StringParseGoogleAPI(self.str_text)
@@ -469,7 +488,7 @@ class BotCommand(API):
         str_input = hc.StringParseIndex(self.str_text)
         str_input.Parse()
         course_name = str_input.course_name
-        index = str_input.index
+        # index = str_input.index
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
         self.getdata.start(course_name, student_type)

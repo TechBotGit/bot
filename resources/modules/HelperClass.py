@@ -136,12 +136,12 @@ class StringParseGoogleAPI(object):
         self._first_week = value
         return self._first_week
 
-    @start_time.setter
+    @start_time_cantik.setter
     def start_time_cantik(self, value):
         self._start_time_cantik = value
         return self._start_time_cantik
 
-    @end_time.setter
+    @end_time_cantik.setter
     def end_time_cantik(self, value):
         self._end_time_cantik = value
         return self._end_time_cantik
@@ -316,7 +316,7 @@ class splintergetdata(object):
         self.data=[[],[],[],[],[],[],[]]
         self.indexlist=[]
         self.soup = ''
-        #only for initialization, duck typing will change its format later XD
+        # only for initialization, duck typing will change its format later XD
 
     def start(self, Course_code, Type_course):
         with Browser(self.browser_used) as browser:
@@ -324,39 +324,39 @@ class splintergetdata(object):
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            #while len(browser.windows)>0:
+            # while len(browser.windows)>0:
             for ii in browser.windows:
                 if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
                     browser.windows.current = ii
                     html_page = browser.html
                     # print(html_page)
                     self.soup = BeautifulSoup(html_page, 'html.parser')
-                    #had to declare soup self here :'(
+                    # had to declare soup self here :'(
                     # print(soup)
-                    #ii.close()
+                    # ii.close()
         print('Success')
 
-    
     def parsedatahml(self):
         tables = self.soup.find('table',border=True)
         rows = tables.find_all('tr')
-        #print(rows)
-        for iterator in range (1,len(rows)):
+        # print(rows)
+        for iterator in range(1,len(rows)):
             for columns in range(0,7):
-                #print(rows[iterator].find_all('td')[columns])
+                # print(rows[iterator].find_all('td')[columns])
                 self.data[columns].append(rows[iterator].find_all('td')[columns])
-                #print (self.data[columns][iterator])
+                # print (self.data[columns][iterator])
             if self.data[0][-1].text!='':
                     self.indexlist.append(self.data[0][-1].text)
-        #print(self.indexlist)
-        #print (self.data)
-        #print(type(self.data))
+        # print(self.indexlist)
+        # print (self.data)
+        # print(type(self.data))
         return self.data
+
 
 class chooseindex(object):
     def __init__(self):
-         self.data=[[],[],[],[],[],[],[]]
-         self.dict = {
+        self.data=[[],[],[],[],[],[],[]]
+        self.dict = {
             'course_code': [],
             'type': [],
             'group': [],
@@ -369,7 +369,7 @@ class chooseindex(object):
     def selectindex(self,index_number,parsedlist):
         self.data=parsedlist
         finish=False
-        #print(soup)
+        # print(soup)
         for iterator in range(len(self.data[0])):
             if self.data[0][iterator].text==index_number:
                 for iterator2 in range(iterator,len(self.data[0])):
@@ -383,8 +383,8 @@ class chooseindex(object):
                     self.dict["time"].append(self.data[4][iterator2].text)
                     self.dict["venue"].append(self.data[5][iterator2].text)
                     self.dict["remark"].append(self.data[6][iterator2].text)
-                    #for columns in range(0,7):
-                        #print(self.data[columns][iterator2].text)
+                    """for columns in range(0,7):
+                        print(self.data[columns][iterator2].text)"""
             if finish:
                 break
-        print(self.dict)     
+        print(self.dict)

@@ -111,7 +111,8 @@ class GoogleAPI(object):
                 ignore_first_event = ',' + first_event_ugly_start + ','
             else:
                 ignore_first_event = ',' + first_event_ugly_start
-
+        else:
+            recurrence = ',' + recurrence
         # Event Details
         event = {
             'summary': summary,

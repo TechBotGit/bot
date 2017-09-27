@@ -548,8 +548,9 @@ class IndexToGoogle(API):
             event_desc = " ".join([course_index, course_group])
 
             ignore_first_event = False
-            if (recurrence.count('1') != 0 and day != 'MO') or recurrence.count('1') == 0:
-                ignore_first_event = True
+            if recurrence != '':
+                if (recurrence.count('1') != 0 and day != 'MO') or recurrence.count('1') == 0:
+                    ignore_first_event = True
             
             # Recurrence Parsing
             recurrenceObject = hc.StringParseGoogleAPI(recurrence)

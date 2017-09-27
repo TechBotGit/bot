@@ -39,7 +39,7 @@ class DB(object):
         return self._chat_id_list
     
     def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
-        """Update exisiting workbook"""
+        """Description: Update exisiting workbook"""
         if not self.isChatidExist(chat_id):
             update_list = [chat_id, first_week, first_recess_week, student_type, course_code_list]
             self.sheet_update.append(update_list)

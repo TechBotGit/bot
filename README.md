@@ -11,7 +11,7 @@ CZ1003 Project
 bot-project
 
 # Pre-requisites
-## Installing Python modules
+## Installing Dependencies
 
 ### **1. Telepot module**
 ```
@@ -246,12 +246,13 @@ About
 ### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
 #### 3.1 Inputting Your Index 
+##### 3.1.1 Selecting Student Type
+##### 3.1.2 Adding your First Week and First Recess Week
 
 #### 3.2 Creating New Event
 
 #### 3.3 Check If You Are Free at A Certain Time 
 
-#### 3.4 Choose Meeting Time According to Bot Recommendation
 
 
 
@@ -295,12 +296,55 @@ You can then talk to the bot and ask it to arrange your meet
 ### 3.1 Inputting Your Index
 
 You can input your index in the bot. This way, the bot can tell you what courses you have throughout the day. To input your course's index, you must first type in **/addindex**
+If you have not completed some of your index, the bot will then redirect you to another instructions that you have to fullfill before adding your index.
 The bot will reply in the following manner:
+```
+Sure thing.
+
+Hmm... Wait a second. You haven't told me what enough data!
+
+Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time
+
+Run /addfirstweek to set your first_week and first_recess_week
+```
+#### 3.1.1. Setting Student Type
+
+You must set your student type before putting in your index. This is equivalent to declaring whether you are a part time student or a full time student.
+To do this, you must first type in **/setstudenttype** or **/st**
+The bot will then reply in the following manner:
+```
+Are you a full time or part time student?
+
+```
+You will be given two choices in the keyboard; "Full-Time Student" and "Part-Time Student". Click your Student Type. The bot will reply in the following manner:
+```
+Successful!
+```
+#### 3.1.2. Adding your First Week and First Recess Week
+
+You must also enter your first week and first recess week in your bot. To do that, you must first enter **/addfirstweek** into the bot. 
+```
+Please Enter your first week and first recess week using the following format:
+
+FirstWeek;FirstRecessWeek
+
+For example:
+
+2017-8-14;2017-10-2
+```
+Enter the dates in the above format. After you enter the dates, the bot will reply in the following manner:
+```
+Captured!
+
+Your data is sucessfully recorded in our database!
+```
+After you have completed the process above, enter **/addindex** into the bot, and the bot should reply you in the following manner:
 ```
 Sure thing. Please type your details in following format:
 
-Course Name;Course Type(Full/Part Time);Index Number
+Please type your course code below. For example, CZ1003
 ```
+Type in your course code and the bot will output a keyboard listing all the indexes in that course. 
 
 ### 3.2 Creating New Event
 

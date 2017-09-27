@@ -24,6 +24,9 @@ class GoogleAPI(object):
         self.SCOPES = 'https://www.googleapis.com/auth/calendar'
         self.CLIENT_SECRET_FILE = '../api/client_secret.json'
         self.APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+        self.credentials = self.get_credentials()
+        self.http = self.credentials.authorize(httplib2.Http())
+        self.service = discovery.build('calendar', 'v3', http=self.http)
 
     def get_credentials(self):
         home_dir = os.path.expanduser('~')
@@ -51,9 +54,6 @@ class GoogleAPI(object):
         return credentials
 
     def createEvent(self, summary, location, start, end):
-        credentials = self.get_credentials()
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('calendar', 'v3', http=http)
 
         # Event Details
         event = {
@@ -78,13 +78,10 @@ class GoogleAPI(object):
                 ],
             },
         }
-        event = service.events().insert(calendarId='primary', body=event).execute()
+        event = self.service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
 
     def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
-        credentials = self.get_credentials()
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('calendar', 'v3', http=http)
 
         first_event_str_start = first_week + start_time
         first_event_obj_start = datetime.datetime.strptime(first_event_str_start, '%Y-%m-%d%H:%M:%S')
@@ -139,13 +136,10 @@ class GoogleAPI(object):
             ]
         }
 
-        event = service.events().insert(calendarId='primary', body=event).execute()
+        event = self.service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
    
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
-        credentials = self.get_credentials()
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('calendar', 'v3', http=http)
         
         # Parsing date
         iso_date_start = hc.StringParseGoogleAPI(str_date_start).ParseDate()
@@ -162,7 +156,7 @@ class GoogleAPI(object):
                 }
             ]
         }
-        query = service.freebusy().query(body=query).execute()
+        query = self.service.freebusy().query(body=query).execute()
         return query
 
     def isFree(self, query):

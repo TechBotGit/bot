@@ -91,7 +91,7 @@ class GoogleAPI(object):
         first_event_iso_start = first_event_obj_start.isoformat()
         first_event_ugly_start = first_event_obj_start.strftime("%Y%m%dT%H%M%S")
         
-        first_event_str_end = first_week + start_time
+        first_event_str_end = first_week + end_time
         first_event_obj_end = datetime.datetime.strptime(first_event_str_end, '%Y-%m-%d%H:%M:%S')
         first_event_iso_end = first_event_obj_end.isoformat()
         

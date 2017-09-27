@@ -3,7 +3,7 @@ CZ1003 Project
 bot-project
 
 # Pre-requisites
-## Installing Python modules
+## Installing Dependencies
 
 ### **1. Telepot module**
 ```

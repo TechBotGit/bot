@@ -17,6 +17,8 @@ class StringParseGoogleAPI(object):
         self._location = ''
         self._start_date = ''
         self._end_date = ''
+        self._start_time_cantik = ''
+        self._end_time_cantik = ''
 
         # for STARS Property
         self._course_code = ''
@@ -97,6 +99,14 @@ class StringParseGoogleAPI(object):
     # def ignored_week(self):
     #     return self._ignored_week
 
+    @property
+    def start_time_cantik(self):
+        return self._start_time_cantik
+
+    @property
+    def end_time_cantik(self):
+        return self._end_time_cantik
+
     @event_name.setter
     def event_name(self, value):
         self._event_name = value
@@ -156,6 +166,16 @@ class StringParseGoogleAPI(object):
     def day(self, value):
         self._day = self.format_day[value]
 
+    @start_time_cantik.setter
+    def start_time_cantik(self, value):
+        self._start_time_cantik = value
+        return self._start_time_cantik
+
+    @end_time_cantik.setter
+    def end_time_cantik(self, value):
+        self._end_time_cantik = value
+        return self._end_time_cantik
+
     # @occuring_week.setter
     # def occuring_week(self, value):
     #     self._occuring_week.append(value)
@@ -167,25 +187,33 @@ class StringParseGoogleAPI(object):
     #     return self._ignored_week
 
     def ParseEvent(self):
-        semicolon = []
+        str_input= self.str_message.split(';')
+        if len(str_input)!=4:
+            raise ValueError
+        for i in range(len(str_input)):
+            if i==0:
+                self.event_name=str_input[i]
 
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.event_name += l
+            elif i==1:
+                self.location=str_input[i]
 
-                elif len(semicolon) == 1:
-                    self.location += l
-                
-                elif len(semicolon) == 2:
-                    self.start_date += l
-
-                elif len(semicolon) == 3:
-                    self.end_date += l
-
-            else:
-                semicolon.append(';')
-                continue
+            elif i==2:
+                self.start_time_cantik = str_input[i]
+                print(self.start_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.start_date = iso_date
+            
+            elif i==3:
+                self.end_time_cantik = str_input[i]
+                print(self.end_time_cantik)
+                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
+                tz = pytz.timezone('Asia/Singapore')
+                tz_obj_date = tz.localize(obj_date)
+                iso_date = tz_obj_date.isoformat()
+                self.end_date = iso_date
 
     def ParseDate(self):
         """Description: For freebusy query"""
@@ -396,7 +424,7 @@ class splintergetdata(object):
         self.data=[[],[],[],[],[],[],[]]
         self.indexlist=[]
         self.soup = ''
-        #only for initialization, duck typing will change its format later XD
+        # only for initialization, duck typing will change its format later XD
 
     def start(self, Course_code, Type_course):
         with Browser(self.browser_used) as browser:
@@ -404,32 +432,32 @@ class splintergetdata(object):
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            #while len(browser.windows)>0:
+            # while len(browser.windows)>0:
             for ii in browser.windows:
                 if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
                     browser.windows.current = ii
                     html_page = browser.html
                     # print(html_page)
                     self.soup = BeautifulSoup(html_page, 'html.parser')
-                    #had to declare soup self here :'(
+                    # had to declare soup self here :'(
                     # print(soup)
-                    #ii.close()
+                    # ii.close()
         print('Success')
 
     def parsedatahml(self):
         tables = self.soup.find('table',border=True)
         rows = tables.find_all('tr')
-        #print(rows)
-        for iterator in range (1,len(rows)):
+        # print(rows)
+        for iterator in range(1,len(rows)):
             for columns in range(0,7):
-                #print(rows[iterator].find_all('td')[columns])
+                # print(rows[iterator].find_all('td')[columns])
                 self.data[columns].append(rows[iterator].find_all('td')[columns])
-                #print (self.data[columns][iterator])
+                # print (self.data[columns][iterator])
             if self.data[0][-1].text!='':
                     self.indexlist.append(self.data[0][-1].text)
-        #print(self.indexlist)
-        #print (self.data)
-        #print(type(self.data))
+        # print(self.indexlist)
+        # print (self.data)
+        # print(type(self.data))
         return self.data
 
 

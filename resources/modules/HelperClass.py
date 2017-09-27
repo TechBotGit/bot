@@ -424,7 +424,6 @@ class splintergetdata(object):
         self.data=[[],[],[],[],[],[],[]]
         self.indexlist=[]
         self.soup = ''
-        # only for initialization, duck typing will change its format later XD
 
     def start(self, Course_code, Type_course):
         with Browser(self.browser_used) as browser:
@@ -439,9 +438,6 @@ class splintergetdata(object):
                     html_page = browser.html
                     # print(html_page)
                     self.soup = BeautifulSoup(html_page, 'html.parser')
-                    # had to declare soup self here :'(
-                    # print(soup)
-                    # ii.close()
         print('Success')
 
     def parsedatahml(self):

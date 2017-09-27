@@ -10,8 +10,6 @@ import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
 
-# for passing da object
-
 
 class API(object):
     """API Basic initialisation"""
@@ -23,6 +21,7 @@ class API(object):
         self.token = f.read()
         f.close()
         self.bot = telepot.Bot(self.token)
+        
         # Important storage information
         self._db_chat = {}
         self._list_update_message = []
@@ -242,9 +241,6 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "Course code successfully accessed. Please do the instructions above :)")
-                    # few lines below are for debug purpose
-                    # passingobject=BotCommandObject
-                    # BotCommandObject.getdata.selectindex(self.indexchosen)
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:
@@ -291,9 +287,7 @@ class API(object):
                             inlines_keyboard = []
                             
                             for i in range(len(hc.PreformattedBotInlineMarkup().days)):
-                                # print(hc.PreformattedBotInlineMarkup().days[i])
                                 inlines_keyboard.append([InlineKeyboardButton(text=hc.PreformattedBotInlineMarkup().days[i], callback_data=hc.PreformattedBotInlineMarkup().days[i])])
-                            # print(inlines_keyboard)
                             keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                             self.bot.sendMessage(chat_id, 'Choose a day!', reply_markup=keyboard)
                         
@@ -315,7 +309,7 @@ class API(object):
                 BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             except:
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
-                self.bot.sendMessage(from_id, 'Error occured! Please try again...')
+                self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index added! :)')
             # Below is for debugging only

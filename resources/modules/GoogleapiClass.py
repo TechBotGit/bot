@@ -86,18 +86,19 @@ class GoogleAPI(object):
 
         # First Instance of the course
         # first_event's start_time
-        first_event_str_start = first_week + start_time
-        first_event_obj_start = datetime.datetime.strptime(first_event_str_start, '%Y-%m-%d%H:%M:%S')
-        first_event_iso_start = first_event_obj_start.isoformat()
-        first_event_ugly_start = first_event_obj_start.strftime("%Y%m%dT%H%M%S")
+        first_event_start_str = first_week + 'T' + start_time  # to avoid ambiguity
+        first_event_start_obj = datetime.datetime.strptime(first_event_start_str, '%Y-%m-%dT%H:%M:%S')
+        first_event_start_iso = first_event_start_obj.isoformat()
+        first_event_ugly_start = first_event_start_obj.strftime("%Y%m%dT%H%M%S")
 
         # first_event's end_time
-        first_event_str_end = first_week + end_time
-        first_event_obj_end = datetime.datetime.strptime(first_event_str_end, '%Y-%m-%d%H:%M:%S')
-        first_event_iso_end = first_event_obj_end.isoformat()
+        first_event_end_str = first_week + 'T' + end_time
+        first_event_end_obj = datetime.datetime.strptime(first_event_end_str, '%Y-%m-%dT%H:%M:%S')
+        first_event_end_iso = first_event_end_obj.isoformat()
 
         # The recess week
-        first_recess_week_obj = datetime.datetime.strptime(first_recess_week, '%Y-%m-%d')
+        first_recess_week_str = first_recess_week + 'T' + start_time
+        first_recess_week_obj = datetime.datetime.strptime(first_recess_week_str, '%Y-%m-%dT%H:%M:%S')
         
         # Ignore recess week
         ParseObject = hc.StringParseGoogleAPI(start_time)
@@ -119,11 +120,11 @@ class GoogleAPI(object):
             'location': location,
             'description': desc,
             'start': {
-                'dateTime': first_event_iso_start,
+                'dateTime': first_event_start_iso,
                 'timeZone': 'Asia/Singapore',
             },
             'end': {
-                'dateTime': first_event_iso_end,
+                'dateTime': first_event_end_iso,
                 'timeZone': 'Asia/Singapore',
             },
             'reminders': {

@@ -9,10 +9,12 @@ os.chdir(cwd)
 sys.path.append('../resources/modules')
 import BotClass as bc
 
-
-bot = bc.API().bot  # the bot object
+# The main API Object
 API = bc.API()
-handle = API.handleAPI  # APIhandler
+
+# Important properties
+bot = API.bot
+handle = API.handleAPI
 callbackquery = API.on_callback_query
 
 MessageLoop(bot, {'chat': handle, 'callback_query': callbackquery}).run_as_thread()

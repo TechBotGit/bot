@@ -175,16 +175,6 @@ class StringParseGoogleAPI(object):
         self._end_time_cantik = value
         return self._end_time_cantik
 
-    # @occuring_week.setter
-    # def occuring_week(self, value):
-    #     self._occuring_week.append(value)
-    #     return self._occuring_week
-
-    # @ignored_week.setter
-    # def ignored_week(self, value):
-    #     self._ignored_week = value
-    #     return self._ignored_week
-
     def ParseEvent(self):
         str_input= self.str_message.split(';')
         if len(str_input)!=4:
@@ -406,12 +396,12 @@ class splintergetdata(object):
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            # while len(browser.windows)>0:
+
             for ii in browser.windows:
                 if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
                     browser.windows.current = ii
                     html_page = browser.html
-                    # print(html_page)
+
                     self.soup = BeautifulSoup(html_page, 'html.parser')
         print('Success')
 
@@ -421,14 +411,9 @@ class splintergetdata(object):
         # print(rows)
         for iterator in range(1,len(rows)):
             for columns in range(0,7):
-                # print(rows[iterator].find_all('td')[columns])
                 self.data[columns].append(rows[iterator].find_all('td')[columns])
-                # print (self.data[columns][iterator])
             if self.data[0][-1].text!='':
                     self.indexlist.append(self.data[0][-1].text)
-        # print(self.indexlist)
-        # print (self.data)
-        # print(type(self.data))
         return self.data
 
 

@@ -269,7 +269,6 @@ class StringParseGoogleAPI(object):
         start = 1
         end = 13
         date_list = []
-        # helper_list = []
         if query_recur != '':
             query_recur = query_recur.replace('Wk', '')
             if query_recur.count('-') == 0:
@@ -297,7 +296,7 @@ class StringParseGoogleAPI(object):
         for free_week in self.ignored_week:
             if free_week > 7:
                 free_week += 1
-            start_week_obj = datetime.datetime.strptime(start_week + start_time, '%Y-%m-%d%H:%M:%S') + datetime.timedelta(days=7 * (free_week - 1))
+            start_week_obj = datetime.datetime.strptime(start_week + 'T' + start_time, '%Y-%m-%dT%H:%M:%S') + datetime.timedelta(days=7 * (free_week - 1))
             for day_plus in range(7):
                 increment_day = start_week_obj + datetime.timedelta(days=day_plus)
                 increment_day = increment_day.strftime("%Y%m%dT%H%M%S")

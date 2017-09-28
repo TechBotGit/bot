@@ -312,16 +312,20 @@ class API(object):
                 self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index added! :)')
-            # Below is for debugging only
-            self.indexchosen = query_data
-            # print(query_data)
+
             BotFindIndexObject=hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             
             # Initialize pre requisite before adding to Google Calendar
             toGoogle = IndexToGoogle(chat_id, complete_data)
             event_list = toGoogle.get_event()
-            toGoogle.PreCreateEventIndex(event_list)
+            try:
+                toGoogle.PreCreateEventIndex(event_list)
+            except:
+                self.bot.sendMessage(chat_id, "Unknown error has occured")
+            else:
+                self.bot.sendMessage(chat_id, "Nice!")
+                self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
             
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')

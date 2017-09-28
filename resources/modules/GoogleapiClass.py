@@ -84,22 +84,24 @@ class GoogleAPI(object):
 
     def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
 
+        # First Instance of the course
+        # first_event's start_time
         first_event_str_start = first_week + start_time
         first_event_obj_start = datetime.datetime.strptime(first_event_str_start, '%Y-%m-%d%H:%M:%S')
         first_event_iso_start = first_event_obj_start.isoformat()
         first_event_ugly_start = first_event_obj_start.strftime("%Y%m%dT%H%M%S")
-        
+
+        # first_event's end_time
         first_event_str_end = first_week + end_time
         first_event_obj_end = datetime.datetime.strptime(first_event_str_end, '%Y-%m-%d%H:%M:%S')
         first_event_iso_end = first_event_obj_end.isoformat()
+
+        # The recess week
+        first_recess_week_obj = datetime.datetime.strptime(first_recess_week, '%Y-%m-%d')
         
-        # Ignore any particular week
+        # Ignore recess week
         ParseObject = hc.StringParseGoogleAPI(start_time)
-        ParseObject.ParseDateWeek(first_week)
-        ignore_first_week = ParseObject.date_string_complete
-        
-        ParseObject.ParseDateWeek(first_recess_week)
-        ignore_recess_week = ParseObject.date_string_complete
+        ignore_recess_week = ParseObject.ParseDateWeek(first_recess_week_obj)
 
         # ignore the first event
         ignore_first_event = ""
@@ -132,7 +134,6 @@ class GoogleAPI(object):
             },
             'recurrence': [
                 "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + ignore_recess_week + ignore_first_event + recurrence,
-                # "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
                 "RRULE:FREQ=WEEKLY;UNTIL=20171118;BYDAY=" + day
             ]
         }
@@ -170,7 +171,7 @@ class GoogleAPI(object):
         return start_busy, end_busy
 
     def deleteEvent(self,InputtedeventID):
-        credentials = self.get_credentials()
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('calendar', 'v3', http=http)
-        service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()
+        # credentials = self.get_credentials()
+        # http = credentials.authorize(httplib2.Http())
+        # service = discovery.build('calendar', 'v3', http=http)
+        self.service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()

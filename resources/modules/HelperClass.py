@@ -41,7 +41,6 @@ class StringParseGoogleAPI(object):
             'FRI': 'FR',
             'SAT': 'SA'
         }
-        self.date_string_complete = ' '
 
     @property
     def event_name(self):
@@ -247,35 +246,18 @@ class StringParseGoogleAPI(object):
         str_end_time = obj_end_time.strftime('%H:%M:%S')
         return str_start_time, str_end_time
 
-    def ParseDateWeek(self, start_week):
-        """Description: To exclude any week"""
-        hour_start, minute_start, second_start = self.str_message.split(':')
-        year_week, month_week, day_week = start_week.split('-')
-        
-        hour_start = int(hour_start)
-        minute_start = int(minute_start)
-        second_start = int(second_start)
-        year_week = int(year_week)
-        month_week = int(month_week)
-        day_week = int(day_week)
-        
+    def ParseDateWeek(self, start_week_obj):
+        """Description: To exclude any week
+        Notes: start_week_obj must be a datetime object
+        """
         date_list = []
-        date_list_no_colon = []
-        # date_string_complete = ''
-
         for day_plus in range(7):
-            a = datetime.datetime(year_week, month_week, day_week + day_plus, hour_start, minute_start)
-            a = a.isoformat()
-            date_list.append(a)
+            increment_day = start_week_obj + datetime.timedelta(days=day_plus)
+            increment_day = increment_day.strftime('%Y%m%dT%H%M%S')
+            date_list.append(increment_day)
 
-        for item in date_list:
-            date_string = ''
-            for c in item:
-                if c != '-' and c != ':':
-                    date_string += c
-            date_list_no_colon.append(date_string)
-
-        self.date_string_complete = ','.join(date_list_no_colon)
+        date_string_complete = ','.join(date_list)
+        return date_string_complete
 
     def ParseIndexInput(self):
         course_code, location_course, course_type, start_time, end_time = self.str_message.split(';')
@@ -297,8 +279,7 @@ class StringParseGoogleAPI(object):
         start = 1
         end = 13
         date_list = []
-        date_list_no_colon = []
-        helper_list = []
+        # helper_list = []
         if query_recur != '':
             query_recur = query_recur.replace('Wk', '')
             if query_recur.count('-') == 0:
@@ -329,17 +310,11 @@ class StringParseGoogleAPI(object):
             start_week_obj = datetime.datetime.strptime(start_week + start_time, '%Y-%m-%d%H:%M:%S') + datetime.timedelta(days=7 * (free_week - 1))
             for day_plus in range(7):
                 increment_day = start_week_obj + datetime.timedelta(days=day_plus)
-                increment_day = increment_day.isoformat()
+                increment_day = increment_day.strftime("%Y%m%dT%H%M%S")
                 date_list.append(increment_day)
 
-        for item in date_list:
-            date_string = ''
-            for c in item:
-                if c != '-' and c != ':':
-                    date_string += c
-            date_list_no_colon.append(date_string)
-
-        self.date_string_complete = ','.join(date_list_no_colon)
+        date_string_complete = ','.join(date_list)
+        return date_string_complete
 
 
 class StringParseIndex(object):

@@ -601,8 +601,7 @@ class IndexToGoogle(API):
             
             # Recurrence Parsing
             recurrenceObject = hc.StringParseGoogleAPI(recurrence)
-            recurrenceObject.ParseOccurIgnoreWeek(first_week, start_time)
-            recurrence_string = recurrenceObject.date_string_complete
-
+            recurrence_string = recurrenceObject.ParseOccurIgnoreWeek(first_week, start_time)
+            
             # CreateEventIndex
             gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day, ignore_first_event)

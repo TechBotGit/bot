@@ -243,7 +243,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "Course code successfully accessed. Please do the instructions above :)")
+                        self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
                     try:

@@ -135,13 +135,6 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
                 
-                elif msg_received == '/scheduleindex':
-                    self.bot.sendMessage(chat_id, "Please Enter your index using the following format: ")
-                    self.bot.sendMessage(chat_id, "CourseCode;Location;LAB/LEC/TUT;start_time;end_time;first_recess_week, fist_week")
-                    self.bot.sendMessage(chat_id, 'For example: ')
-
-                    self.bot.sendMessage(chat_id, 'CZ1005;HWLAB3;LAB;14:30:00;16:30:00')
-                
                 elif msg_received == '/addfirstweek':
                     self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
                     self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
@@ -245,15 +238,6 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
-                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/scheduleindex':
-                    try:
-                        BotCommandObject.ScheduleIndexCommand(chat_id)
-                    
-                    except:
-                        self.bot.sendMessage(chat_id, 'Cannot schedule index! Make sure you have entered the correct format!')
-
-                    else:
-                        self.bot.sendMessage(chat_id, "Successfully added! :)")
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
@@ -448,7 +432,6 @@ class BotCommand(API):
             '/createevent',
             '/deleteevent',
             '/isfree',
-            '/scheduleindex',
             '/addfirstweek',
             '/quit'
         ]
@@ -547,22 +530,6 @@ class BotCommand(API):
         print(course_type)
         excel = db.DB()
         excel.update(chat_id, student_type=course_type)
-        
-    def ScheduleIndexCommand(self, chat_id):
-        """Important: Soon to be depreciated """
-        str_input = hc.StringParseGoogleAPI(self.str_text)
-        str_input.ParseIndexInput()
-        
-        course_code = str_input.course_code
-        location_course = str_input.location_course
-        course_type = str_input.course_type
-        start_time = str_input.start_time
-        end_time = str_input.end_time
-        
-        first_week = db.DB().table_query(chat_id, first_week=True)[0]
-        first_recess_week = db.DB().table_query(chat_id, first_recess_week=True)[1]
-
-        gc.GoogleAPI().CreateEventIndex(course_code, location_course, course_type, start_time, end_time, first_week, first_recess_week)
 
     def AddFirstWeek(self, chat_id):
         first_week, first_recess_week = self.str_text.split(';')

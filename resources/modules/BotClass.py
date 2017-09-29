@@ -324,10 +324,20 @@ class API(object):
                     'event_id': []
                 }
             }
+            # Check if the dictionary already exists
+            db_check = db.DB()
+            if db_check.isRecordExist(chat_id, course_code_event_id=True):
+                data = db_check.table_query(chat_id, course_code_event_id=True)[3]
+                data_dict = json.loads(data)
+                
+                # if it is not the same course code
+                if list(data_dict.keys())[0] != course_code:
+                    course_code_dict.update(data_dict)
+
             # Loads the dictionary to the database
             course_code_dict_str = json.dumps(course_code_dict)
             db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
-            
+
             # Initialize pre requisite before adding to Google Calendar
             toGoogle = IndexToGoogle(chat_id, complete_data)
             event_list = toGoogle.get_event()

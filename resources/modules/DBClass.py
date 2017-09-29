@@ -18,6 +18,7 @@ class DB(object):
         self.sheet['C1'] = 'first_recess_week'
         self.sheet['D1'] = 'student_type'
         self.sheet['E1'] = 'course_code_list'
+        self.sheet['F1'] = 'event_id_list'
         
         # If file doesn't exist, create it
         if not os.path.isfile(self.path_file):
@@ -38,14 +39,15 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
+    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None, override=True):
         """Description: Update exisiting workbook"""
+        update_list = [chat_id, first_week, first_recess_week, student_type, course_code_list, event_id_list]
         if not self.isChatidExist(chat_id):
-            update_list = [chat_id, first_week, first_recess_week, student_type, course_code_list]
             self.sheet_update.append(update_list)
         else:
             print('Updating existing table')
-            self.set_table_query(chat_id, first_week, first_recess_week, student_type, course_code_list)
+            update_list.remove(chat_id)
+            self.set_table_query(chat_id, update_list, override=override)
 
         self.wb_update.save(self.path_file)
 
@@ -54,7 +56,7 @@ class DB(object):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
     
-    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
+    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None):
         """Description: Check if a particular record exists in the database \n
         Usage: Set the optional parameter to be True to retrieve the data \n
         Return: Boolean
@@ -72,16 +74,18 @@ class DB(object):
                         result = self.sheet_update.cell(row=cell.row, column=4).value
                     elif course_code_list:
                         result = self.sheet_update.cell(row=cell.row, column=5).value
+                    elif event_id_list:
+                        result = self.sheet_update.cell(row=cell.row, column=6).value
                     break
         return result is not None
     
-    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
-        """Description: Query table in database \n
-        Usage: Set the requested data parameter to True to retrieve it. \n
-        Return: list \n
+    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None):
+        """Description: Query table in database
+        Usage: Set the requested data parameter to True to retrieve it.
+        Return: list
         Note: Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
        
-        arg_list = [first_week, first_recess_week, student_type, course_code_list]
+        arg_list = [first_week, first_recess_week, student_type, course_code_list, event_id_list]
         result_list = []
         for row in self.sheet_update.iter_rows():
             for cell in row:
@@ -96,18 +100,23 @@ class DB(object):
                 break
         return result_list
     
-    def set_table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None):
+    def set_table_query(self, chat_id, update_list, override=True):
         """Description: Query table to set data with the corresponding chat_id \n
         Usage: Set the optional argument to the value that you want to set \n
         Example: set_table_query(<chat_id>, first_week='2017-8-14') \n
         Return: None
         """
-        arg_list = [first_week, first_recess_week, student_type, course_code_list]
         for row in self.sheet_update.iter_rows():
             for cell in row:
                 if cell.value == chat_id:
-                    for i in range(len(arg_list)):
-                        if arg_list[i] is not None:
-                            self.sheet_update.cell(row=cell.row, column=i + 2, value=arg_list[i])
+                    for i in range(len(update_list)):
+                        if update_list[i] is not None:
+                            if override:
+                                self.sheet_update.cell(row=cell.row, column=i + 2, value=update_list[i])
+                            else:
+                                if not self.isRecordExist(chat_id, event_id_list=True):
+                                    self.sheet_update.cell(row=cell.row, column=i + 2).value = update_list[i]
+                                else:
+                                    self.sheet_update.cell(row=cell.row, column=i + 2).value += ','+ update_list[i]
                     break
                 break

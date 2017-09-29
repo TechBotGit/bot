@@ -6,8 +6,10 @@ from oauth2client.file import Storage
 
 import httplib2
 import os
-import HelperClass as hc
 import datetime
+import HelperClass as hc
+import DBClass as db
+
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
@@ -82,7 +84,7 @@ class GoogleAPI(object):
         print('Event created: %s' % (event.get('htmlLink')))
         return event.get('id')
 
-    def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
+    def CreateEventIndex(self, chat_id, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
 
         # First Instance of the course
         # first_event's start_time
@@ -141,6 +143,10 @@ class GoogleAPI(object):
 
         event = self.service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
+        event_id = event['id']
+        print(event_id)
+        db.DB().update(chat_id, event_id_list=event_id, override=False)
+        # print(event['iCalUID'])
    
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
         

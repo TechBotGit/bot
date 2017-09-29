@@ -16,7 +16,7 @@ class API(object):
     def __init__(self):
         # Deploy Bot
         self.cwd = os.path.dirname(sys.argv[0])
-        self.api_key = self.cwd + '/a.txt'
+        self.api_key = self.cwd + '/../resources/token.txt'
         f = open(self.api_key, 'r')
         self.token = f.read()
         f.close()
@@ -319,13 +319,14 @@ class API(object):
             # Initialize pre requisite before adding to Google Calendar
             toGoogle = IndexToGoogle(chat_id, complete_data)
             event_list = toGoogle.get_event()
-            try:
-                toGoogle.PreCreateEventIndex(event_list)
-            except:
-                self.bot.sendMessage(chat_id, "Unknown error has occured")
-            else:
-                self.bot.sendMessage(chat_id, "Nice!")
-                self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
+            toGoogle.PreCreateEventIndex(event_list)
+            # try:
+            #     toGoogle.PreCreateEventIndex(event_list)
+            # except:
+            #     self.bot.sendMessage(chat_id, "Unknown error has occured")
+            # else:
+            #     self.bot.sendMessage(chat_id, "Nice!")
+            #     self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
             
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
@@ -604,4 +605,4 @@ class IndexToGoogle(API):
             recurrence_string = recurrenceObject.ParseOccurIgnoreWeek(first_week, start_time)
             
             # CreateEventIndex
-            gc.GoogleAPI().CreateEventIndex(event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day, ignore_first_event)
+            gc.GoogleAPI().CreateEventIndex(self.chat_id, event_summary, location, event_desc, start_time, end_time, first_week, first_recess_week, recurrence_string, day, ignore_first_event)

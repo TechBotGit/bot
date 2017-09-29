@@ -89,8 +89,11 @@ class API(object):
             if BotCommand(msg_received).isValidCommand():
                 # Send users a message related to the command
                 if msg_received == '/start':
-                    self.bot.sendMessage(chat_id, "Hi! I'm a bot that tells you your course schedule and plan your meetings! Feel free to ask me stuff :)")
-                    self.bot.sendMessage(chat_id, "If you want to know your course schedule, type in Course. If you want to plan your meetings, type in Meetings. If you want to know anything about me, just type in whatever you want and hope I understand :)")
+                    self.bot.sendMessage(chat_id, "Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)")
+                    self.bot.sendMessage(chat_id, "Want to add course index? Just run /addindex.")
+                    self.bot.sendMessage(chat_id, "Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.")
+                    self.bot.sendMessage(chat_id, "Want to know me more? Just ask me whatever you want and hope I can understand :)")
+                    self.bot.sendMessage(chat_id, "To know more commands just type forward slash '/' to see what's available")
                 
                 elif msg_received == '/createevent':
                     msg_reply = "Okay send me the details in following format:"

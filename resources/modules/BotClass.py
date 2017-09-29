@@ -330,25 +330,31 @@ class API(object):
                 data = db_check.table_query(chat_id, course_code_event_id=True)[3]
                 data_dict = json.loads(data)
                 
-                # if it is not the same course code
-                if list(data_dict.keys())[0] != course_code:
+                # if it is a new course code, update the dictionary
+                if course_code not in list(data_dict.keys()):
                     course_code_dict.update(data_dict)
+                else:
+                    self.error = 1
+                    self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
+                    self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
+                    self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removeindex!')
 
-            # Loads the dictionary to the database
-            course_code_dict_str = json.dumps(course_code_dict)
-            db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
+            if not self.error:
+                # Loads the dictionary to the database
+                course_code_dict_str = json.dumps(course_code_dict)
+                db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
 
-            # Initialize pre requisite before adding to Google Calendar
-            toGoogle = IndexToGoogle(chat_id, complete_data)
-            event_list = toGoogle.get_event()
-            toGoogle.PreCreateEventIndex(event_list)
-            # try:
-            #     toGoogle.PreCreateEventIndex(event_list)
-            # except:
-            #     self.bot.sendMessage(chat_id, "Unknown error has occured")
-            # else:
-            #     self.bot.sendMessage(chat_id, "Nice!")
-            #     self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
+                # Initialize pre requisite before adding to Google Calendar
+                toGoogle = IndexToGoogle(chat_id, complete_data)
+                event_list = toGoogle.get_event()
+                
+                try:
+                    toGoogle.PreCreateEventIndex(event_list)
+                except:
+                    self.bot.sendMessage(chat_id, "Unknown error has occured")
+                else:
+                    self.bot.sendMessage(chat_id, "Nice!")
+                    self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
             
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')

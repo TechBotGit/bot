@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from openpyxl import load_workbook, Workbook
 # from openpyxl.utils.dataframe import dataframe_to_rows
 
@@ -111,12 +112,26 @@ class DB(object):
                 if cell.value == chat_id:
                     for i in range(len(update_list)):
                         if update_list[i] is not None:
-                            if override:
-                                self.sheet_update.cell(row=cell.row, column=i + 2, value=update_list[i])
-                            else:
-                                if not self.isRecordExist(chat_id, other_event_id=True):
-                                    self.sheet_update.cell(row=cell.row, column=i + 2).value = update_list[i]
-                                else:
-                                    self.sheet_update.cell(row=cell.row, column=i + 2).value += ','+ update_list[i]
+                            self.sheet_update.cell(row=cell.row, column=i + 2, value=update_list[i])
                     break
                 break
+
+    def UpdateCourseCodeEventId(self, chat_id, course_code, evt_id):
+        if self.isChatidExist(chat_id):
+            print('Updating existing table')
+            for row in self.sheet_update.iter_rows():
+                for cell in row:
+                    if cell.value == chat_id:
+                        data = self.sheet_update.cell(row=cell.row, column=5).value
+
+                        # Parse to dictionary
+                        data_dict = json.loads(data)
+                        # Append the list inside the dictionary
+                        data_dict[course_code]['event_id'].append(evt_id)
+                        # Parse it back to strings
+                        data_str = json.dumps(data_dict)
+                        # Put it into the database
+                        self.sheet_update.cell(row=cell.row, column=5, value=data_str)
+                        break
+                    break
+        self.wb_update.save(self.path_file)

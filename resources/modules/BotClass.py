@@ -1,6 +1,6 @@
 import os
 import sys
-# import time
+import json
 import telepot
 import datetime
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -318,6 +318,15 @@ class API(object):
 
             BotFindIndexObject=hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
+            course_code_dict = {
+                course_code: {
+                    'index':self.indexchosen,
+                    'event_id': []
+                }
+            }
+            # Loads the dictionary to the database
+            course_code_dict_str = json.dumps(course_code_dict)
+            db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
             
             # Initialize pre requisite before adding to Google Calendar
             toGoogle = IndexToGoogle(chat_id, complete_data)

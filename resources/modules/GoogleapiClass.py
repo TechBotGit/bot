@@ -145,7 +145,8 @@ class GoogleAPI(object):
         print('Event created: %s' % (event.get('htmlLink')))
         event_id = event['id']
         print(event_id)
-        db.DB().update(chat_id, event_id_list=event_id, override=False)
+        course_code, course_type = summary.split(' ')
+        db.DB().UpdateCourseCodeEventId(chat_id, course_code, event_id)
         # print(event['iCalUID'])
    
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm

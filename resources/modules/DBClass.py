@@ -17,8 +17,8 @@ class DB(object):
         self.sheet['B1'] = 'first_week'
         self.sheet['C1'] = 'first_recess_week'
         self.sheet['D1'] = 'student_type'
-        self.sheet['E1'] = 'course_code_list'
-        self.sheet['F1'] = 'event_id_list'
+        self.sheet['E1'] = 'course_code_event_id'
+        self.sheet['F1'] = 'other_event_id'
         
         # If file doesn't exist, create it
         if not os.path.isfile(self.path_file):
@@ -39,9 +39,9 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None, override=True):
+    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_event_id=None, other_event_id=None, override=True):
         """Description: Update exisiting workbook"""
-        update_list = [chat_id, first_week, first_recess_week, student_type, course_code_list, event_id_list]
+        update_list = [chat_id, first_week, first_recess_week, student_type, course_code_event_id, other_event_id]
         if not self.isChatidExist(chat_id):
             self.sheet_update.append(update_list)
         else:
@@ -56,7 +56,7 @@ class DB(object):
             self.chat_id_list.append(self.sheet_update['A'][i].value)
         return chat_id in self.chat_id_list
     
-    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None):
+    def isRecordExist(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_event_id=None, other_event_id=None):
         """Description: Check if a particular record exists in the database \n
         Usage: Set the optional parameter to be True to retrieve the data \n
         Return: Boolean
@@ -72,20 +72,20 @@ class DB(object):
                         result = self.sheet_update.cell(row=cell.row, column=3).value
                     elif student_type:
                         result = self.sheet_update.cell(row=cell.row, column=4).value
-                    elif course_code_list:
+                    elif course_code_event_id:
                         result = self.sheet_update.cell(row=cell.row, column=5).value
-                    elif event_id_list:
+                    elif other_event_id:
                         result = self.sheet_update.cell(row=cell.row, column=6).value
                     break
         return result is not None
     
-    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_list=None, event_id_list=None):
+    def table_query(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_event_id=None, other_event_id=None):
         """Description: Query table in database
         Usage: Set the requested data parameter to True to retrieve it.
         Return: list
         Note: Returns a list of requested data with the index coresponds to the order of the optional arguments, i.e. first_week has the index 0, first_recess_week has the index 1, etc."""
        
-        arg_list = [first_week, first_recess_week, student_type, course_code_list, event_id_list]
+        arg_list = [first_week, first_recess_week, student_type, course_code_event_id, other_event_id]
         result_list = []
         for row in self.sheet_update.iter_rows():
             for cell in row:
@@ -114,7 +114,7 @@ class DB(object):
                             if override:
                                 self.sheet_update.cell(row=cell.row, column=i + 2, value=update_list[i])
                             else:
-                                if not self.isRecordExist(chat_id, event_id_list=True):
+                                if not self.isRecordExist(chat_id, other_event_id=True):
                                     self.sheet_update.cell(row=cell.row, column=i + 2).value = update_list[i]
                                 else:
                                     self.sheet_update.cell(row=cell.row, column=i + 2).value += ','+ update_list[i]

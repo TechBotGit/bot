@@ -239,7 +239,8 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
+                        if not self.error:
+                            self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
                     
@@ -329,15 +330,7 @@ class API(object):
             if db_check.isRecordExist(chat_id, course_code_event_id=True):
                 data = db_check.table_query(chat_id, course_code_event_id=True)[3]
                 data_dict = json.loads(data)
-                
-                # if it is a new course code, update the dictionary
-                if course_code not in list(data_dict.keys()):
-                    course_code_dict.update(data_dict)
-                else:
-                    self.error = 1
-                    self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
-                    self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
-                    self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removeindex!')
+                course_code_dict.update(data_dict)
 
             if not self.error:
                 # Loads the dictionary to the database
@@ -472,7 +465,7 @@ class BotCommand(API):
     @end_busy.setter
     def end_busy(self, value):
         self._end_busy = value
-    
+
     def isValidCommand(self):
         return self.str_text in self.command_list
 
@@ -485,7 +478,7 @@ class BotCommand(API):
         start_date_pretty = str_input.start_time_cantik
         end_date_pretty = str_input.end_time_cantik
         end_date = str_input.end_date
-        # print("beep",start_date_pretty,end_date_pretty)
+
         query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
         isFree = gc.GoogleAPI().isFree(query)
         # Get the query's busy info
@@ -523,22 +516,35 @@ class BotCommand(API):
         str_input.Parse()
         
         global course_code  # set course_code to global!
-        course_code = str_input.course_code
+        course_code = str_input.course_code.upper()
         # index = str_input.index
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
-        self.getdata.start(course_code, student_type)
-        self.parseddataindex=self.getdata.parsedatahml()
-        inlines_keyboard = []
-        for i in range(len(self.getdata.indexlist)):
-            # print(hc.PreformattedBotInlineMarkup().days[i])
-            inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
-        # print(inlines_keyboard)
-        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-        self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
+        is_course_code_exist = excel.isRecordExist(chat_id, course_code_event_id=True)
+        course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
+        
+        if course_code_str is None:
+            excel.update(chat_id, course_code_event_id='{}')
+        course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
+        course_code_dict = json.loads(course_code_str_update)
+        
+        if not is_course_code_exist or course_code not in list(course_code_dict.keys()):
+            self.getdata.start(course_code, student_type)
+            self.parseddataindex=self.getdata.parsedatahml()
+            inlines_keyboard = []
+            for i in range(len(self.getdata.indexlist)):
+                inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
+
+            keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+            self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
+        else:
+            API.error = 1
+            self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
+            self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
+            self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removeindex!')
 
     def RemoveIndexCommand(self, chat_id):
-        course_code = self.str_text
+        course_code = self.str_text.upper()
         print(course_code)
         
         check_db = db.DB()

@@ -179,7 +179,4 @@ class GoogleAPI(object):
         return start_busy, end_busy
 
     def deleteEvent(self,InputtedeventID):
-        # credentials = self.get_credentials()
-        # http = credentials.authorize(httplib2.Http())
-        # service = discovery.build('calendar', 'v3', http=http)
         self.service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()

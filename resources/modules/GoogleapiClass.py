@@ -6,8 +6,10 @@ from oauth2client.file import Storage
 
 import httplib2
 import os
-import HelperClass as hc
 import datetime
+import HelperClass as hc
+import DBClass as db
+
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
@@ -82,24 +84,27 @@ class GoogleAPI(object):
         print('Event created: %s' % (event.get('htmlLink')))
         return event.get('id')
 
-    def CreateEventIndex(self, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
+    def CreateEventIndex(self, chat_id, summary, location, desc, start_time, end_time, first_week, first_recess_week, recurrence, day, is_ignore_first_event=False):
 
-        first_event_str_start = first_week + start_time
-        first_event_obj_start = datetime.datetime.strptime(first_event_str_start, '%Y-%m-%d%H:%M:%S')
-        first_event_iso_start = first_event_obj_start.isoformat()
-        first_event_ugly_start = first_event_obj_start.strftime("%Y%m%dT%H%M%S")
+        # First Instance of the course
+        # first_event's start_time
+        first_event_start_str = first_week + 'T' + start_time  # to avoid ambiguity
+        first_event_start_obj = datetime.datetime.strptime(first_event_start_str, '%Y-%m-%dT%H:%M:%S')
+        first_event_start_iso = first_event_start_obj.isoformat()
+        first_event_ugly_start = first_event_start_obj.strftime("%Y%m%dT%H%M%S")
+
+        # first_event's end_time
+        first_event_end_str = first_week + 'T' + end_time
+        first_event_end_obj = datetime.datetime.strptime(first_event_end_str, '%Y-%m-%dT%H:%M:%S')
+        first_event_end_iso = first_event_end_obj.isoformat()
+
+        # The recess week
+        first_recess_week_str = first_recess_week + 'T' + start_time
+        first_recess_week_obj = datetime.datetime.strptime(first_recess_week_str, '%Y-%m-%dT%H:%M:%S')
         
-        first_event_str_end = first_week + end_time
-        first_event_obj_end = datetime.datetime.strptime(first_event_str_end, '%Y-%m-%d%H:%M:%S')
-        first_event_iso_end = first_event_obj_end.isoformat()
-        
-        # Ignore any particular week
+        # Ignore recess week
         ParseObject = hc.StringParseGoogleAPI(start_time)
-        ParseObject.ParseDateWeek(first_week)
-        ignore_first_week = ParseObject.date_string_complete
-        
-        ParseObject.ParseDateWeek(first_recess_week)
-        ignore_recess_week = ParseObject.date_string_complete
+        ignore_recess_week = ParseObject.ParseDateWeek(first_recess_week_obj)
 
         # ignore the first event
         ignore_first_event = ""
@@ -117,11 +122,11 @@ class GoogleAPI(object):
             'location': location,
             'description': desc,
             'start': {
-                'dateTime': first_event_iso_start,
+                'dateTime': first_event_start_iso,
                 'timeZone': 'Asia/Singapore',
             },
             'end': {
-                'dateTime': first_event_iso_end,
+                'dateTime': first_event_end_iso,
                 'timeZone': 'Asia/Singapore',
             },
             'reminders': {
@@ -132,13 +137,17 @@ class GoogleAPI(object):
             },
             'recurrence': [
                 "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + ignore_recess_week + ignore_first_event + recurrence,
-                # "RDATE;TZID=Asia/Singapore;VALUE=DATE:20170609T100000,20170611T100000",
                 "RRULE:FREQ=WEEKLY;UNTIL=20171118;BYDAY=" + day
             ]
         }
 
         event = self.service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))
+        event_id = event['id']
+        print(event_id)
+        course_code, course_type = summary.split(' ')
+        db.DB().UpdateCourseCodeEventId(chat_id, course_code, event_id)
+        # print(event['iCalUID'])
    
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
         
@@ -170,7 +179,4 @@ class GoogleAPI(object):
         return start_busy, end_busy
 
     def deleteEvent(self,InputtedeventID):
-        credentials = self.get_credentials()
-        http = credentials.authorize(httplib2.Http())
-        service = discovery.build('calendar', 'v3', http=http)
-        service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()
+        self.service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()

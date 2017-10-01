@@ -127,7 +127,10 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Please type your course code below. For example, CZ1003")
                         print(response)
                         self.error = 0  # no error occured
-                    
+                
+                elif msg_received == '/removeindex':
+                    self.bot.sendMessage(chat_id, "Please type the course code that you want to remove!")
+
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
 
@@ -237,6 +240,19 @@ class API(object):
 
                     else:
                         self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
+
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
+                    
+                    self.bot.sendMessage(chat_id, 'Removing index...')
+                    try:
+                        BotCommandObject.RemoveIndexCommand(chat_id)
+                    
+                    except:
+                        self.bot.sendMessage(chat_id, 'Cannot remove index!')
+
+                    else:
+                        self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
+                        self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
@@ -352,7 +368,6 @@ class API(object):
 
         # only the text
         self.list_update_message = list(self.db_chat.values())
-# RECORDS THE CONVERSATION AND CHECKS IF YOU HAVE NOT GIVEN YOUR INPUT IT WILL DO NOTHING
 
 
 class BotReply(API):
@@ -521,6 +536,29 @@ class BotCommand(API):
         # print(inlines_keyboard)
         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
         self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
+
+    def RemoveIndexCommand(self, chat_id):
+        course_code = self.str_text
+        print(course_code)
+        
+        check_db = db.DB()
+        course_code_db_str = check_db.table_query(chat_id, course_code_event_id=course_code)[3]
+        course_code_db_obj = json.loads(course_code_db_str)
+
+        # Remove it from Google Calendar
+        Google = gc.GoogleAPI()
+        try:
+            for evt_id in course_code_db_obj[course_code]['event_id']:
+                Google.deleteEvent(evt_id)
+        except:
+            self.error = 1
+            raise ValueError
+        
+        # Remove it from the database
+        if not self.error:
+            del(course_code_db_obj[course_code])
+            updated_course_code_str = json.dumps(course_code_db_obj)
+            check_db.update(chat_id, course_code_event_id=updated_course_code_str)
 
     def SetTypeStudent(self, chat_id):
         str_input = hc.StringParseStudentType(self.str_text)

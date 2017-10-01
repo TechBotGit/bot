@@ -25,15 +25,21 @@ pip install splinter
 pip install --upgrade google-api-python-client
 ```
 
-### **5. Google Chrome Driver**
-```
-brew install chromedriver
-```
 
-
-### **6. openpyxl Package**
+### **5. openpyxl Package**
 ```
 pip install openpyxl
+```
+
+
+### **6. pytz Package**
+```
+pip install pytz
+```
+
+### **7. Google Chrome Driver**
+```
+brew install chromedriver
 ```
 
 ## Setting Up Google API

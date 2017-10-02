@@ -5,47 +5,43 @@ bot-project
 # Pre-requisites
 ## Installing Dependencies
 
-### **1. Telepot module**
+### 1. Telepot module
 ```
 pip install telepot
 ```
 	
-### **2. Beautifulsoup module**
+### 2. Beautifulsoup module
 ```
 pip install beautifulsoup4
 ```
 
-### **3. Splinter module**
+### 3. Splinter module
 ```
 pip install splinter
 ```
 
-### **4. Google API module**
+### 4. Google API module
 ```
 pip install --upgrade google-api-python-client
 ```
 
-
-### **5. openpyxl Package**
+### 5. openpyxl Package
 ```
 pip install openpyxl
 ```
 
-
-### **6. pytz Package**
+### 6. pytz Package
 ```
 pip install pytz
 ```
 
-### **7. Google Chrome Driver**
+### 7. Browser Driver
+Assuming you are using Google Chrome, then run the following command:
 ```
 brew install chromedriver
 ```
+If you are using Mozilla Firefox, then read the [Documentation for geckodriver](https://github.com/mozilla/geckodriver)
 
-## Setting Up Google API
-### **Turn on the Google API of your account**
-Refer to the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python).
-> Important Notes: save the .json file in the *[resources/api/](resources/api)* folder under the name of *client_secret.json*.
 
 
 # User Manual
@@ -53,6 +49,7 @@ Refer to the [Google's official documentation](https://developers.google.com/goo
 Welcome to our bot! We will help you maneuver your WAY through your DAY!
 Feel free to ask me stuff :)
 If you want to know your course schedule, type in COURSE. If you want to plan your meetings, type in MEETINGS. If you want to know anything about me, just type in whatever you want and hope I understand :)
+
 
 ## Contents
 
@@ -62,9 +59,19 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 
 #### 1.2 System Requirements
 
+
 ### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
-### [Chapter 3 Inputing Course Indexes, Finding Free Time, and Creating New Event](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
+#### 2.1 Setting Up Telegram bot token
+
+#### 2.2 Setting Up Google API
+
+#### 2.3 Setting Up Browser
+
+#### 2.4 Testing your Bot
+
+
+### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
 #### 3.1 Inputting Your Index 
 ##### 3.1.1 Selecting Student Type
@@ -90,13 +97,40 @@ Hence, you can find common free time to get together for various meetings.
 
 ### 1.2 System Requirements
 
-The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
+1. Telegram versions released after 9 April, 2016 or Telegram Web.
+2. Python 3.6x
+
 
 ## Chapter 2 Getting Started
 
-To start the program, you must first ope the file "app.py" found in the "resources" folder. 
-Then click "Run" and choose "Run Module" to start the bot.
-You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
+Before you can run the bot, several settings are required. 
+
+### 2.1 Setting Up Telegram Bot
+
+1. To set up a bot, read the [Telegram's official documentation](https://core.telegram.org/api).
+2. After you receive the token, save it in the **[resources/](resources/)** folder under the name of **token.txt**
+
+### 2.2 Setting Up Google API
+
+1. Turn on your Google API by following the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)
+2. After you receive your API (.json file), save it in the **[resources/api/](resources/api)** folder under the name of **client_secret.json**.
+
+### 2.3 Setting Up Browser
+
+Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
+
+>**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
+
+### 2.4 Testing your Bot
+
+1. Run your Bot
+
+To start the program, run file **app.py** in the **[main/](main/)** folder. 
+You will be able to see the text *Listening ...* printed on the console, indicating that your code is currently running.
+
+2. Say "Hi" to your Bot
+
+Try sending the message *"Hi"* to your bot. If it replies *"Hi, <your_name>!"*, then you're all set!
 
 
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time
@@ -121,6 +155,7 @@ Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time
 
 Run /addfirstweek to set your first_week and first_recess_week
 ```
+
 #### 3.1.1. Setting Student Type
 
 You must set your student type before putting in your index. This is equivalent to declaring whether you are a part time student or a full time student.
@@ -134,6 +169,7 @@ You will be given two choices in the keyboard; "Full-Time Student" and "Part-Tim
 ```
 Successful!
 ```
+
 #### 3.1.2. Adding your First Week and First Recess Week
 
 You must also enter your first week and first recess week in your bot. To do that, you must first enter **/addfirstweek** into the bot. 

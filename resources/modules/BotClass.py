@@ -239,9 +239,13 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
                     else:
-                        if not self.error:
+                        if not BotCommandObject.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
+                    # self.indexchosen=''
+                    # BotCommandObject.AddIndexCommand(chat_id)
+                    # self.parseddataindex = BotCommandObject.parseddataindex
+                
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
                     
                     self.bot.sendMessage(chat_id, 'Removing index...')
@@ -252,8 +256,9 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot remove index!')
 
                     else:
-                        self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
-                        self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
+                        if not self.error:
+                            self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
+                            self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
@@ -332,7 +337,7 @@ class API(object):
                 data_dict = json.loads(data)
                 course_code_dict.update(data_dict)
 
-            if not self.error:
+            if not BotCommandObject.error:
                 # Loads the dictionary to the database
                 course_code_dict_str = json.dumps(course_code_dict)
                 db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
@@ -340,15 +345,16 @@ class API(object):
                 # Initialize pre requisite before adding to Google Calendar
                 toGoogle = IndexToGoogle(chat_id, complete_data)
                 event_list = toGoogle.get_event()
-                
-                try:
-                    toGoogle.PreCreateEventIndex(event_list)
-                except:
-                    self.bot.sendMessage(chat_id, "Unknown error has occured")
+                if event_list is not None:
+                    try:
+                        toGoogle.PreCreateEventIndex(event_list)
+                    except:
+                        self.bot.sendMessage(chat_id, "Unknown error has occured")
+                    else:
+                        self.bot.sendMessage(chat_id, "Nice!")
+                        self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
                 else:
-                    self.bot.sendMessage(chat_id, "Nice!")
-                    self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
-            
+                    self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
@@ -538,7 +544,7 @@ class BotCommand(API):
             keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
             self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
         else:
-            API.error = 1
+            self.error = 1
             self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
             self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
             self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removeindex!')
@@ -598,22 +604,25 @@ class IndexToGoogle(API):
         value_list = list(self.index_dictionary.values())
         key_list = list(self.index_dictionary.keys())
         event_list = [[] for event in range(len(value_list[0]))]  # initialize list of lists
-        ParseObject = hc.StringParseGoogleAPI(self.index_dictionary)
-        for i in range(len(value_list[0])):
-            # Change the time format
-            time = self.index_dictionary['time'][i]
-            formated_time = ParseObject.ParseDateIndex(time)
-            self.index_dictionary['time'][i] = formated_time
+        if len(event_list) != 1:  # not online course
+            ParseObject = hc.StringParseGoogleAPI(self.index_dictionary)
+            for i in range(len(value_list[0])):
+                # Change the time format
+                time = self.index_dictionary['time'][i]
+                formated_time = ParseObject.ParseDateIndex(time)
+                self.index_dictionary['time'][i] = formated_time
 
-            # Change the day format
-            day = self.index_dictionary['day'][i]
-            # Setting the value
-            ParseObject.day = day
-            # Assign it to the list
-            self.index_dictionary['day'][i] = ParseObject.day
-            for key in key_list:
-                event_list[i].append(self.index_dictionary[key][i])
-        return event_list
+                # Change the day format
+                day = self.index_dictionary['day'][i]
+                # Setting the value
+                ParseObject.day = day
+                # Assign it to the list
+                self.index_dictionary['day'][i] = ParseObject.day
+                for key in key_list:
+                    event_list[i].append(self.index_dictionary[key][i])
+            return event_list
+        else:  # an online course
+            return None
 
     def PreCreateEventIndex(self, evt_list):
         """Description: preparation to add the event from evt_list to Google Calendar"""

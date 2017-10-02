@@ -91,14 +91,6 @@ class StringParseGoogleAPI(object):
     def day(self):
         return self._day
 
-    # @property
-    # def occuring_week(self):
-    #     return self._occuring_week
-
-    # @property
-    # def ignored_week(self):
-    #     return self._ignored_week
-
     @property
     def start_time_cantik(self):
         return self._start_time_cantik

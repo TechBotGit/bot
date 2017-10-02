@@ -230,7 +230,7 @@ class API(object):
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
-                    try:
+                    """try:
                         self.indexchosen=''
                         BotCommandObject.AddIndexCommand(chat_id)
                         self.parseddataindex = BotCommandObject.parseddataindex
@@ -241,7 +241,10 @@ class API(object):
                     else:
                         if not self.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
-
+                    """
+                    self.indexchosen=''
+                    BotCommandObject.AddIndexCommand(chat_id)
+                    self.parseddataindex = BotCommandObject.parseddataindex
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
                     
                     self.bot.sendMessage(chat_id, 'Removing index...')

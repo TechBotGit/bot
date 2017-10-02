@@ -129,7 +129,18 @@ class API(object):
                         self.error = 0  # no error occured
                 
                 elif msg_received == '/removeindex':
-                    self.bot.sendMessage(chat_id, "Please type the course code that you want to remove!")
+                    excel = db.DB()
+                    course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
+                    if course_code_str is None:
+                        self.bot.sendMessage(chat_id,"There is nothing to remove...")
+                    else:
+                        course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
+                        course_code_dict = json.loads(course_code_str_update)
+                        inlines_keyboard = []
+                        for i in list(course_code_dict.keys()):
+                            inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
+                        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+                        self.bot.sendMessage(chat_id, "Please click the course code that you want to remove!",reply_markup=keyboard)
 
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
@@ -241,23 +252,10 @@ class API(object):
                     else:
                         if not self.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
-
+                    
                     # self.indexchosen=''
                     # BotCommandObject.AddIndexCommand(chat_id)
                     # self.parseddataindex = BotCommandObject.parseddataindex
-                
-                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
-                    
-                    self.bot.sendMessage(chat_id, 'Removing index...')
-                    try:
-                        BotCommandObject.RemoveIndexCommand(chat_id)
-                    
-                    except:
-                        self.bot.sendMessage(chat_id, 'Cannot remove index!')
-
-                    else:
-                        self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
-                        self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
@@ -353,6 +351,17 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Nice!")
                     self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
             
+        elif msg['message']['text'].find('Please click the course code that you want to remove!')!=-1:
+            try:
+                BotCommandObject.RemoveIndexCommand(chat_id)
+            
+            except:
+                self.bot.sendMessage(chat_id, 'Cannot remove index!')
+
+            else:
+                self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
+                self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
+
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 
@@ -554,7 +563,9 @@ class BotCommand(API):
         check_db = db.DB()
         course_code_db_str = check_db.table_query(chat_id, course_code_event_id=course_code)[3]
         course_code_db_obj = json.loads(course_code_db_str)
-
+        print(course_code_db_obj)
+        print("str:")
+        print(course_code_db_str)
         # Remove it from Google Calendar
         Google = gc.GoogleAPI()
         try:

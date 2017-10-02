@@ -242,6 +242,10 @@ class API(object):
                         if not BotCommandObject.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
+                    # self.indexchosen=''
+                    # BotCommandObject.AddIndexCommand(chat_id)
+                    # self.parseddataindex = BotCommandObject.parseddataindex
+                
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/removeindex':
                     
                     self.bot.sendMessage(chat_id, 'Removing index...')

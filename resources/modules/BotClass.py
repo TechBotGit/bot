@@ -130,12 +130,12 @@ class API(object):
                 
                 elif msg_received == '/removeindex':
                     excel = db.DB()
-                    course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    if course_code_str is None:
+                    course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
+                    course_code_dict = json.loads(course_code_str_update)
+                    if course_code_str_update is None or len(course_code_dict)==0:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
+                    
                     else:
-                        course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
-                        course_code_dict = json.loads(course_code_str_update)
                         inlines_keyboard = []
                         for i in list(course_code_dict.keys()):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
@@ -346,11 +346,14 @@ class API(object):
                         toGoogle.PreCreateEventIndex(event_list)
                     except:
                         self.bot.sendMessage(chat_id, "Unknown error has occured")
+                        self.bot.answerCallbackQuery(query_id, text='Error! :(')
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")
                         self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
+                        self.bot.answerCallbackQuery(query_id, text='Index removed! :)')
                 else:
                     self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
+                    self.bot.answerCallbackQuery(query_id, text='It is an online course! ')
 
         elif msg['message']['text'].find('Please click the course code that you want to remove!')!=-1:
             try:

@@ -338,14 +338,13 @@ class API(object):
                 course_code_dict.update(data_dict)
 
             if not BotCommandObject.error:
-                # Loads the dictionary to the database
-                course_code_dict_str = json.dumps(course_code_dict)
-                db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
-
                 # Initialize pre requisite before adding to Google Calendar
                 toGoogle = IndexToGoogle(chat_id, complete_data)
                 event_list = toGoogle.get_event()
-                if event_list is not None:
+                if event_list is not None:  # Not an online course
+                    # Loads the dictionary to the database
+                    course_code_dict_str = json.dumps(course_code_dict)
+                    db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
                     try:
                         toGoogle.PreCreateEventIndex(event_list)
                     except:
@@ -355,6 +354,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, "%s has been added to your Google Calendar" %(query_data))
                 else:
                     self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
+
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
 

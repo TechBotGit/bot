@@ -114,7 +114,7 @@ Before you can run the bot, several settings are required.
 
 Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
-Important Notes: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7.-browser-driver-1)
+Important Notes: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
 
 
 

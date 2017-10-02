@@ -76,7 +76,7 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 #### 3.1 Inputting Your Index 
 ##### 3.1.1 Selecting Student Type
 ##### 3.1.2 Adding Your First Week and First Recess Week
-##### 3.1.2 Inputting Your Index
+##### 3.1.3 Adding Your Course Code
 
 #### 3.2 Creating New Event
 
@@ -183,6 +183,9 @@ Captured!
 
 Your data is sucessfully recorded in our database!
 ```
+
+#### 3.1.3 Adding Your Course Code
+
 After you have completed the process above, enter **/addindex** into the bot, and the bot should reply you in the following manner:
 ```
 Sure thing. Please type your details in following format:

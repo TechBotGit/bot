@@ -128,18 +128,13 @@ Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resou
 To start the program, run file **app.py** in the **[main/](main/)** folder. 
 You will be able to see the text *Listening ...* printed on the console, indicating that your code is currently running.
 
-2. Say "Hi" to your Bot
+2. Say *"Hi"* to your Bot
 
 Try sending the message *"Hi"* to your bot. If it replies *"Hi, <your_name>!"*, then you're all set!
 
 
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time
 
-### 3.0 Starting The Bot
-
-To start the bot, say "hi" to the bot and wait for it to greet you.
-Then ask what the bot can do by asking "what do you do?", or you can simply type in "/start". 
-You can then talk to the bot and ask it to arrange your meet
 
 ### 3.1 Inputting Your Index
 

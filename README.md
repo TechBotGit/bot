@@ -64,19 +64,18 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 
 ### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
-#### 2.1 IDLE Python 3.6
-
-#### 2.2 Visual Studio Code 1.15.1 Python 3.6
-
-### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
+### [Chapter 3 Inputing Course Indexes, Finding Free Time, and Creating New Event](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
 #### 3.1 Inputting Your Index 
 ##### 3.1.1 Selecting Student Type
-##### 3.1.2 Adding your First Week and First Recess Week
+##### 3.1.2 Adding Your First Week and First Recess Week
+##### 3.1.2 Inputting Your Index
 
 #### 3.2 Creating New Event
 
-#### 3.3 Check If You Are Free at A Certain Time 
+#### 3.3 Check If You Are Free at A Certain Time
+
+#### 3.4 Removing Your Index
 
 
 
@@ -95,19 +94,9 @@ The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
 
 ## Chapter 2 Getting Started
 
-We have several alternatives to run the program as to which Python platform you choose to use.
-
-### 2.1 IDLE Python 3.6
-
-To start the program, you should first open IDLE Python3.6.
-Then open file “first_thing.py” found in the "samples" folder. 
-Then click “Run” and choose “Run Module” to start the bot. 
+To start the program, you must first ope the file "app.py" found in the "resources" folder. 
+Then click "Run" and choose "Run Module" to start the bot.
 You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
-
-### 2.2 Visual Studio Code 1.15.1 Python 3.6
-
-To start the program, you should first open Visual Studio Code 1.15.1 Python 3.6. 
-Then open file "first_thing.py" found in the "samples" folder. Then rightclick and choose "Run Code" if your default Programming language is Python 3.6 or "Run Python File in Terminal" if your default Programming language is not Python 3.6. You will be able to see the text "Listening ..." printed on the screen, indicating that your code is currently running.
 
 
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time
@@ -169,7 +158,16 @@ Sure thing. Please type your details in following format:
 
 Please type your course code below. For example, CZ1003
 ```
-Type in your course code and the bot will output a keyboard listing all the indexes in that course. 
+Type in your course code and the bot will output a keyboard listing all the indexes in that course as a mark-up keyboard and will return to you thr following message:
+```
+The indexes for this course code has been successfully accessed. Please do the instructions above :)
+```
+Click on your course index **once** and if addition of course schedule is successful, your bot will reply in the following manner:
+```
+Nice!
+00317 has been added to your Google Calendar
+```
+where **00317** is the index of your course.
 
 ### 3.2 Creating New Event
 
@@ -214,6 +212,5 @@ You are busy on this interval!
 You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
 ```
 
-### 3.4 Choose Meeting Time According to Bot Recommendation
+### 3.4 Removing Your Index
 
-This bot also offers the function to predict how many people will be in the section you are going to. Accessing the interface where two buttons “Library Current Status Inquiry” and “Library Status Prediction” are presented, you are expected to click on the latter. After that, do the same as the above-mentioned step to focus on one section. The program will return you a computed number, which is the average of the last several sets of data collected.

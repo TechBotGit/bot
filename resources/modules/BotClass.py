@@ -571,9 +571,6 @@ class BotCommand(API):
         check_db = db.DB()
         course_code_db_str = check_db.table_query(chat_id, course_code_event_id=course_code)[3]
         course_code_db_obj = json.loads(course_code_db_str)
-        print(course_code_db_obj)
-        print("str:")
-        print(course_code_db_str)
         # Remove it from Google Calendar
         Google = gc.GoogleAPI()
         try:

@@ -357,7 +357,7 @@ class API(object):
 
         elif msg['message']['text'].find('Please click the course code that you want to remove!')!=-1:
             try:
-                BotCommandObject.RemoveIndexCommand(chat_id,query_data)
+                BotCommand(query_data).RemoveIndexCommand(chat_id)
             
             except:
                 self.bot.sendMessage(chat_id, 'Cannot remove index!')
@@ -367,7 +367,7 @@ class API(object):
                 self.bot.sendMessage(chat_id, "The index for this course code has been removed from your Google Calendar and our database!")
                 self.bot.sendMessage(chat_id, "Run /addindex to replace your removed index, if you wish :D")
                 self.bot.answerCallbackQuery(query_id, text='Index removed! :)')
-            # BotCommandObject.RemoveIndexCommand(chat_id,query_data)
+            # BotCommand(query_data).RemoveIndexCommand(chat_id)
 
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
@@ -564,8 +564,8 @@ class BotCommand(API):
             self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
             self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removeindex!')
 
-    def RemoveIndexCommand(self, chat_id,course_code_from_inline):
-        course_code = course_code_from_inline
+    def RemoveIndexCommand(self, chat_id):
+        course_code = self.str_text
         print(course_code)
         
         check_db = db.DB()

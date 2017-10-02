@@ -530,6 +530,7 @@ class BotCommand(API):
         course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
         
         if course_code_str is None:
+            # Change it to an empty dictionary
             excel.update(chat_id, course_code_event_id='{}')
         course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
         course_code_dict = json.loads(course_code_str_update)

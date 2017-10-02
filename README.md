@@ -5,47 +5,45 @@ bot-project
 # Pre-requisites
 ## Installing Dependencies
 
-### **1. Telepot module**
+### 1. Telepot module
 ```
 pip install telepot
 ```
 	
-### **2. Beautifulsoup module**
+### 2. Beautifulsoup module
 ```
 pip install beautifulsoup4
 ```
 
-### **3. Splinter module**
+### 3. Splinter module
 ```
 pip install splinter
 ```
 
-### **4. Google API module**
+### 4. Google API module
 ```
 pip install --upgrade google-api-python-client
 ```
 
 
-### **5. openpyxl Package**
+### 5. openpyxl Package
 ```
 pip install openpyxl
 ```
 
 
-### **6. pytz Package**
+### 6. pytz Package
 ```
 pip install pytz
 ```
 
-### **7. Google Chrome Driver**
+### 7. Browser Driver
+Assuming you are using Google Chrome, then run the following command:
 ```
 brew install chromedriver
 ```
+If you are using Mozilla Firefox, then read the [Documentation for geckodriver](https://github.com/mozilla/geckodriver)
 
-## Setting Up Google API
-### **Turn on the Google API of your account**
-Refer to the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python).
-> Important Notes: save the .json file in the *[resources/api/](resources/api)* folder under the name of *client_secret.json*.
 
 
 # User Manual
@@ -64,9 +62,11 @@ If you want to know your course schedule, type in COURSE. If you want to plan yo
 
 ### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
-#### 2.1 IDLE Python 3.6
+#### 2.1 Setting Up Telegram bot token
 
-#### 2.2 Visual Studio Code 1.15.1 Python 3.6
+#### 2.2 Setting Up Google API
+
+#### 2.3 Setting Up Browser
 
 ### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
@@ -91,23 +91,31 @@ Hence, you can find common free time to get together for various meetings.
 
 ### 1.2 System Requirements
 
-The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
+1. Telegram versions released after 9 April, 2016 or Telegram Web.
+2. Python 3.6x
 
 ## Chapter 2 Getting Started
 
-We have several alternatives to run the program as to which Python platform you choose to use.
+Before you can run the bot, several settings are required. 
 
-### 2.1 IDLE Python 3.6
+### 2.1 Setting Up Telegram Bot
 
-To start the program, you should first open IDLE Python3.6.
-Then open file “first_thing.py” found in the "samples" folder. 
-Then click “Run” and choose “Run Module” to start the bot. 
-You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
+1. To set up a bot, read the [Telegram's official documentation](https://core.telegram.org/api).
+2. After you receive the token, save it in the **[resources/](resources/)** folder under the name of **token.txt**
 
-### 2.2 Visual Studio Code 1.15.1 Python 3.6
 
-To start the program, you should first open Visual Studio Code 1.15.1 Python 3.6. 
-Then open file "first_thing.py" found in the "samples" folder. Then rightclick and choose "Run Code" if your default Programming language is Python 3.6 or "Run Python File in Terminal" if your default Programming language is not Python 3.6. You will be able to see the text "Listening ..." printed on the screen, indicating that your code is currently running.
+### 2.2 Setting Up Google API
+
+1. Turn on your Google API by following the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)
+2. After you receive your API (.json file), save it in the **[resources/api/](resources/api)** folder under the name of **client_secret.json**.
+
+
+### 2.3 Setting Up Browser
+
+Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
+
+Important Notes: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7.-browser-driver-1)
+
 
 
 ## Chapter 3 Inputing Course Indexes and Finding Common Free Time

@@ -360,13 +360,13 @@ class PreformattedBotInlineMarkup(object):
     """This is a class for storing future fixed KeyboardMarkup"""
     def __init__(self):
         self.days = [
-            'Sunday',
             'Monday',
             'Tuesday',
             'Wednesday',
             'Thursday',
             'Friday',
-            'Saturday'
+            'Saturday',
+            'Sunday'
         ]
 
 

@@ -104,8 +104,42 @@ class API(object):
                     print(response)
                 
                 elif msg_received == '/removeevent':
-                    self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
+                    excel = db.DB()
+                    course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
+                    course_code_dict = json.loads(course_code_str)
+                    evt_name_list = [
+                        course_code_dict[key]['name'] + ' at ' + course_code_dict[key]['start'] + ' until ' + course_code_dict[key]['end']
+                        for key in list(course_code_dict.keys())
+                    ]
+                    if course_code_str is None or len(course_code_dict)==0:
+                        self.bot.sendMessage(chat_id,"There is nothing to remove...")
+                    
+                    else:
+                        inlines_keyboard = []
+                        for i in evt_name_list:
+                            inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
+                        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+                        self.bot.sendMessage(chat_id, "Please click the event that you want to remove!",reply_markup=keyboard)
+                    # self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
 
+                elif msg_received == '/getevent':
+                    excel = db.DB()
+                    course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
+                    course_code_dict = json.loads(course_code_str)
+                    evt_name_list = [
+                        course_code_dict[key]['name'] + ' at ' + course_code_dict[key]['start'] + ' until ' + course_code_dict[key]['end']
+                        for key in list(course_code_dict.keys())
+                    ]
+                    if course_code_str is None or len(course_code_dict)==0:
+                        self.bot.sendMessage(chat_id, "There is no event...")
+                    
+                    else:
+                        inlines_keyboard = []
+                        for i in evt_name_list:
+                            inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
+                        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+                        self.bot.sendMessage(chat_id, "Your events are as follows", reply_markup=keyboard)
+                
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
 
@@ -132,25 +166,33 @@ class API(object):
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     course_code_dict = json.loads(course_code_str)
+                    index_list = [
+                        course_code_dict[key]['index'] + ' (' + key + ')'
+                        for key in list(course_code_dict.keys())
+                    ]
                     if course_code_str is None or len(course_code_dict)==0:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                     
                     else:
                         inlines_keyboard = []
-                        for i in list(course_code_dict.keys()):
+                        for i in index_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-                        self.bot.sendMessage(chat_id, "Please click the course code that you want to remove!",reply_markup=keyboard)
+                        self.bot.sendMessage(chat_id, "Please click the index that you want to remove!",reply_markup=keyboard)
                 
                 elif msg_received == '/getindex':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     course_code_dict = json.loads(course_code_str)
+                    index_list = [
+                        course_code_dict[key]['index'] + ' (' + key + ')'
+                        for key in list(course_code_dict.keys())
+                    ]
                     if course_code_str is None or len(course_code_dict)==0:
                         self.bot.sendMessage(chat_id, "You have no index registered in our database!")
                     else:
                         inlines_keyboard = []
-                        for i in list(course_code_dict.keys()):
+                        for i in list(index_list):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your index are as follows: ", reply_markup=keyboard)
@@ -368,7 +410,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
                     self.bot.answerCallbackQuery(query_id, text='It is an online course! ')
 
-        elif msg['message']['text'].find('Please click the course code that you want to remove!')!=-1:
+        elif msg['message']['text'].find('Please click the index that you want to remove!')!=-1:
             try:
                 BotCommand(query_data).RemoveIndexCommand(chat_id)
             
@@ -473,6 +515,7 @@ class BotCommand(API):
             '/setstudentype',
             '/addevent',
             '/removeevent',
+            '/getevent',
             '/isfree',
             '/addfirstweek',
             '/quit'

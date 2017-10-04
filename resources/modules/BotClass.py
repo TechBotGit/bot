@@ -369,7 +369,7 @@ class API(object):
                 self.bot.answerCallbackQuery(query_id, text='Index removed! :)')
             # BotCommand(query_data).RemoveIndexCommand(chat_id)
 
-        else:
+        elif msg['message']['text'].find('Choose a day!') != -1:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
             
     def StoreChat(self, update_object):

@@ -130,9 +130,9 @@ class API(object):
                 
                 elif msg_received == '/removeindex':
                     excel = db.DB()
-                    course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    course_code_dict = json.loads(course_code_str_update)
-                    if course_code_str_update is None or len(course_code_dict)==0:
+                    course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
+                    course_code_dict = json.loads(course_code_str)
+                    if course_code_str is None or len(course_code_dict)==0:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                     
                     else:
@@ -141,7 +141,20 @@ class API(object):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Please click the course code that you want to remove!",reply_markup=keyboard)
-
+                
+                elif msg_received == '/getindex':
+                    excel = db.DB()
+                    course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
+                    course_code_dict = json.loads(course_code_str)
+                    if course_code_str is None or len(course_code_dict)==0:
+                        self.bot.sendMessage(chat_id, "You have no index registered in our database!")
+                    else:
+                        inlines_keyboard = []
+                        for i in list(course_code_dict.keys()):
+                            inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
+                        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+                        self.bot.sendMessage(chat_id, "Your index are as follows: ", reply_markup=keyboard)
+                
                 elif msg_received == '/quit':
                     self.bot.sendMessage(chat_id, "Bye :(")
 
@@ -454,6 +467,7 @@ class BotCommand(API):
             '/start',
             '/addindex',
             '/removeindex',
+            '/getindex',
             '/setstudenttype',
             '/st',
             '/setstudentype',

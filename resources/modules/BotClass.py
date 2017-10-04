@@ -182,7 +182,7 @@ class API(object):
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addevent':
                     
                     try:
-                        trial = BotCommandObject.CreateEventCommand()
+                        trial = BotCommandObject.AddEventCommand(chat_id)
                         1 / trial[0]
 
                     except ValueError:
@@ -207,12 +207,12 @@ class API(object):
                     else:
                         self.bot.sendMessage(chat_id, 'Successful! Your event ID is ' + trial[3] + '.\n Please refer to this Event ID for further information.')
                     # for debugging
-                    # iso = BotCommandObject.CreateEventCommand()
+                    # iso = BotCommandObject.AddEventCommand()
                 
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/removeevent'):
                     
                     try:
-                        BotCommandObject.DeleteEventCommand()
+                        BotCommandObject.RemoveEventCommand()
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Error occured! Have you entered the correct event ID?')
@@ -503,7 +503,7 @@ class BotCommand(API):
     def isValidCommand(self):
         return self.str_text in self.command_list
 
-    def CreateEventCommand(self):
+    def AddEventCommand(self, chat_id):
         str_input = hc.StringParseGoogleAPI(self.str_text)
         str_input.ParseEvent()
         event_name = str_input.event_name
@@ -522,9 +522,26 @@ class BotCommand(API):
             # raise ZeroDivisionError
         # Call the GoogleAPI class and create event
         current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+        # load the event to the database
+        other_event_id_dict = {
+            current_event_id: {
+                'name': event_name,
+                'location': location,
+                'start': start_date_pretty,
+                'end': end_date_pretty
+            }
+        }
+        excel = db.DB()
+        if excel.isRecordExist(chat_id, other_event_id=True):
+            existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
+            existing_data_dict = json.loads(existing_data_str)
+            other_event_id_dict.update(existing_data_dict)
+
+        other_event_id_str = json.dumps(other_event_id_dict)
+        excel.update(chat_id, other_event_id=other_event_id_str)
         return (1,start_date_pretty,end_date_pretty,current_event_id)
 
-    def DeleteEventCommand(self):
+    def RemoveEventCommand(self):
         str_input = self.str_text
         gc.GoogleAPI().deleteEvent(str_input)
 

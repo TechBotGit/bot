@@ -95,7 +95,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Want to know me more? Just ask me whatever you want and hope I can understand :)")
                     self.bot.sendMessage(chat_id, "To know more commands just type forward slash '/' to see what's available")
                 
-                elif msg_received == '/createevent':
+                elif msg_received == '/addevent':
                     msg_reply = "Okay send me the details in following format:"
                     str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
                     self.bot.sendMessage(chat_id, msg_reply)
@@ -103,7 +103,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
                     print(response)
                 
-                elif msg_received == '/deleteevent':
+                elif msg_received == '/removeevent':
                     self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
@@ -179,7 +179,7 @@ class API(object):
                 BotCommandObject = BotCommand(msg['text'])
                 # to prevent crashing as it separates the variables so literally it can run parallelly
                 # This checks if the last msg['text'] is indeed a command
-                if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/createevent':
+                if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addevent':
                     
                     try:
                         trial = BotCommandObject.CreateEventCommand()
@@ -209,7 +209,7 @@ class API(object):
                     # for debugging
                     # iso = BotCommandObject.CreateEventCommand()
                 
-                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/deleteevent'):
+                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/removeevent'):
                     
                     try:
                         BotCommandObject.DeleteEventCommand()
@@ -471,8 +471,8 @@ class BotCommand(API):
             '/setstudenttype',
             '/st',
             '/setstudentype',
-            '/createevent',
-            '/deleteevent',
+            '/addevent',
+            '/removeevent',
             '/isfree',
             '/addfirstweek',
             '/quit'

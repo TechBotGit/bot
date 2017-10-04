@@ -206,7 +206,7 @@ where **00317** is the index of your course.
 ### 3.2 Creating New Event
 
 You can create new events through the bot and the bot will input it in your Google Calendar for you.
-First, type in **/createevent** to create your event.
+First, type in **/addevent** to create your event.
 The bot will respond in the following manner:
 ```
 Okay send me the details in following format:

@@ -11,3 +11,8 @@ class IsNotMondayError(Error):
 class ParseError(Error):
     """Raised when unable to do parsing"""
     pass
+
+
+class IsNotFreeError(Error):
+    """Raised when not free"""
+    pass

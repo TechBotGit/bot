@@ -102,14 +102,14 @@ To know more commands just type forward slash '/' to see what's available
 
 ### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
 
-### 4.1 Inputting Your Index
+### 4.1 Inputting Your Course
 
 #### 4.1.1. Setting Student Type
 #### 4.1.2. Adding your First Week and First Recess Week
 
 #### 4.1.3 Adding Your Course Code
 
-### 4.2 Removing Your Index
+### 4.2 Removing Your Course
 
 ### 4.3 Displaying Your Courses
 
@@ -191,10 +191,8 @@ After you have done this, everytime you type in **/**, the bot will suggest comm
 
 ### Chapter 3 List of Commands Available
 
-#### 3.01 /start and /
+#### 3.01 /start
 This command is used to initially start the bot. Type **/start** in the telegram bot chat and the bot will greet you and tell you what it can do. 
-
-The **/** is used to display the commands available in the bot. 
 
 #### 3.02 /addevent
 This command is used to add your own personal events, for instance meetings or parties, etc. 
@@ -230,9 +228,9 @@ This quits the bot.
 ## Chapter 4 Inputing Course Indexes and Finding Common Free Time
 
 
-### 4.1 Inputting Your Index
+### 4.1 Inputting Your Course
 
-You can input your index in the bot. This way, the bot can tell you what courses you have throughout the day. To input your course's index, you must first type in **/addindex**
+You can input your course in the bot. This way, the bot can tell you what courses you have throughout the day. To input your course's index, you must first type in **/addcourse**
 If you have not completed some of your index, the bot will then redirect you to another instructions that you have to fullfill before adding your index.
 The bot will reply in the following manner:
 ```
@@ -297,7 +295,7 @@ Nice!
 ```
 where **00317** is the index of your course.
 
-### 4.2 Removing Your Index
+### 4.2 Removing Your Course
 
 You can remove your index if you have put in the wrong index, or if you have simply dropped the course.To remove your index, simply type in **/removecourse** into the bot. The bot will respond in the following manner:
 
@@ -356,13 +354,12 @@ The bot will respond in the following manner:
 ```
 Okay send me the details in following format:
 
-Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss
+Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM
+
+For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00
 ```
 Input the details of your event according to the format above.
 The bot will return **Successful!** if your event creation is successful.
-
-**NOTE: the 'T' indicates a separation between the date and time of the event.
-You must include the 'T' in your input.**
 
 ### 4.5 Removing Your Event
 
@@ -430,4 +427,3 @@ You are busy on this interval!
 
 You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
 ```
-

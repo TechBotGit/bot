@@ -75,11 +75,11 @@ class DB(object):
                         result = self.sheet_update.cell(row=cell.row, column=4).value
                     elif course_code_event_id:
                         dictionary = self.sheet_update.cell(row=cell.row, column=5).value
-                        if dictionary != '{}' or dictionary != '':
+                        if dictionary != '{}' and dictionary is not None:
                             result = self.sheet_update.cell(row=cell.row, column=5).value
                     elif other_event_id:
-                        dictionary = self.sheet_update.cell(row=cell.row, column=5).value
-                        if dictionary != '{}' or dictionary != '':
+                        dictionary = self.sheet_update.cell(row=cell.row, column=6).value
+                        if dictionary != '{}' and dictionary is not None:
                             result = self.sheet_update.cell(row=cell.row, column=6).value
                     break
         return result is not None

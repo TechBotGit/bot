@@ -113,6 +113,10 @@ class GoogleAPI(object):
                 ignore_first_event = ',' + first_event_ugly_start
         else:
             recurrence = ',' + recurrence
+        
+        final_week_obj = datetime.datetime.strptime(first_week, '%Y-%m-%d') + datetime.timedelta(days=7 * 13 + 5)
+        final_week_str = final_week_obj.strftime("%Y%m%d")
+        
         # Event Details
         event = {
             'summary': summary,
@@ -134,7 +138,7 @@ class GoogleAPI(object):
             },
             'recurrence': [
                 "EXDATE;TZID=Asia/Singapore;VALUE=DATE:" + ignore_recess_week + ignore_first_event + recurrence,
-                "RRULE:FREQ=WEEKLY;UNTIL=20171118;BYDAY=" + day
+                "RRULE:FREQ=WEEKLY;UNTIL=" + final_week_str + ";BYDAY=" + day
             ]
         }
 

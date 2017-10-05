@@ -46,10 +46,15 @@ If you are using Mozilla Firefox, then read the [Documentation for geckodriver](
 
 # User Manual
 
-Welcome to our bot! We will help you maneuver your WAY through your DAY!
-Feel free to ask me stuff :)
-If you want to know your course schedule, type in COURSE. If you want to plan your meetings, type in MEETINGS. If you want to know anything about me, just type in whatever you want and hope I understand :)
+Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)
 
+Want to add course index? Just run /addindex.
+
+Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.
+
+Want to know me more? Just ask me whatever you want and hope I can understand :)
+
+To know more commands just type forward slash '/' to see what's available
 
 ## Contents
 
@@ -248,3 +253,23 @@ You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
 
 ### 3.4 Removing Your Index
 
+You can remove your index if you have put in the wrong index, or if you have simply dropped the course.To remove your index, simply type in **/removeindex** into the bot. The bot will respond in the following manner:
+
+```
+Please type the course code that you want to remove!
+```
+After the bot replied as above, type in the course code you want to remove, i.e. CZ1003.
+After you have typed in the course code that you want to remove, the bot will reply as follows if the removal is a success:
+```
+Removing index...
+
+The index for this course code has been removed from your Google Calendar and our database!
+
+Run /addindex to replace your removed index, if you wish :D
+```
+If removal is not successful, it may be caused by you entering the wrong course code and the bot will reply in the following manner:
+```
+Removing index...
+
+Cannot remove index!
+```

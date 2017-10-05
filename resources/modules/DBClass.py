@@ -78,7 +78,7 @@ class DB(object):
                         if dictionary != '{}' and dictionary is not None:
                             result = self.sheet_update.cell(row=cell.row, column=5).value
                     elif other_event_id:
-                        dictionary = self.sheet_update.cell(row=cell.row, column=5).value
+                        dictionary = self.sheet_update.cell(row=cell.row, column=6).value
                         if dictionary != '{}' and dictionary is not None:
                             result = self.sheet_update.cell(row=cell.row, column=6).value
                     break

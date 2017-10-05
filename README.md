@@ -326,6 +326,10 @@ Cannot remove index!
 If you have no courses to remove, the bot will return you this following message:
 ```
 There is nothing to remove...
+
+What you probably want to do next:
+
+Run /addcourse to add a course
 ```
 ### 4.3 Displaying Your Courses
 
@@ -377,6 +381,10 @@ Run /addevent to add an event!
 If you have no event in your Google Calendar, the bot will return you this following message:
 ```
 There is nothing to remove...
+
+What you probably want to do next:
+
+Run /addevent to add an event
 ```
 ### 4.6 Displaying Your Events
 

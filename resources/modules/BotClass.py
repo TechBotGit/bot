@@ -244,7 +244,7 @@ class API(object):
                         trial = BotCommandObject.AddEventCommand(chat_id)
                         1 / trial[0]
 
-                    except ValueError:
+                    except err.ParseError:
                         self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
                     
                     except ZeroDivisionError:
@@ -263,7 +263,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event with different datetime")
                     
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot create event! Please try again')
+                        self.bot.sendMessage(chat_id, 'Unknown Error occured')
                     # prevents crashing  of the full program as it limits the crash to this fuction only
                     else:
                         self.bot.sendMessage(chat_id, 'Successful! Your event has been added to Google Calendar and recorded in our database!')
@@ -610,9 +610,12 @@ class BotCommand(API):
         start_date_pretty = str_input.start_time_cantik
         end_date_pretty = str_input.end_time_cantik
         end_date = str_input.end_date
-
-        query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
-        isFree = gc.GoogleAPI().isFree(query)
+        
+        try:
+            query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
+            isFree = gc.GoogleAPI().isFree(query)
+        except:
+            raise err.ParseError("Unable to make query because of parsing error!")
         # Get the query's busy info
         if not isFree:
             print("not free!")

@@ -9,6 +9,7 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, Reply
 import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
+import ErrorClass as err
 
 
 class API(object):
@@ -220,10 +221,11 @@ class API(object):
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
                 
                 elif msg_received == '/addfirstweek':
-                    self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
+                    self.bot.sendMessage(chat_id, "Please enter the Monday dates of your first week and first recess week using the following format: ")
                     self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
                     self.bot.sendMessage(chat_id, 'For example: ')
                     self.bot.sendMessage(chat_id, '2017-8-14;2017-10-2')
+                    self.bot.sendMessage(chat_id, "Notes: These two dates are very important. If you enter the wrong dates and add your course (i.e. by running /addcourse), consequently, your course schedule will be shifted by one or more weeks!")
                 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
@@ -338,8 +340,12 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
-                    except:
+                    except err.IsNotMondayError:
+                        self.bot.sendMessage(chat_id, "The input date is not Monday!")
+                        self.bot.sendMessage(chat_id, "Please run /addfirstweek again and enter the Monday dates of your first week and first recess week!")
+                    except err.ParseError:
                         self.bot.sendMessage(chat_id, "Error occurred while recording your data into our database!")
+
                     else:
                         self.bot.sendMessage(chat_id, 'Captured!')
                         self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
@@ -731,12 +737,20 @@ class BotCommand(API):
         excel.update(chat_id, student_type=course_type)
 
     def AddFirstWeek(self, chat_id):
-        first_week, first_recess_week = self.str_text.split(';')
-        
-        # Initialize db
-        excel = db.DB()
-        # Update the exel file
-        excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
+        try:
+            first_week, first_recess_week = self.str_text.split(';')
+        except:
+            raise err.ParseError("Cannot Parse !")
+        first_week_obj = datetime.datetime.strptime(first_week, '%Y-%m-%d')
+        first_recess_week_obj = datetime.datetime.strptime(first_recess_week, '%Y-%m-%d')
+        # If it is Monday, then proceed
+        if first_week_obj.weekday() == 0 and first_recess_week_obj.weekday() == 0:
+            # Initialize db
+            excel = db.DB()
+            # Update the exel file
+            excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
+        else:
+            raise err.IsNotMondayError('Date is not monday!')
     
 
 class IndexToGoogle(API):

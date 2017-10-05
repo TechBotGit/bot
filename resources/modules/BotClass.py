@@ -90,7 +90,7 @@ class API(object):
                 # Send users a message related to the command
                 if msg_received == '/start':
                     self.bot.sendMessage(chat_id, "Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)")
-                    self.bot.sendMessage(chat_id, "Want to add course index? Just run /addcourse.")
+                    self.bot.sendMessage(chat_id, "Want to add course index? Just run /addcourse")
                     self.bot.sendMessage(chat_id, "Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.")
                     self.bot.sendMessage(chat_id, "Want to know me more? Just ask me whatever you want and hope I can understand :)")
                     self.bot.sendMessage(chat_id, "To know more commands just type forward slash '/' to see what's available")
@@ -106,32 +106,34 @@ class API(object):
                 elif msg_received == '/removeevent':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
-                    course_code_dict = json.loads(course_code_str)
-                    evt_name_list = [
-                        course_code_dict[key]['name'] + ';' + course_code_dict[key]['start'] + ';' + course_code_dict[key]['end']
-                        for key in list(course_code_dict.keys())
-                    ]
-                    if course_code_str is None or len(course_code_dict)==0:
-                        self.bot.sendMessage(chat_id,"There is nothing to remove...")
                     
+                    if not excel.isRecordExist(chat_id, other_event_id=True):
+                        self.bot.sendMessage(chat_id,"There is nothing to remove...")
+                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     else:
+                        course_code_dict = json.loads(course_code_str)
+                        evt_name_list = [
+                            course_code_dict[key]['name'] + ';' + course_code_dict[key]['start'] + ';' + course_code_dict[key]['end']
+                            for key in list(course_code_dict.keys())
+                        ]
                         inlines_keyboard = []
                         for i in evt_name_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your events are as follows in the format: event_name;start_time;end_time")
                         self.bot.sendMessage(chat_id, "Please click the event that you want to remove!", reply_markup=keyboard)
-                    # self.bot.sendMessage(chat_id, "Sure thing. Please tell me your event ID:")
 
                 elif msg_received == '/getevent':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
-                    course_code_dict = json.loads(course_code_str)
-                    if course_code_str is None or len(course_code_dict)==0:
+                    if not excel.isRecordExist(chat_id, other_event_id=True):
                         self.bot.sendMessage(chat_id, "There is no event recorded in our database!")
-                        self.bot.sendMessage(chat_id, "Run /addevent to add your event!")
+                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     
                     else:
+                        course_code_dict = json.loads(course_code_str)
                         evt_name_list = [
                             course_code_dict[key]['name'] + ';' + course_code_dict[key]['start'] + ';' + course_code_dict[key]['end']
                             for key in list(course_code_dict.keys())
@@ -144,6 +146,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, "What you probably want do next: ")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
+                        self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
                 
                 elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
@@ -170,11 +173,13 @@ class API(object):
                 elif msg_received == '/removecourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    course_code_dict = json.loads(course_code_str)
-                    if course_code_str is None or len(course_code_dict)==0:
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
+                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                     
                     else:
+                        course_code_dict = json.loads(course_code_str)
                         index_list = [
                             key
                             for key in list(course_code_dict.keys())
@@ -188,16 +193,16 @@ class API(object):
                 elif msg_received == '/getcourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    course_code_dict = json.loads(course_code_str)
-                    index_list = [
-                        key
-                        for key in list(course_code_dict.keys())
-                    ]
-                    if course_code_str is None or len(course_code_dict)==0:
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id, "There are no indexes registered in our database!")
                         self.bot.sendMessage(chat_id, "What you probably want to do next: ")
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")
                     else:
+                        course_code_dict = json.loads(course_code_str)
+                        index_list = [
+                            key
+                            for key in list(course_code_dict.keys())
+                        ]
                         inlines_keyboard = []
                         for i in list(index_list):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
@@ -425,7 +430,7 @@ class API(object):
                         
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")
-                        self.bot.sendMessage(chat_id, "%s %s has been added to your Google Calendar" %(course_code, query_data))
+                        self.bot.sendMessage(chat_id, "%s (index %s) has been added to your Google Calendar" %(course_code, query_data))
                         self.bot.sendMessage(chat_id, "What you probably want to do next: ")
                         self.bot.sendMessage(chat_id, "Run /addcourse to add another course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
@@ -440,7 +445,6 @@ class API(object):
                     self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
                     self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
                     
-
         elif msg['message']['text'].find('Please click the course that you want to remove!') != -1:
             try:
                 BotCommand(query_data).RemoveCourseCommand(chat_id)
@@ -466,8 +470,9 @@ class API(object):
             else:
                 self.bot.sendMessage(chat_id, "The event %s has been removed!" %(query_data))
                 self.bot.sendMessage(chat_id, "What you probably want to do next: ")
-                self.bot.sendMessage(chat_id, "Run /removeevent to remove another event!")
-                self.bot.sendMessage(chat_id, "Run /addevent to add an event!")
+                self.bot.sendMessage(chat_id, "Run /removeevent to remove another event")
+                self.bot.sendMessage(chat_id, "Run /addevent to add an event")
+                self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
             
@@ -619,8 +624,8 @@ class BotCommand(API):
             }
         }
         excel = db.DB()
+        existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
         if excel.isRecordExist(chat_id, other_event_id=True):
-            existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
             existing_data_dict = json.loads(existing_data_str)
             other_event_id_dict.update(existing_data_dict)
 

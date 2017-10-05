@@ -70,9 +70,6 @@ class GoogleAPI(object):
                 'dateTime': end,
                 'timeZone': 'Asia/Singapore',
             },
-            'attendees': [
-                {'email': 'jasoncobalagi@gmail.com'}
-            ],
             'reminders': {
                 'useDefault': False,
                 'overrides': [
@@ -132,7 +129,7 @@ class GoogleAPI(object):
             'reminders': {
                 'useDefault': False,
                 'overrides': [
-                    {'method': 'email', 'minutes': 60}
+                    {'method': 'popup', 'minutes': 60}
                 ],
             },
             'recurrence': [

@@ -37,7 +37,7 @@ class API(object):
         # Static message
         self.suggestion = "What you probably want to do next: "
         self.successRecordDatabase = 'Sucessfull! Your data has been recorded in our database!'
-        self.sucessRecordDatabaseandCalendar = 'Sucessfull! You data has been recorded in our database and your Google Calendar!'
+        self.successRecordDatabaseandCalendar = 'Sucessfull! You data has been recorded in our database and your Google Calendar!'
 
         self.successRemoveDatabase = 'Your data has been removed from our database!'
         self.successRemoveDatabaseandCalendar = 'Your data has been removed from our database and your Google Calendar!'
@@ -270,7 +270,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Unknown Error occured')
                     
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful! Your event has been added to Google Calendar and recorded in our database!')
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase)
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
@@ -323,19 +323,19 @@ class API(object):
                     else:
                         if not BotCommandObject.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
-                    
-                    # self.indexchosen=''
-                    # BotCommandObject.AddCourseCommand(chat_id)
-                    # self.parseddataindex = BotCommandObject.parseddataindex
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
                     except err.IsNotMondayError:
                         self.bot.sendMessage(chat_id, "The input date is not Monday!")
+                        self.bot.sendMessage(chat_id, self.failRecordDatabase)
                         self.bot.sendMessage(chat_id, "Please run /addfirstweek again and enter the Monday dates of your first week and first recess week!")
                     except err.ParseError:
+                        self.bot.sendMessage(chat_id, 'Unable to parse!')
                         self.bot.sendMessage(chat_id, self.failRecordDatabase)
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /addfirstweek again and enter the correct format!')
 
                     else:
                         self.bot.sendMessage(chat_id, self.successRecordDatabase)
@@ -463,6 +463,7 @@ class API(object):
                 BotCommand(query_data).RemoveEventCommand(chat_id)
             except:
                 self.bot.sendMessage(chat_id, "Cannot remove event, unknown error happens!")
+                self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
             else:
                 self.bot.sendMessage(chat_id, "The event %s has been removed!" %(query_data))
                 self.bot.sendMessage(chat_id, self.successRemoveDatabaseandCalendar)
@@ -754,7 +755,7 @@ class BotCommand(API):
         try:
             first_week, first_recess_week = self.str_text.split(';')
         except:
-            raise err.ParseError("Cannot Parse !")
+            raise err.ParseError
         first_week_obj = datetime.datetime.strptime(first_week, '%Y-%m-%d')
         first_recess_week_obj = datetime.datetime.strptime(first_recess_week, '%Y-%m-%d')
         # If it is Monday, then proceed

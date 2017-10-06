@@ -26,3 +26,8 @@ class QueryError(Error):
 class BrowserError(Error):
     """Raised when something is wrong during executing the splinter"""
     pass
+
+
+class OnlineCourseError(Error):
+    """Raised when online course is selected"""
+    pass

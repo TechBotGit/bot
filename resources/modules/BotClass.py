@@ -247,6 +247,20 @@ class API(object):
                     self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
                     self.bot.sendMessage(chat_id, 'For example: ')
                     self.bot.sendMessage(chat_id, '10')
+                    keyboard=[
+                        [
+                            '7', '8', '9'
+                        ],
+                        [
+                            '4', '5', '6'
+                        ],
+                        [
+                            '1', '2', '3'
+                        ]
+                    ]
+                    reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, one_time_keyboard=True)
+                    self.bot.sendMessage(chat_id, 'Press!', reply_markup=reply_markup)
+
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 

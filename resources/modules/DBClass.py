@@ -40,7 +40,7 @@ class DB(object):
         self._chat_id_list.append(value)
         return self._chat_id_list
     
-    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_event_id=None, other_event_id=None, override=True):
+    def update(self, chat_id, first_week=None, first_recess_week=None, student_type=None, course_code_event_id=None, other_event_id=None):
         """Description: Update exisiting workbook"""
         update_list = [chat_id, first_week, first_recess_week, student_type, course_code_event_id, other_event_id]
         if not self.isChatidExist(chat_id):
@@ -48,7 +48,7 @@ class DB(object):
         else:
             print('Updating existing table')
             update_list.remove(chat_id)
-            self.set_table_query(chat_id, update_list, override=override)
+            self.set_table_query(chat_id, update_list)
 
         self.wb_update.save(self.path_file)
 
@@ -105,7 +105,7 @@ class DB(object):
                 break
         return result_list
     
-    def set_table_query(self, chat_id, update_list, override=True):
+    def set_table_query(self, chat_id, update_list):
         """Description: Query table to set data with the corresponding chat_id \n
         Usage: Set the optional argument to the value that you want to set \n
         Example: set_table_query(<chat_id>, first_week='2017-8-14') \n

@@ -174,9 +174,9 @@ class GoogleAPI(object):
    
     def BusyInfo(self, query):
         busy = query['calendars']['primary']['busy']
-        start_busy = busy[0]['start']
-        end_busy = busy[0]['end']
-        return start_busy, end_busy
+        # start_busy = busy[0]['start']
+        # end_busy = busy[0]['end']
+        return busy
 
     def deleteEvent(self,InputtedeventID):
         self.service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()

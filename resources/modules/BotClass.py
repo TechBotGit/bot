@@ -33,6 +33,20 @@ class API(object):
 
         # Error raising
         self._error = 0
+
+        # Static message
+        self.suggestion = "What you probably want to do next: "
+        self.successRecordDatabase = 'Sucessfull! Your data has been recorded in our database!'
+        self.sucessRecordDatabaseandCalendar = 'Sucessfull! You data has been recorded in our database and your Google Calendar!'
+
+        self.successRemoveDatabase = 'Your data has been removed from our database!'
+        self.successRemoveDatabaseandCalendar = 'Your data has been removed from our database and your Google Calendar!'
+
+        self.failRecordDatabase = 'Your data is not recorded in our database!'
+        self.failRecordDatabaseandCalendar = 'Your data is not recorded in our database and your Google Calendar!'
+
+        self.failRemoveDatabase = 'Your data is not removed from our database!'
+        self.failRemoveDatabaseandCalendar = 'Your data is not removed from our database and your Google Calendar!'
     
     @property
     def db_chat(self):
@@ -77,7 +91,7 @@ class API(object):
 
     def handleAPI(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
-        print(content_type, chat_type, chat_id)  # debug msg received
+        print(content_type, chat_type, chat_id)
         response = self.bot.getUpdates()
         self.StoreChat(response)
 
@@ -110,7 +124,7 @@ class API(object):
                     
                     if not excel.isRecordExist(chat_id, other_event_id=True):
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     else:
                         course_code_dict = json.loads(course_code_str)
@@ -130,7 +144,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
                     if not excel.isRecordExist(chat_id, other_event_id=True):
                         self.bot.sendMessage(chat_id, "There is no event recorded in our database!")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     
                     else:
@@ -176,7 +190,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                     
                     else:
@@ -196,7 +210,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id, "There are no indexes registered in our database!")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")
                     else:
                         course_code_dict = json.loads(course_code_str)
@@ -209,7 +223,7 @@ class API(object):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your course code are as follows: ", reply_markup=keyboard)
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course (if any)")
                 
@@ -241,38 +255,27 @@ class API(object):
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addevent':
                     
                     try:
-                        trial = BotCommandObject.AddEventCommand(chat_id)
-                        1 / trial[0]
+                        BotCommandObject.AddEventCommand(chat_id)
 
                     except err.ParseError:
-                        self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
+                        self.bot.sendMessage(chat_id, 'Cannot addevent! Make sure to enter the correct format!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /addevent again with the correct time format")
                     
-                    except ZeroDivisionError:
-                        query = gc.GoogleAPI().FreeBusyQuery(trial[1],trial[2])
-                        info_busy = gc.GoogleAPI().BusyInfo(query)
-                        start_busy = info_busy[0]
-                        end_busy = info_busy[1]
-                        start_busy = start_busy[:19]
-                        end_busy = end_busy[:19]
-                        start_busy = datetime.datetime.strptime(start_busy,"%Y-%m-%dT%H:%M:%S")
-                        start_busy = start_busy.strftime("%Y-%m-%d %H:%M")
-                        end_busy = datetime.datetime.strptime(end_busy,"%Y-%m-%dT%H:%M:%S")
-                        end_busy = end_busy.strftime("%Y-%m-%d %H:%M")
-                        self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on ' + start_busy + ' until ' + end_busy + ' !')
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                    except err.IsNotFreeError:
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event with different datetime")
                     
                     except:
                         self.bot.sendMessage(chat_id, 'Unknown Error occured')
-                    # prevents crashing  of the full program as it limits the crash to this fuction only
+                    
                     else:
                         self.bot.sendMessage(chat_id, 'Successful! Your event has been added to Google Calendar and recorded in our database!')
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
-                    # for debugging
-                    # iso = BotCommandObject.AddEventCommand()
-                
+                        self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
+
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/removeevent'):
                     
                     try:
@@ -293,8 +296,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Wrong format!')
                     
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!',reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-                        self.bot.sendMessage(chat_id, "Your data is sucessfully recorded in our database!")
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase,reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
                         self.bot.sendMessage(chat_id, "Have you added your first week?")
                         self.bot.sendMessage(chat_id, "If you haven't, run /addfirstweek")
                         self.bot.sendMessage(chat_id, "If you have, then run /addcourse straight away!")
@@ -344,11 +346,10 @@ class API(object):
                         self.bot.sendMessage(chat_id, "The input date is not Monday!")
                         self.bot.sendMessage(chat_id, "Please run /addfirstweek again and enter the Monday dates of your first week and first recess week!")
                     except err.ParseError:
-                        self.bot.sendMessage(chat_id, "Error occurred while recording your data into our database!")
+                        self.bot.sendMessage(chat_id, self.failRecordDatabase)
 
                     else:
-                        self.bot.sendMessage(chat_id, 'Captured!')
-                        self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase)
                         self.bot.sendMessage(chat_id, "Have you set your student type?")
                         self.bot.sendMessage(chat_id, "If you haven't, run /setstudenttype")
                         self.bot.sendMessage(chat_id, "If you have, run /addcourse straight away!")
@@ -436,8 +437,8 @@ class API(object):
                         
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")
-                        self.bot.sendMessage(chat_id, "%s (index %s) has been added to your Google Calendar" %(course_code, query_data))
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, "%s (index %s) has been added to your Google Calendar and our database" %(course_code, query_data))
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add another course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
                         self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
@@ -445,8 +446,8 @@ class API(object):
                 else:
                     self.bot.answerCallbackQuery(query_id, text='It is an online course!')
                     self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
-                    self.bot.sendMessage(chat_id, "Your data is not recorded in our database!")
-                    self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                    self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                    self.bot.sendMessage(chat_id, self.suggestion)
                     self.bot.sendMessage(chat_id, "Run /addcourse to add another course (no online course, please)")
                     self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
                     self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
@@ -461,8 +462,8 @@ class API(object):
 
             else:
                 self.bot.answerCallbackQuery(query_id, text='Course removed! :)')
-                self.bot.sendMessage(chat_id, "The course with this index has been removed from your Google Calendar and our database!")
-                self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                self.bot.sendMessage(chat_id, self.successRemoveDatabaseandCalendar)
+                self.bot.sendMessage(chat_id, self.suggestion)
                 self.bot.sendMessage(chat_id, "Run /addcourse to replace your removed course, if you wish")
                 self.bot.sendMessage(chat_id, "Run /removecourse to remove another course")
                 self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
@@ -475,7 +476,8 @@ class API(object):
                 self.bot.sendMessage(chat_id, "Cannot remove event, unknown error happens!")
             else:
                 self.bot.sendMessage(chat_id, "The event %s has been removed!" %(query_data))
-                self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                self.bot.sendMessage(chat_id, self.successRemoveDatabaseandCalendar)
+                self.bot.sendMessage(chat_id, self.suggestion)
                 self.bot.sendMessage(chat_id, "Run /removeevent to remove another event")
                 self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                 self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
@@ -612,36 +614,56 @@ class BotCommand(API):
         end_date = str_input.end_date
         
         try:
-            query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
-            isFree = gc.GoogleAPI().isFree(query)
+            Google = gc.GoogleAPI()
+            query = Google.FreeBusyQuery(start_date_pretty, end_date_pretty)
+            isFree = Google.isFree(query)
+            info_busy = Google.BusyInfo(query)
+            
         except:
             raise err.ParseError("Unable to make query because of parsing error!")
+        
         # Get the query's busy info
         if not isFree:
             print("not free!")
-            return (0,start_date_pretty,end_date_pretty)
-            # raise ZeroDivisionError
-        # Call the GoogleAPI class and create event
-        current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
-        # load the event to the database
-        other_event_id_dict = {
-            current_event_id: {
-                'name': event_name,
-                'location': location,
-                'start': start_date_pretty,
-                'end': end_date_pretty
+            self.bot.sendMessage(chat_id, "Cannot add event!")
+            self.bot.sendMessage(chat_id, "You have %d events occuring between %s and %s" %(len(info_busy), start_date_pretty, end_date_pretty))
+            
+            for i in range(len(info_busy)):
+                # Ignoring timezones
+                ignored_tz_start_busy = hc.StringParseGoogleAPI(info_busy[i]['start']).IgnoreTimeZone()
+                ignored_tz_end_busy = hc.StringParseGoogleAPI(info_busy[i]['end']).IgnoreTimeZone()
+
+                # Make these pretty
+                start_busy_pretty = ignored_tz_start_busy.strftime('%Y-%m-%d %H:%M')
+                end_busy_pretty = ignored_tz_end_busy.strftime('%Y-%m-%d %H:%M')
+
+                # Send message to user
+                self.bot.sendMessage(chat_id, "%d. %s until %s" %(i + 1, start_busy_pretty, end_busy_pretty))
+            
+            # Raise the error
+            raise err.IsNotFreeError
+        
+        else:
+            # Call the GoogleAPI class and create event
+            current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+            # load the event to the database
+            other_event_id_dict = {
+                current_event_id: {
+                    'name': event_name,
+                    'location': location,
+                    'start': start_date_pretty,
+                    'end': end_date_pretty
+                }
             }
-        }
-        excel = db.DB()
-        existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
-        if excel.isRecordExist(chat_id, other_event_id=True):
-            existing_data_dict = json.loads(existing_data_str)
-            other_event_id_dict.update(existing_data_dict)
+            excel = db.DB()
+            existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
+            if excel.isRecordExist(chat_id, other_event_id=True):
+                existing_data_dict = json.loads(existing_data_str)
+                other_event_id_dict.update(existing_data_dict)
 
-        other_event_id_str = json.dumps(other_event_id_dict)
-        excel.update(chat_id, other_event_id=other_event_id_str)
-        return (1,start_date_pretty,end_date_pretty,current_event_id)
-
+            other_event_id_str = json.dumps(other_event_id_dict)
+            excel.update(chat_id, other_event_id=other_event_id_str)
+            
     def RemoveEventCommand(self, chat_id):
         query_data = self.str_text
         evt_name, start, end = query_data.split(';')

@@ -7,6 +7,7 @@ from oauth2client.file import Storage
 import httplib2
 import os
 import datetime
+import pytz
 import HelperClass as hc
 import DBClass as db
 
@@ -180,3 +181,18 @@ class GoogleAPI(object):
 
     def deleteEvent(self,InputtedeventID):
         self.service.events().delete(calendarId='primary', eventId=InputtedeventID).execute()
+
+    def getUpcomingEventList(self, num_event):
+        """Description: Getting upcoming events
+        Return: dictionary
+        """
+        tz = pytz.timezone('Asia/Singapore')
+        now = datetime.datetime.now()
+        tz_now = tz.localize(now)
+        tz_now_iso = tz_now.isoformat()
+        print('Getting the upcomming %d events' %(num_event))
+        eventsResult = self.service.events().list(
+            calendarId='primary', timeMin=tz_now_iso, maxResults=num_event, singleEvents=True,
+            orderBy='startTime').execute()
+        events = eventsResult.get('items', [])
+        return events

@@ -243,6 +243,10 @@ class API(object):
                     self.bot.sendMessage(chat_id, '2017-8-14;2017-10-2')
                     self.bot.sendMessage(chat_id, "Notes: These two dates are very important. If you enter the wrong dates and add your course (i.e. by running /addcourse), consequently, your course schedule will be shifted by one or more weeks!")
                 
+                elif msg_received == '/getupcomingevent':
+                    self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
+                    self.bot.sendMessage(chat_id, 'For example: ')
+                    self.bot.sendMessage(chat_id, '10')
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
@@ -372,6 +376,8 @@ class API(object):
                         self.bot.sendMessage(chat_id, "If you haven't, run /setstudenttype")
                         self.bot.sendMessage(chat_id, "If you have, run /addcourse straight away!")
                 
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/getupcomingevent':
+                    BotCommandObject.getUpcomingEvent(chat_id)
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -591,6 +597,7 @@ class BotCommand(API):
             '/addevent',
             '/removeevent',
             '/getevent',
+            '/getupcomingevent',
             '/isfree',
             '/addfirstweek',
             '/quit'
@@ -819,6 +826,38 @@ class BotCommand(API):
         else:
             raise err.IsNotMondayError('Date is not monday!')
     
+    def getUpcomingEvent(self, chat_id):
+        num_event = int(self.str_text)
+        self.bot.sendMessage(chat_id, 'Getting %s upcoming event(s) for you' %(num_event))
+        events = gc.GoogleAPI().getUpcomingEventList(num_event)
+        event_detail_list = []
+        inlines_keyboard = []
+        for event in events:
+            # Getting the start, end, and summary
+            start = event['start']['dateTime']
+            end = event['end']['dateTime']
+            summary = event['summary']
+
+            # Ignoring their timezones
+            ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
+            ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
+
+            # Making these pretty
+            ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
+            ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
+
+            # Combining all
+            complete_event = summary + ' (' + ignore_tz_start_pretty + '-' + ignore_tz_end_pretty + ')'
+            event_detail_list.append(complete_event)
+        
+        # Preparing inline keyboard
+        for event_detail in event_detail_list:
+            inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
+        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+        
+        # Send the message to user
+        self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
+        
 
 class IndexToGoogle(API):
     """Description: the main class to integrate indexes with Google Calendar"""

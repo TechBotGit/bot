@@ -131,7 +131,7 @@ class API(object):
                     self.bot.sendMessage(chat_id, "*Want to know what I can do?* Just run /help to see commands that I can do to help you", parse_mode='Markdown')
                 
                 elif msg_received == '/help':
-                    self.bot.sendMessage(chat_id, "Here are lists of commands that I can do:")
+                    self.bot.sendMessage(chat_id, "Here is the list of commands that I can do: ")
                     self.bot.sendMessage(chat_id, self.helpMessage, parse_mode="Markdown")
 
                 elif msg_received == '/addevent':
@@ -187,11 +187,11 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                         self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
                 
-                elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
+                elif msg_received == '/setstudenttype':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
 
                 elif msg_received == '/addcourse':
-                    self.bot.sendMessage(chat_id,'Sure thing.\n')
+                    self.bot.sendMessage(chat_id, 'Sure thing')
                     print(response)
                     check_db = db.DB()
                     first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
@@ -200,8 +200,8 @@ class API(object):
                     is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
                     if not all(is_satisfied):
                         # any of the requirements are not satisfied
-                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
-                        self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
+                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me enough data!')
+                        self.bot.sendMessage(chat_id,'Run /setstudenttype to set your student type, i.e. Full Time or Part Time')
                         self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
                         self.error = 1  # explicitly telling that there is an error
                     else:
@@ -270,7 +270,6 @@ class API(object):
                 elif msg_received == '/getupcomingevent':
                     self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
                     self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, '10')
                     keyboard=[
                         [
                             '7', '8', '9'
@@ -626,20 +625,18 @@ class BotCommand(API):
         super().__init__()
         self.command_list = [
             '/start',
+            '/help',
+            '/quit',
+            '/isfree',
+            '/getupcomingevent',
+            '/addevent',
+            '/removeevent',
+            '/getevent',
             '/addcourse',
             '/removecourse',
             '/getcourse',
             '/setstudenttype',
-            '/st',
-            '/setstudentype',
-            '/addevent',
-            '/removeevent',
-            '/getevent',
-            '/getupcomingevent',
-            '/isfree',
             '/addfirstweek',
-            '/quit',
-            '/help'
         ]
         self.str_text = str_text
         

@@ -280,39 +280,6 @@ class StringParseGoogleAPI(object):
         """
         ignored_tz = datetime.datetime.strptime(self.str_message[:19], '%Y-%m-%dT%H:%M:%S')
         return ignored_tz
-
-
-class StringParseIndex(object):
-    
-    def __init__(self, str_message):
-        self.str_message = str_message
-        self._course_code = ''
-        self._index = ''
-    
-    @property
-    def course_code(self):
-        return self._course_code
-
-    @property
-    def index(self):
-        return self._index
-
-    @course_code.setter
-    def course_code(self, value):
-        self._course_code = value
-        return self._course_code
-
-    @index.setter
-    def index(self, value):
-        self._index = value
-        return self._index
-
-    def Parse(self):
-        for l in self.str_message:
-            if l == ' ':
-                continue
-            else:
-                self.course_code += l
         
 
 class StringParseStudentType(object):

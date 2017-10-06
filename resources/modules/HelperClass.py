@@ -185,33 +185,6 @@ class StringParseGoogleAPI(object):
         self.start_date = tz_start_time_obj.isoformat()
         self.end_date = tz_end_time_obj.isoformat()
 
-        # if len(str_input)!=4:
-        #     raise ValueError
-        # for i in range(len(str_input)):
-        #     if i==0:
-        #         self.event_name=str_input[i]
-
-        #     elif i==1:
-        #         self.location=str_input[i]
-
-        #     elif i==2:
-        #         self.start_time_cantik = str_input[i]
-        #         print(self.start_time_cantik)
-        #         obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
-        #         tz = pytz.timezone('Asia/Singapore')
-        #         tz_obj_date = tz.localize(obj_date)
-        #         iso_date = tz_obj_date.isoformat()
-        #         self.start_date = iso_date
-            
-        #     elif i==3:
-        #         self.end_time_cantik = str_input[i]
-        #         print(self.end_time_cantik)
-        #         obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
-        #         tz = pytz.timezone('Asia/Singapore')
-        #         tz_obj_date = tz.localize(obj_date)
-        #         iso_date = tz_obj_date.isoformat()
-        #         self.end_date = iso_date
-
     def ParseDate(self):
         """Description: For freebusy query"""
         obj_date = datetime.datetime.strptime(self.str_message, '%Y-%m-%d %H:%M')

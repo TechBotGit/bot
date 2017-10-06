@@ -276,17 +276,6 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
                         self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
 
-                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/removeevent'):
-                    
-                    try:
-                        BotCommandObject.RemoveEventCommand()
-                    
-                    except:
-                        self.bot.sendMessage(chat_id, 'Error occured! Have you entered the correct event ID?')
-                    
-                    else:
-                        self.bot.sendMessage(chat_id, 'Successful!')
-
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
                     try:

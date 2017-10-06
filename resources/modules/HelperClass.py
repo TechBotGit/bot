@@ -192,19 +192,6 @@ class StringParseGoogleAPI(object):
         tz_obj_date = tz.localize(obj_date)
         iso_date = tz_obj_date.isoformat()
         return iso_date
-
-    def ParseDateRange(self):
-        """Description: For isFree command"""
-        semicolon = []
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.start_date += l
-                else:
-                    self.end_date += l
-            else:
-                semicolon.append(';')
-                continue
     
     def ParseDateIndex(self, date_string_range):
         """Description: to parse a date range from HTML, e.g. 1430-1530 into 14:30:00 and 15:30:00

@@ -861,7 +861,7 @@ class BotCommand(API):
             ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
 
             # Combining all
-            complete_event = summary + ' (' + ignore_tz_start_pretty + '-' + ignore_tz_end_pretty + ')'
+            complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
             event_detail_list.append(complete_event)
         
         # Preparing inline keyboard

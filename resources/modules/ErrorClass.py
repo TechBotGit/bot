@@ -21,3 +21,8 @@ class IsNotFreeError(Error):
 class QueryError(Error):
     """Raised when the format is correct, but failed to perform Google Calendar queries"""
     pass
+
+
+class BrowserError(Error):
+    """Raised when something is wrong during executing the splinter"""
+    pass

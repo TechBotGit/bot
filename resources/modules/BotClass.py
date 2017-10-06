@@ -309,7 +309,16 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Cannot perform query!')
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, 'Run /isfree again with the correct date format')
-            
+                    
+                    except err.QueryError:
+                        self.bot.sendMessage(chat_id, "Your format is correct, however we cannot perform the query to your Google Account")
+                        self.bot.sendMessage(chat_id, "Chances are: ")
+                        self.bot.sendMessage(chat_id, '1. You have problems with your API keys')
+                        self.bot.sendMessage(chat_id, '2. You entered a bad date, e.g. your end time is smaller than your start time')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your API problem')
+                        self.bot.sendMessage(chat_id, 'Run /addevent again and give me a reasonable date interval')
+                    
                     except err.IsNotFreeError:
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /isfree again with different datetime")
@@ -694,9 +703,12 @@ class BotCommand(API):
             raise err.ParseError
 
         # Call the GoogleAPI class and check isFree
-        query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
+        try:
+            query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
+            isFree = gc.GoogleAPI().isFree(query)
+        except:
+            raise err.QueryError
 
-        isFree = gc.GoogleAPI().isFree(query)
         self.bot.sendMessage(chat_id, isFree)
         # Get the query's busy info
         if not isFree:

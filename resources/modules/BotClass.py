@@ -268,6 +268,15 @@ class API(object):
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event with different datetime")
                     
+                    except err.QueryError:
+                        self.bot.sendMessage(chat_id, "Your format is correct, however we cannot perform the query to your Google Account")
+                        self.bot.sendMessage(chat_id, "Chances are: ")
+                        self.bot.sendMessage(chat_id, '1. You have problems with your API keys')
+                        self.bot.sendMessage(chat_id, '2. You entered a bad date, e.g. your end time is smaller than your start time')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your API problem')
+                        self.bot.sendMessage(chat_id, 'Run /addevent again and give me a reasonable date interval')
+                    
                     except:
                         self.bot.sendMessage(chat_id, 'Unknown Error occured')
                     
@@ -597,29 +606,35 @@ class BotCommand(API):
         return self.str_text in self.command_list
 
     def AddEventCommand(self, chat_id):
-        str_input = hc.StringParseGoogleAPI(self.str_text)
-        str_input.ParseEvent()
-        event_name = str_input.event_name
-        location = str_input.location
-        start_date = str_input.start_date
-        start_date_pretty = str_input.start_time_cantik
-        end_date_pretty = str_input.end_time_cantik
-        end_date = str_input.end_date
+        try:
+            # Parsing
+            str_input = hc.StringParseGoogleAPI(self.str_text)
+            str_input.ParseEvent()
+            event_name = str_input.event_name
+            location = str_input.location
+            start_date = str_input.start_date
+            start_date_pretty = str_input.start_time_cantik
+            end_date_pretty = str_input.end_time_cantik
+            end_date = str_input.end_date
+
+        except:
+            raise err.ParseError
         
         try:
+            # Performing queries
             Google = gc.GoogleAPI()
             query = Google.FreeBusyQuery(start_date_pretty, end_date_pretty)
             isFree = Google.isFree(query)
             info_busy = Google.BusyInfo(query)
-            
+        
         except:
-            raise err.ParseError("Unable to make query because of parsing error!")
+            raise err.QueryError('Unable to perform query')
         
         # Get the query's busy info
         if not isFree:
             print("not free!")
             self.bot.sendMessage(chat_id, "Cannot add event!")
-            self.bot.sendMessage(chat_id, "You have %d events occuring between %s and %s" %(len(info_busy), start_date_pretty, end_date_pretty))
+            self.bot.sendMessage(chat_id, "You have %d event(s) occuring between %s and %s" %(len(info_busy), start_date_pretty, end_date_pretty))
             
             for i in range(len(info_busy)):
                 # Ignoring timezones
@@ -687,7 +702,7 @@ class BotCommand(API):
         if not isFree:
             info_busy = gc.GoogleAPI().BusyInfo(query)
             self.bot.sendMessage(chat_id, 'You are busy on this time interval!')
-            self.bot.sendMessage(chat_id, "You have %d events occuring between %s and %s" %(len(info_busy), start_date_query, end_date_query))
+            self.bot.sendMessage(chat_id, "You have %d event(s) occuring between %s and %s" %(len(info_busy), start_date_query, end_date_query))
             for i in range(len(info_busy)):
                 # Ignoring timezones
                 ignored_tz_start_busy = hc.StringParseGoogleAPI(info_busy[i]['start']).IgnoreTimeZone()

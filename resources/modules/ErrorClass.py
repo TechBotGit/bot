@@ -16,3 +16,8 @@ class ParseError(Error):
 class IsNotFreeError(Error):
     """Raised when not free"""
     pass
+
+
+class QueryError(Error):
+    """Raised when the format is correct, but failed to perform Google Calendar queries"""
+    pass

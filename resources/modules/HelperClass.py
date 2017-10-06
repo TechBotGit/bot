@@ -321,6 +321,7 @@ class StringParseGoogleAPI(object):
         ignored_tz = datetime.datetime.strptime(self.str_message[:19], '%Y-%m-%dT%H:%M:%S')
         return ignored_tz
 
+
 class StringParseIndex(object):
     
     def __init__(self, str_message):

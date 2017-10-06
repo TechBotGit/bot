@@ -338,6 +338,14 @@ class API(object):
                         BotCommandObject.AddCourseCommand(chat_id)
                         self.parseddataindex = BotCommandObject.parseddataindex
                     
+                    except err.BrowserError:
+                        self.bot.sendMessage(chat_id, 'Cannot access the course!')
+                        self.bot.sendMessage(chat_id, 'Chances are: ')
+                        self.bot.sendMessage(chat_id, '1. You have problems with your browser driver (e.g. chromedriver for Google Chrome)')
+                        self.bot.sendMessage(chat_id, '2. You entered a course code that does not exist')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your browser problem')
+                        self.bot.sendMessage(chat_id, 'Run /addcourse and enter the correct course code')
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
@@ -730,12 +738,9 @@ class BotCommand(API):
         return isFree
 
     def AddCourseCommand(self,chat_id):
-        str_input = hc.StringParseIndex(self.str_text)
-        str_input.Parse()
-        
         global course_code  # set course_code to global!
-        course_code = str_input.course_code.upper()
-        # index = str_input.index
+        course_code = self.str_text.replace(' ', '').upper()
+        
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
         is_course_code_exist = excel.isRecordExist(chat_id, course_code_event_id=True)
@@ -748,8 +753,13 @@ class BotCommand(API):
         course_code_dict = json.loads(course_code_str_update)
         
         if not is_course_code_exist or course_code not in list(course_code_dict.keys()):
-            self.getdata.start(course_code, student_type)
-            self.parseddataindex=self.getdata.parsedatahml()
+            # Splinter in action
+            try:
+                self.getdata.start(course_code, student_type)
+                self.parseddataindex=self.getdata.parsedatahml()
+            except:
+                raise err.BrowserError
+
             inlines_keyboard = []
             for i in range(len(self.getdata.indexlist)):
                 inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])

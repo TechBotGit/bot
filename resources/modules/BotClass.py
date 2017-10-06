@@ -233,6 +233,8 @@ class API(object):
                 elif msg_received == '/isfree':
                     self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
+                    self.bot.sendMessage(chat_id, 'For example: ')
+                    self.bot.sendMessage(chat_id, '2017-10-09 08:00;2017-10-09 16:00')
                 
                 elif msg_received == '/addfirstweek':
                     self.bot.sendMessage(chat_id, "Please enter the Monday dates of your first week and first recess week using the following format: ")
@@ -292,21 +294,22 @@ class API(object):
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
-
-                        isFree = BotCommandObject.IsFreeCommand()
+                        BotCommandObject.IsFreeCommand(chat_id)
                     
-                    except:
-                        self.bot.sendMessage(chat_id, 'Cannot check! Make sure to enter the correct format!')
-                    
+                    except err.ParseError:
+                        self.bot.sendMessage(chat_id, 'Cannot perform query!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /isfree again with the correct date format')
+            
+                    except err.IsNotFreeError:
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /isfree again with different datetime")
                     else:
-                        self.bot.sendMessage(chat_id, isFree)
-                        if isFree:
-                            self.bot.sendMessage(chat_id, 'You are free on this time interval')
-                        else:
-                            start_busy = BotCommandObject.start_busy
-                            end_busy = BotCommandObject.end_busy
-                            self.bot.sendMessage(chat_id, 'You are busy on this interval!')
-                            self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
+                        self.bot.sendMessage(chat_id, 'You are free on this time interval')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /addevent to add an event for this interval time')
+                        self.bot.sendMessage(chat_id, 'Run /getevent to list all events you have added')
+                        self.bot.sendMessage(chat_id, 'Run /isfree again to check for another time')
                 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addcourse' and not self.error:
                     
@@ -669,21 +672,34 @@ class BotCommand(API):
         excel.update(chat_id, other_event_id=other_event_id_update_str)
         gc.GoogleAPI().deleteEvent(evt_id)
 
-    def IsFreeCommand(self):
-        str_input = hc.StringParseGoogleAPI(self.str_text)
-        str_input.ParseDateRange()
-        start_date_query = str_input.start_date
-        end_date_query = str_input.end_date
+    def IsFreeCommand(self, chat_id):
+        try:
+            start_date_query, end_date_query = self.str_text.split(';')
+        except:
+            raise err.ParseError
 
         # Call the GoogleAPI class and check isFree
         query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
 
         isFree = gc.GoogleAPI().isFree(query)
+        self.bot.sendMessage(chat_id, isFree)
         # Get the query's busy info
         if not isFree:
             info_busy = gc.GoogleAPI().BusyInfo(query)
-            self.start_busy = info_busy[0]
-            self.end_busy = info_busy[1]
+            self.bot.sendMessage(chat_id, 'You are busy on this time interval!')
+            self.bot.sendMessage(chat_id, "You have %d events occuring between %s and %s" %(len(info_busy), start_date_query, end_date_query))
+            for i in range(len(info_busy)):
+                # Ignoring timezones
+                ignored_tz_start_busy = hc.StringParseGoogleAPI(info_busy[i]['start']).IgnoreTimeZone()
+                ignored_tz_end_busy = hc.StringParseGoogleAPI(info_busy[i]['end']).IgnoreTimeZone()
+
+                # Make these pretty
+                start_busy_pretty = ignored_tz_start_busy.strftime('%Y-%m-%d %H:%M')
+                end_busy_pretty = ignored_tz_end_busy.strftime('%Y-%m-%d %H:%M')
+
+                # Send message to user
+                self.bot.sendMessage(chat_id, "%d. %s until %s" %(i + 1, start_busy_pretty, end_busy_pretty))
+            raise err.IsNotFreeError
         return isFree
 
     def AddCourseCommand(self,chat_id):

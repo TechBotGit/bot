@@ -47,7 +47,29 @@ class API(object):
 
         self.failRemoveDatabase = 'Your data is not removed from our database!'
         self.failRemoveDatabaseandCalendar = 'Your data is not removed from our database and your Google Calendar!'
-    
+
+        # Help message
+        self.helpMessage = "*Basic Commands* \n"
+        self.helpMessage += "/start - Send welcome message \n"
+        self.helpMessage += "/help - list available commands \n"
+        self.helpMessage += "/quit - Send good bye message \n\n"
+
+        self.helpMessage += "*General Commands* \n"
+        self.helpMessage += "/isfree - To check whether you are free at a certain time interval \n"
+        self.helpMessage += "/getupcomingevent - List your upcoming events \n\n"
+
+        self.helpMessage += "*Event-related Commands* \n"
+        self.helpMessage += "/addevent - Add an event to your Google Calendar \n"
+        self.helpMessage += "/removeevent - Remove an event from your Google Calendar \n"
+        self.helpMessage += "/getevent - List all events that you have added \n\n"
+
+        self.helpMessage += "*Course-related Commands* \n"
+        self.helpMessage += "/addcourse - Add a course schedule to your Google Calendar \n"
+        self.helpMessage += "/removecourse - Remove a course schedule from your Google Calendar \n"
+        self.helpMessage += "/getcourse - List all courses that you have added \n"
+        self.helpMessage += "/setstudenttype - Set your student type (Full Time or Part Time) \n"
+        self.helpMessage += "/addfirstweek - Add the first weekday, i.e. Monday, of your first week and recess week \n"
+        
     @property
     def db_chat(self):
         return self._db_chat
@@ -104,12 +126,14 @@ class API(object):
             if BotCommand(msg_received).isValidCommand():
                 # Send users a message related to the command
                 if msg_received == '/start':
-                    self.bot.sendMessage(chat_id, "Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)")
-                    self.bot.sendMessage(chat_id, "Want to add course index? Just run /addcourse")
-                    self.bot.sendMessage(chat_id, "Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.")
-                    self.bot.sendMessage(chat_id, "Want to know me more? Just ask me whatever you want and hope I can understand :)")
-                    self.bot.sendMessage(chat_id, "To know more commands just type forward slash '/' to see what's available")
+                    self.bot.sendMessage(chat_id, "Hi, %s! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!" %(msg['chat']['first_name']))
+                    self.bot.sendMessage(chat_id, "*Want to know me more?* Just ask me whatever you want and hope I can understand", parse_mode='Markdown')
+                    self.bot.sendMessage(chat_id, "*Want to know what I can do?* Just run /help to see commands that I can do to help you", parse_mode='Markdown')
                 
+                elif msg_received == '/help':
+                    self.bot.sendMessage(chat_id, "Here are lists of commands that I can do:")
+                    self.bot.sendMessage(chat_id, self.helpMessage, parse_mode="Markdown")
+
                 elif msg_received == '/addevent':
                     msg_reply = "Okay send me the details in following format:"
                     str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
@@ -614,7 +638,8 @@ class BotCommand(API):
             '/getupcomingevent',
             '/isfree',
             '/addfirstweek',
-            '/quit'
+            '/quit',
+            '/help'
         ]
         self.str_text = str_text
         

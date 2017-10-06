@@ -136,10 +136,11 @@ class API(object):
 
                 elif msg_received == '/addevent':
                     msg_reply = "Okay send me the details in following format:"
-                    str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
+                    str_format = "*Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM*"
                     self.bot.sendMessage(chat_id, msg_reply)
-                    self.bot.sendMessage(chat_id, str_format)
-                    self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
+                    self.bot.sendMessage(chat_id, str_format, parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "*For example:*", parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "_Party;NTU;2017-10-08 20:00;2017-10-08 22:00_", parse_mode="Markdown")
                     print(response)
                 
                 elif msg_received == '/removeevent':
@@ -181,7 +182,7 @@ class API(object):
                         for i in evt_name_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-                        self.bot.sendMessage(chat_id, "Your events are as follows in the format: event_name;start_time;end_time", reply_markup=keyboard)
+                        self.bot.sendMessage(chat_id, "Your events are as follows in the format: \n *event_name;start_time;end_time*", parse_mode="Markdown", reply_markup=keyboard)
                         self.bot.sendMessage(chat_id, "What you probably want do next: ")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
@@ -257,19 +258,18 @@ class API(object):
                 elif msg_received == '/isfree':
                     self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
-                    self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, '2017-10-09 08:00;2017-10-09 16:00')
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '2017-10-09 08:00;2017-10-09 16:00', parse_mode="Markdown")
                 
                 elif msg_received == '/addfirstweek':
                     self.bot.sendMessage(chat_id, "Please enter the Monday dates of your first week and first recess week using the following format: ")
-                    self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
-                    self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, '2017-8-14;2017-10-2')
-                    self.bot.sendMessage(chat_id, "Notes: These two dates are very important. If you enter the wrong dates and add your course (i.e. by running /addcourse), consequently, your course schedule will be shifted by one or more weeks!")
+                    self.bot.sendMessage(chat_id, "*FirstWeek;FirstRecessWeek*", parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '_2017-8-14;2017-10-2_', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "*Notes*: _These two dates are very important. If you enter the wrong dates and add your course (i.e. by running /addcourse), consequently, your course schedule will be shifted by one or more weeks!_", parse_mode="Markdown")
                 
                 elif msg_received == '/getupcomingevent':
                     self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
-                    self.bot.sendMessage(chat_id, 'For example: ')
                     keyboard=[
                         [
                             '7', '8', '9'

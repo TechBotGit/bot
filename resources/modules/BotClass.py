@@ -475,7 +475,7 @@ class API(object):
                 BotCommand(query_data).RemoveCourseCommand(chat_id)
             
             except:
-                self.bot.sendMessage(chat_id, 'Cannot remove course!')
+                self.bot.sendMessage(chat_id, self.failRemoveDatabaseandCalendar)
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
 
             else:

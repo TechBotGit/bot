@@ -412,12 +412,10 @@ class API(object):
     def on_callback_query(self, msg):
         query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, chat_id, query_data)
-        print(query_data)
         if msg['message']['text'].find('Please choose your index below')!=-1:
             try:
-                self.indexchosen=query_data
-                # print(query_data)
-                BotFindIndexObject=hc.chooseindex()
+                self.indexchosen = query_data
+                BotFindIndexObject = hc.chooseindex()
                 BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             except:
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
@@ -425,7 +423,7 @@ class API(object):
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index received! :)')
 
-            BotFindIndexObject=hc.chooseindex()
+            BotFindIndexObject = hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             course_code_dict = {
                 course_code: {
@@ -441,10 +439,20 @@ class API(object):
                 course_code_dict.update(data_dict)
 
             if not BotCommandObject.error:
-                # Initialize pre requisite before adding to Google Calendar
-                toGoogle = IndexToGoogle(chat_id, complete_data)
-                event_list = toGoogle.get_event()
-                if event_list is not None:  # Not an online course
+                # If online course is selected
+                if complete_data['recurrence'][0].find('Online') != -1:
+                    self.bot.answerCallbackQuery(query_id, text='It is an online course!')
+                    self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
+                    self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                    self.bot.sendMessage(chat_id, self.suggestion)
+                    self.bot.sendMessage(chat_id, "Run /addcourse to add another course (no online course, please)")
+                    self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
+                    self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
+                
+                else:
+                    # Initialize pre requisite before adding to Google Calendar
+                    toGoogle = IndexToGoogle(chat_id, complete_data)
+                    event_list = toGoogle.get_event()
                     # Loads the dictionary to the database
                     course_code_dict_str = json.dumps(course_code_dict)
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
@@ -460,15 +468,6 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /addcourse to add another course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
                         self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
-                        
-                else:
-                    self.bot.answerCallbackQuery(query_id, text='It is an online course!')
-                    self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
-                    self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
-                    self.bot.sendMessage(chat_id, self.suggestion)
-                    self.bot.sendMessage(chat_id, "Run /addcourse to add another course (no online course, please)")
-                    self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
-                    self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
                     
         elif msg['message']['text'].find('Please click the course that you want to remove!') != -1:
             try:
@@ -756,7 +755,7 @@ class BotCommand(API):
             # Splinter in action
             try:
                 self.getdata.start(course_code, student_type)
-                self.parseddataindex=self.getdata.parsedatahml()
+                self.parseddataindex = self.getdata.parsedatahml()
             except:
                 raise err.BrowserError
 
@@ -835,25 +834,22 @@ class IndexToGoogle(API):
         value_list = list(self.index_dictionary.values())
         key_list = list(self.index_dictionary.keys())
         event_list = [[] for event in range(len(value_list[0]))]  # initialize list of lists
-        if len(event_list) != 1:  # not online course
-            ParseObject = hc.StringParseGoogleAPI(self.index_dictionary)
-            for i in range(len(value_list[0])):
-                # Change the time format
-                time = self.index_dictionary['time'][i]
-                formated_time = ParseObject.ParseDateIndex(time)
-                self.index_dictionary['time'][i] = formated_time
+        ParseObject = hc.StringParseGoogleAPI(self.index_dictionary)
+        for i in range(len(value_list[0])):
+            # Change the time format
+            time = self.index_dictionary['time'][i]
+            formated_time = ParseObject.ParseDateIndex(time)
+            self.index_dictionary['time'][i] = formated_time
 
-                # Change the day format
-                day = self.index_dictionary['day'][i]
-                # Setting the value
-                ParseObject.day = day
-                # Assign it to the list
-                self.index_dictionary['day'][i] = ParseObject.day
-                for key in key_list:
-                    event_list[i].append(self.index_dictionary[key][i])
-            return event_list
-        else:  # an online course
-            return None
+            # Change the day format
+            day = self.index_dictionary['day'][i]
+            # Setting the value
+            ParseObject.day = day
+            # Assign it to the list
+            self.index_dictionary['day'][i] = ParseObject.day
+            for key in key_list:
+                event_list[i].append(self.index_dictionary[key][i])
+        return event_list
 
     def PreCreateEventIndex(self, evt_list):
         """Description: preparation to add the event from evt_list to Google Calendar"""

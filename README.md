@@ -132,7 +132,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 
 ## Chapter 1 Introduction
-> [Back to contents](#contents-1)
+> [Back to contents](#contents)
 
 ### 1.1 Overview
 
@@ -147,7 +147,7 @@ Hence, you can find common free time to get together for various meetings.
 
 
 ## Chapter 2 Getting Started
-> [Back to contents](#contents-1)
+> [Back to contents](#contents)
 
 Before you can run the bot, several settings are required. 
 
@@ -201,7 +201,7 @@ quit - This quits the bot.
 After you have done this, everytime you type in **/**, the bot will suggest commands you might want to use. 
 
 ### Chapter 3 List of Commands Available
-> [Back to contents](#contents-1)
+> [Back to contents](#contents)
 
 #### 3.01 /start
 This command is used to initially start the bot. Type **/start** in the telegram bot chat and the bot will greet you and tell you what it can do. 
@@ -244,7 +244,7 @@ This command displays all the commands present in the bot
 This quits the bot.
 
 ## Chapter 4 Inputing Course Indexes and Finding Common Free Time
-> [Back to contents](#contents-1)
+> [Back to contents](#contents)
 
 
 ### 4.1 Inputting Your Course
@@ -525,7 +525,7 @@ Course-related Commands
 ```
 
 ## Chapter 5 Further Information
-> [Back to contents](#contents-1)
+> [Back to contents](#contents)
 ### Information 1: 
 
 For any commands that requires you to input a **date**:

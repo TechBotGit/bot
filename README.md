@@ -79,7 +79,7 @@ To know more commands just type forward slash '/' to see what's available
 
 #### 2.6 Updating the List of Commands of Your Bot
 
-### Chapter 3 List of Commands Available
+### [Chapter 3 List of Commands Available](#chapter-3-list-of-commands-available-1)
 #### 3.01 /start and /
 
 #### 3.02 /addevent
@@ -102,7 +102,7 @@ To know more commands just type forward slash '/' to see what's available
 
 #### 3.11 /quit
 
-### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
+### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-4-inputing-course-indexes-and-finding-common-free-time-1)
 
 ### 4.1 Inputting Your Course
 

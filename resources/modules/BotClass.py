@@ -375,9 +375,11 @@ class API(object):
                         self.bot.sendMessage(chat_id, '2. You entered a course code that does not exist')
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, 'Resolve your browser problem')
-                        self.bot.sendMessage(chat_id, 'Run /addcourse and enter the correct course code')
+                        self.bot.sendMessage(chat_id, 'Run /addcourse again and enter the correct course code')
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /addcourse again and enter the correct course code")
 
                     else:
                         if not BotCommandObject.error:
@@ -778,7 +780,7 @@ class BotCommand(API):
     def AddCourseCommand(self,chat_id):
         global course_code  # set course_code to global!
         course_code = self.str_text.replace(' ', '').upper()
-        if len(course_code)<3:
+        if len(course_code) < 3:
             raise err.ParseError
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
@@ -810,7 +812,7 @@ class BotCommand(API):
             self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
             self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
             self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removecourse!')
-            self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and type the correct course code")
+            self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and enter the correct course code")
 
     def RemoveCourseCommand(self, chat_id):
         course_code = self.str_text

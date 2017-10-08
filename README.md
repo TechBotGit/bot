@@ -74,7 +74,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 #### 2.5 Updating the List of Commands of Your Bot
 
-### Chapter 3 List of Commands Available
+### [Chapter 3 List of Commands Available](#chapter-3-list-of-commands-available-1)
 #### 3.01 /start
 
 #### 3.02 /addevent
@@ -101,7 +101,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 #### 3.13 /quit
 
-### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
+### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-4-inputing-course-indexes-and-finding-common-free-time-1)
 
 ### 4.1 Inputting Your Course
 
@@ -126,7 +126,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 ### 4.9 To See All The Commands You Have In Your Bot
 
-### Chapter 5 : Further Information
+### [Chapter 5 Further Information](#chapter-5-further-information-1)
 
 
 
@@ -520,7 +520,7 @@ Course-related Commands
 /addfirstweek - Add the first weekday, i.e. Monday, of your first week and recess week
 ```
 
-## Chapter 5: Further Information
+## Chapter 5 Further Information
 ### Information 1: 
 
 For any commands that requires you to input a **date**:

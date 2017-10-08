@@ -75,7 +75,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 #### 2.5 Updating the List of Commands of Your Bot
 
 ### Chapter 3 List of Commands Available
-#### 3.01 /start and /
+#### 3.01 /start
 
 #### 3.02 /addevent
 

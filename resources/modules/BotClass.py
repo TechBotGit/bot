@@ -536,6 +536,8 @@ class API(object):
                 self.bot.sendMessage(chat_id, "Run /removeevent to remove another event")
                 self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                 self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
+        elif msg['message']['text'].find("Your course code are as follows") != -1:
+            self.bot.answerCallbackQuery(query_id,'')
         else:
             self.bot.answerCallbackQuery(query_id, text='Got it :)')
             

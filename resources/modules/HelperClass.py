@@ -176,33 +176,21 @@ class StringParseGoogleAPI(object):
         return self._end_time_cantik
 
     def ParseEvent(self):
-        str_input= self.str_message.split(';')
-        if len(str_input)!=4:
-            raise ValueError
-        for i in range(len(str_input)):
-            if i==0:
-                self.event_name=str_input[i]
+        # Splitting
+        self.event_name, self.location, self.start_time_cantik, self.end_time_cantik = self.str_message.split(';')
 
-            elif i==1:
-                self.location=str_input[i]
+        # Change the dates into objects
+        start_time_cantik_obj = datetime.datetime.strptime(self.start_time_cantik, '%Y-%m-%d %H:%M')
+        end_time_cantik_obj = datetime.datetime.strptime(self.end_time_cantik, '%Y-%m-%d %H:%M')
 
-            elif i==2:
-                self.start_time_cantik = str_input[i]
-                print(self.start_time_cantik)
-                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
-                tz = pytz.timezone('Asia/Singapore')
-                tz_obj_date = tz.localize(obj_date)
-                iso_date = tz_obj_date.isoformat()
-                self.start_date = iso_date
-            
-            elif i==3:
-                self.end_time_cantik = str_input[i]
-                print(self.end_time_cantik)
-                obj_date = datetime.datetime.strptime(str_input[i], '%Y-%m-%d %H:%M')
-                tz = pytz.timezone('Asia/Singapore')
-                tz_obj_date = tz.localize(obj_date)
-                iso_date = tz_obj_date.isoformat()
-                self.end_date = iso_date
+        # Embedding Timzones
+        tz = pytz.timezone('Asia/Singapore')
+        tz_start_time_obj = tz.localize(start_time_cantik_obj)
+        tz_end_time_obj = tz.localize(end_time_cantik_obj)
+
+        # Changing into ISO
+        self.start_date = tz_start_time_obj.isoformat()
+        self.end_date = tz_end_time_obj.isoformat()
 
     def ParseDate(self):
         """Description: For freebusy query"""
@@ -211,19 +199,6 @@ class StringParseGoogleAPI(object):
         tz_obj_date = tz.localize(obj_date)
         iso_date = tz_obj_date.isoformat()
         return iso_date
-
-    def ParseDateRange(self):
-        """Description: For isFree command"""
-        semicolon = []
-        for l in self.str_message:
-            if l != ';':
-                if len(semicolon) == 0:
-                    self.start_date += l
-                else:
-                    self.end_date += l
-            else:
-                semicolon.append(';')
-                continue
     
     def ParseDateIndex(self, date_string_range):
         """Description: to parse a date range from HTML, e.g. 1430-1530 into 14:30:00 and 15:30:00
@@ -305,38 +280,13 @@ class StringParseGoogleAPI(object):
         date_string_complete = ','.join(date_list)
         return date_string_complete
 
-
-class StringParseIndex(object):
-    
-    def __init__(self, str_message):
-        self.str_message = str_message
-        self._course_code = ''
-        self._index = ''
-    
-    @property
-    def course_code(self):
-        return self._course_code
-
-    @property
-    def index(self):
-        return self._index
-
-    @course_code.setter
-    def course_code(self, value):
-        self._course_code = value
-        return self._course_code
-
-    @index.setter
-    def index(self, value):
-        self._index = value
-        return self._index
-
-    def Parse(self):
-        for l in self.str_message:
-            if l == ' ':
-                continue
-            else:
-                self.course_code += l
+    def IgnoreTimeZone(self):
+        """Description Ignoring Timzones during converting from strings to datetime objects
+        self.str_message must be the datestring in the ISOFORMAT, e.g. 2017-10-09T11:30:00+08:00
+        return: datetime
+        """
+        ignored_tz = datetime.datetime.strptime(self.str_message[:19], '%Y-%m-%dT%H:%M:%S')
+        return ignored_tz
         
 
 class StringParseStudentType(object):

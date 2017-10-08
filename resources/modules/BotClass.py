@@ -9,6 +9,7 @@ from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, Reply
 import GoogleapiClass as gc
 import HelperClass as hc
 import DBClass as db
+import ErrorClass as err
 
 
 class API(object):
@@ -32,7 +33,43 @@ class API(object):
 
         # Error raising
         self._error = 0
-    
+
+        # Static message
+        self.suggestion = "What you probably want to do next: "
+        self.successRecordDatabase = 'Sucessfull! Your data has been recorded in our database!'
+        self.successRecordDatabaseandCalendar = 'Sucessfull! You data has been recorded in our database and your Google Calendar!'
+
+        self.successRemoveDatabase = 'Your data has been removed from our database!'
+        self.successRemoveDatabaseandCalendar = 'Your data has been removed from our database and your Google Calendar!'
+
+        self.failRecordDatabase = 'Your data is not recorded in our database!'
+        self.failRecordDatabaseandCalendar = 'Your data is not recorded in our database and your Google Calendar!'
+
+        self.failRemoveDatabase = 'Your data is not removed from our database!'
+        self.failRemoveDatabaseandCalendar = 'Your data is not removed from our database and your Google Calendar!'
+
+        # Help message
+        self.helpMessage = "*Basic Commands* \n"
+        self.helpMessage += "/start - Send welcome message \n"
+        self.helpMessage += "/help - list available commands \n"
+        self.helpMessage += "/quit - Send good bye message \n\n"
+
+        self.helpMessage += "*General Commands* \n"
+        self.helpMessage += "/isfree - To check whether you are free at a certain time interval \n"
+        self.helpMessage += "/getupcomingevent - List your upcoming events \n\n"
+
+        self.helpMessage += "*Event-related Commands* \n"
+        self.helpMessage += "/addevent - Add an event to your Google Calendar \n"
+        self.helpMessage += "/removeevent - Remove an event from your Google Calendar \n"
+        self.helpMessage += "/getevent - List all events that you have added \n\n"
+
+        self.helpMessage += "*Course-related Commands* \n"
+        self.helpMessage += "/addcourse - Add a course schedule to your Google Calendar \n"
+        self.helpMessage += "/removecourse - Remove a course schedule from your Google Calendar \n"
+        self.helpMessage += "/getcourse - List all courses that you have added \n"
+        self.helpMessage += "/setstudenttype - Set your student type (Full Time or Part Time) \n"
+        self.helpMessage += "/addfirstweek - Add the first weekday, i.e. Monday, of your first week and recess week \n"
+        
     @property
     def db_chat(self):
         return self._db_chat
@@ -76,7 +113,7 @@ class API(object):
 
     def handleAPI(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
-        print(content_type, chat_type, chat_id)  # debug msg received
+        print(content_type, chat_type, chat_id)
         response = self.bot.getUpdates()
         self.StoreChat(response)
 
@@ -89,18 +126,21 @@ class API(object):
             if BotCommand(msg_received).isValidCommand():
                 # Send users a message related to the command
                 if msg_received == '/start':
-                    self.bot.sendMessage(chat_id, "Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)")
-                    self.bot.sendMessage(chat_id, "Want to add course index? Just run /addcourse")
-                    self.bot.sendMessage(chat_id, "Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.")
-                    self.bot.sendMessage(chat_id, "Want to know me more? Just ask me whatever you want and hope I can understand :)")
-                    self.bot.sendMessage(chat_id, "To know more commands just type forward slash '/' to see what's available")
+                    self.bot.sendMessage(chat_id, "Hi, %s! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!" %(msg['chat']['first_name']))
+                    self.bot.sendMessage(chat_id, "*Want to know me more?* Just ask me whatever you want and hope I can understand", parse_mode='Markdown')
+                    self.bot.sendMessage(chat_id, "*Want to know what I can do?* Just run /help to see commands that I can do to help you", parse_mode='Markdown')
                 
+                elif msg_received == '/help':
+                    self.bot.sendMessage(chat_id, "Here is the list of commands that I can do: ")
+                    self.bot.sendMessage(chat_id, self.helpMessage, parse_mode="Markdown")
+
                 elif msg_received == '/addevent':
                     msg_reply = "Okay send me the details in following format:"
-                    str_format = "Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM"
+                    str_format = "*Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM*"
                     self.bot.sendMessage(chat_id, msg_reply)
-                    self.bot.sendMessage(chat_id, str_format)
-                    self.bot.sendMessage(chat_id, "For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00")
+                    self.bot.sendMessage(chat_id, str_format, parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "*For example:*", parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "_Party;NTU;2017-10-08 20:00;2017-10-08 22:00_", parse_mode="Markdown")
                     print(response)
                 
                 elif msg_received == '/removeevent':
@@ -109,7 +149,7 @@ class API(object):
                     
                     if not excel.isRecordExist(chat_id, other_event_id=True):
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     else:
                         course_code_dict = json.loads(course_code_str)
@@ -129,7 +169,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
                     if not excel.isRecordExist(chat_id, other_event_id=True):
                         self.bot.sendMessage(chat_id, "There is no event recorded in our database!")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                     
                     else:
@@ -142,17 +182,17 @@ class API(object):
                         for i in evt_name_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-                        self.bot.sendMessage(chat_id, "Your events are as follows in the format: event_name;start_time;end_time", reply_markup=keyboard)
+                        self.bot.sendMessage(chat_id, "Your events are as follows in the format: \n *event_name;start_time;end_time*", parse_mode="Markdown", reply_markup=keyboard)
                         self.bot.sendMessage(chat_id, "What you probably want do next: ")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                         self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
                 
-                elif msg_received == '/setstudenttype' or msg_received == '/setstudentype' or msg_received == '/st':
+                elif msg_received == '/setstudenttype':
                     self.bot.sendMessage(chat_id,'Are you a full time or part time student?',reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Full Time"), KeyboardButton(text="Part Time")]],one_time_keyboard=True))
 
                 elif msg_received == '/addcourse':
-                    self.bot.sendMessage(chat_id,'Sure thing.\n')
+                    self.bot.sendMessage(chat_id, 'Sure thing')
                     print(response)
                     check_db = db.DB()
                     first_week_exist = check_db.isRecordExist(chat_id, first_week=True)
@@ -161,8 +201,8 @@ class API(object):
                     is_satisfied = [first_week_exist, first_recess_week_exist, student_type_exist]
                     if not all(is_satisfied):
                         # any of the requirements are not satisfied
-                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me what enough data!')
-                        self.bot.sendMessage(chat_id,'Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time')
+                        self.bot.sendMessage(chat_id,'Hmm... Wait a second. You haven\'t told me enough data!')
+                        self.bot.sendMessage(chat_id,'Run /setstudenttype to set your student type, i.e. Full Time or Part Time')
                         self.bot.sendMessage(chat_id, 'Run /addfirstweek to set your first_week and first_recess_week')
                         self.error = 1  # explicitly telling that there is an error
                     else:
@@ -175,7 +215,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                     
                     else:
@@ -195,7 +235,7 @@ class API(object):
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
                     if not excel.isRecordExist(chat_id, course_code_event_id=True):
                         self.bot.sendMessage(chat_id, "There are no indexes registered in our database!")
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")
                     else:
                         course_code_dict = json.loads(course_code_str)
@@ -208,7 +248,7 @@ class API(object):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your course code are as follows: ", reply_markup=keyboard)
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course (if any)")
                 
@@ -218,13 +258,32 @@ class API(object):
                 elif msg_received == '/isfree':
                     self.bot.sendMessage(chat_id, "Please enter the date interval using the following format: ")
                     self.bot.sendMessage(chat_id, "YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM")
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '2017-10-09 08:00;2017-10-09 16:00', parse_mode="Markdown")
                 
                 elif msg_received == '/addfirstweek':
-                    self.bot.sendMessage(chat_id, "Please Enter your first week and first recess week using the following format: ")
-                    self.bot.sendMessage(chat_id, "FirstWeek;FirstRecessWeek")
-                    self.bot.sendMessage(chat_id, 'For example: ')
-                    self.bot.sendMessage(chat_id, '2017-8-14;2017-10-2')
+                    self.bot.sendMessage(chat_id, "Please enter the Monday dates of your first week and first recess week using the following format: ")
+                    self.bot.sendMessage(chat_id, "*FirstWeek;FirstRecessWeek*", parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, '_2017-8-14;2017-10-2_', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "*Notes*: _These two dates are very important. If you enter the wrong dates and add your course (i.e. by running /addcourse), consequently, your course schedule will be shifted by one or more weeks!_", parse_mode="Markdown")
                 
+                elif msg_received == '/getupcomingevent':
+                    self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
+                    keyboard=[
+                        [
+                            '7', '8', '9'
+                        ],
+                        [
+                            '4', '5', '6'
+                        ],
+                        [
+                            '1', '2', '3'
+                        ]
+                    ]
+                    reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, one_time_keyboard=True)
+                    self.bot.sendMessage(chat_id, 'Press!', reply_markup=reply_markup)
+
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
 
@@ -239,48 +298,35 @@ class API(object):
                 if len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addevent':
                     
                     try:
-                        trial = BotCommandObject.AddEventCommand(chat_id)
-                        1 / trial[0]
+                        BotCommandObject.AddEventCommand(chat_id)
 
-                    except ValueError:
-                        self.bot.sendMessage(chat_id, 'Cannot create event! Make sure to enter the correct format!')
+                    except err.ParseError:
+                        self.bot.sendMessage(chat_id, 'Cannot addevent! Make sure to enter the correct format!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /addevent again with the correct time format")
                     
-                    except ZeroDivisionError:
-                        query = gc.GoogleAPI().FreeBusyQuery(trial[1],trial[2])
-                        info_busy = gc.GoogleAPI().BusyInfo(query)
-                        start_busy = info_busy[0]
-                        end_busy = info_busy[1]
-                        start_busy = start_busy[:19]
-                        end_busy = end_busy[:19]
-                        start_busy = datetime.datetime.strptime(start_busy,"%Y-%m-%dT%H:%M:%S")
-                        start_busy = start_busy.strftime("%Y-%m-%d %H:%M")
-                        end_busy = datetime.datetime.strptime(end_busy,"%Y-%m-%dT%H:%M:%S")
-                        end_busy = end_busy.strftime("%Y-%m-%d %H:%M")
-                        self.bot.sendMessage(chat_id, 'Cannot create event! You have another event on ' + start_busy + ' until ' + end_busy + ' !')
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                    except err.IsNotFreeError:
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event with different datetime")
                     
+                    except err.QueryError:
+                        self.bot.sendMessage(chat_id, "Your format is correct, however we cannot perform the query to your Google Account")
+                        self.bot.sendMessage(chat_id, "Chances are: ")
+                        self.bot.sendMessage(chat_id, '1. You have problems with your API keys')
+                        self.bot.sendMessage(chat_id, '2. You entered a bad date, e.g. your end time is smaller than your start time')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your API problem')
+                        self.bot.sendMessage(chat_id, 'Run /addevent again and give me a reasonable date interval')
+                    
                     except:
-                        self.bot.sendMessage(chat_id, 'Cannot create event! Please try again')
-                    # prevents crashing  of the full program as it limits the crash to this fuction only
+                        self.bot.sendMessage(chat_id, 'Unknown Error occured')
+                    
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful! Your event has been added to Google Calendar and recorded in our database!')
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase)
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add another event")
                         self.bot.sendMessage(chat_id, "Run /removeevent to remove an event")
-                    # for debugging
-                    # iso = BotCommandObject.AddEventCommand()
-                
-                elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/removeevent'):
-                    
-                    try:
-                        BotCommandObject.RemoveEventCommand()
-                    
-                    except:
-                        self.bot.sendMessage(chat_id, 'Error occured! Have you entered the correct event ID?')
-                    
-                    else:
-                        self.bot.sendMessage(chat_id, 'Successful!')
+                        self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
 
                 elif len(self.list_update_message) >= 2 and (self.list_update_message[-2] == '/setstudenttype' or self.list_update_message[-2] == '/setstudentype' or self.list_update_message[-2] == '/st'):
                     
@@ -291,29 +337,38 @@ class API(object):
                         self.bot.sendMessage(chat_id, 'Wrong format!')
                     
                     else:
-                        self.bot.sendMessage(chat_id, 'Successful!',reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
-                        self.bot.sendMessage(chat_id, "Your data is sucessfully recorded in our database!")
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase,reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
                         self.bot.sendMessage(chat_id, "Have you added your first week?")
                         self.bot.sendMessage(chat_id, "If you haven't, run /addfirstweek")
                         self.bot.sendMessage(chat_id, "If you have, then run /addcourse straight away!")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/isfree':
                     try:
-
-                        isFree = BotCommandObject.IsFreeCommand()
+                        BotCommandObject.IsFreeCommand(chat_id)
                     
-                    except:
-                        self.bot.sendMessage(chat_id, 'Cannot check! Make sure to enter the correct format!')
+                    except err.ParseError:
+                        self.bot.sendMessage(chat_id, 'Cannot perform query!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /isfree again with the correct date format')
                     
+                    except err.QueryError:
+                        self.bot.sendMessage(chat_id, "Your format is correct, however we cannot perform the query to your Google Account")
+                        self.bot.sendMessage(chat_id, "Chances are: ")
+                        self.bot.sendMessage(chat_id, '1. You have problems with your API keys')
+                        self.bot.sendMessage(chat_id, '2. You entered a bad date, e.g. your end time is smaller than your start time')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your API problem')
+                        self.bot.sendMessage(chat_id, 'Run /addevent again and give me a reasonable date interval')
+                    
+                    except err.IsNotFreeError:
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /isfree again with different datetime")
                     else:
-                        self.bot.sendMessage(chat_id, isFree)
-                        if isFree:
-                            self.bot.sendMessage(chat_id, 'You are free on this time interval')
-                        else:
-                            start_busy = BotCommandObject.start_busy
-                            end_busy = BotCommandObject.end_busy
-                            self.bot.sendMessage(chat_id, 'You are busy on this interval!')
-                            self.bot.sendMessage(chat_id, 'You have an event from %s to %s' % (start_busy, end_busy))
+                        self.bot.sendMessage(chat_id, 'You are free on this time interval')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /addevent to add an event for this interval time')
+                        self.bot.sendMessage(chat_id, 'Run /getevent to list all events you have added')
+                        self.bot.sendMessage(chat_id, 'Run /isfree again to check for another time')
                 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addcourse' and not self.error:
                     
@@ -324,6 +379,14 @@ class API(object):
                         BotCommandObject.AddCourseCommand(chat_id)
                         self.parseddataindex = BotCommandObject.parseddataindex
                     
+                    except err.BrowserError:
+                        self.bot.sendMessage(chat_id, 'Cannot access the course!')
+                        self.bot.sendMessage(chat_id, 'Chances are: ')
+                        self.bot.sendMessage(chat_id, '1. You have problems with your browser driver (e.g. chromedriver for Google Chrome)')
+                        self.bot.sendMessage(chat_id, '2. You entered a course code that does not exist')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Resolve your browser problem')
+                        self.bot.sendMessage(chat_id, 'Run /addcourse and enter the correct course code')
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
 
@@ -334,15 +397,24 @@ class API(object):
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
                         BotCommandObject.AddFirstWeek(chat_id)
-                    except:
-                        self.bot.sendMessage(chat_id, "Error occurred while recording your data into our database!")
+                    except err.IsNotMondayError:
+                        self.bot.sendMessage(chat_id, "The input date is not Monday!")
+                        self.bot.sendMessage(chat_id, self.failRecordDatabase)
+                        self.bot.sendMessage(chat_id, "Please run /addfirstweek again and enter the Monday dates of your first week and first recess week!")
+                    except err.ParseError:
+                        self.bot.sendMessage(chat_id, 'Unable to parse!')
+                        self.bot.sendMessage(chat_id, self.failRecordDatabase)
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, 'Run /addfirstweek again and enter the correct format!')
+
                     else:
-                        self.bot.sendMessage(chat_id, 'Captured!')
-                        self.bot.sendMessage(chat_id, 'Your data is sucessfully recorded in our database!')
+                        self.bot.sendMessage(chat_id, self.successRecordDatabase)
                         self.bot.sendMessage(chat_id, "Have you set your student type?")
                         self.bot.sendMessage(chat_id, "If you haven't, run /setstudenttype")
                         self.bot.sendMessage(chat_id, "If you have, run /addcourse straight away!")
                 
+                elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/getupcomingevent':
+                    BotCommandObject.getUpcomingEvent(chat_id)
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -383,12 +455,10 @@ class API(object):
     def on_callback_query(self, msg):
         query_id, chat_id, query_data = telepot.glance(msg, flavor='callback_query')
         print('Callback Query:', query_id, chat_id, query_data)
-        print(query_data)
         if msg['message']['text'].find('Please choose your index below')!=-1:
             try:
-                self.indexchosen=query_data
-                # print(query_data)
-                BotFindIndexObject=hc.chooseindex()
+                self.indexchosen = query_data
+                BotFindIndexObject = hc.chooseindex()
                 BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             except:
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
@@ -396,7 +466,7 @@ class API(object):
             else:
                 self.bot.answerCallbackQuery(query_id, text='Index added! :)')
 
-            BotFindIndexObject=hc.chooseindex()
+            BotFindIndexObject = hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             course_code_dict = {
                 course_code: {
@@ -411,15 +481,21 @@ class API(object):
                 data_dict = json.loads(data)
                 course_code_dict.update(data_dict)
 
-            if not self.error:
-                # Loads the dictionary to the database
-                course_code_dict_str = json.dumps(course_code_dict)
-                db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
-
-                # Initialize pre requisite before adding to Google Calendar
-                toGoogle = IndexToGoogle(chat_id, complete_data)
-                event_list = toGoogle.get_event()
-                if event_list is not None:  # Not an online course
+            if not BotCommandObject.error:
+                # If online course is selected
+                if complete_data['recurrence'][0].find('Online') != -1:
+                    self.bot.answerCallbackQuery(query_id, text='It is an online course!')
+                    self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
+                    self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                    self.bot.sendMessage(chat_id, self.suggestion)
+                    self.bot.sendMessage(chat_id, "Run /addcourse to add another course (no online course, please)")
+                    self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
+                    self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
+                
+                else:
+                    # Initialize pre requisite before adding to Google Calendar
+                    toGoogle = IndexToGoogle(chat_id, complete_data)
+                    event_list = toGoogle.get_event()
                     # Loads the dictionary to the database
                     course_code_dict_str = json.dumps(course_code_dict)
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
@@ -430,33 +506,24 @@ class API(object):
                         
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")
-                        self.bot.sendMessage(chat_id, "%s (index %s) has been added to your Google Calendar" %(course_code, query_data))
-                        self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                        self.bot.sendMessage(chat_id, "%s (index %s) has been added to your Google Calendar and our database" %(course_code, query_data))
+                        self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add another course")
                         self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
                         self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
-                        
-                else:
-                    self.bot.answerCallbackQuery(query_id, text='It is an online course!')
-                    self.bot.sendMessage(chat_id, "%s is an online course! No need to add it to your Google Calendar!" %(course_code))
-                    self.bot.sendMessage(chat_id, "Your data is not recorded in our database!")
-                    self.bot.sendMessage(chat_id, "What you probably want to do next: ")
-                    self.bot.sendMessage(chat_id, "Run /addcourse to add another course (no online course, please)")
-                    self.bot.sendMessage(chat_id, "Run /removecourse to remove a course")
-                    self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
                     
         elif msg['message']['text'].find('Please click the course that you want to remove!') != -1:
             try:
                 BotCommand(query_data).RemoveCourseCommand(chat_id)
             
             except:
-                self.bot.sendMessage(chat_id, 'Cannot remove course!')
+                self.bot.sendMessage(chat_id, self.failRemoveDatabaseandCalendar)
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
 
             else:
                 self.bot.answerCallbackQuery(query_id, text='Course removed! :)')
-                self.bot.sendMessage(chat_id, "The course with this index has been removed from your Google Calendar and our database!")
-                self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                self.bot.sendMessage(chat_id, self.successRemoveDatabaseandCalendar)
+                self.bot.sendMessage(chat_id, self.suggestion)
                 self.bot.sendMessage(chat_id, "Run /addcourse to replace your removed course, if you wish")
                 self.bot.sendMessage(chat_id, "Run /removecourse to remove another course")
                 self.bot.sendMessage(chat_id, "Run /getcourse to list all the courses you have added")
@@ -467,9 +534,11 @@ class API(object):
                 BotCommand(query_data).RemoveEventCommand(chat_id)
             except:
                 self.bot.sendMessage(chat_id, "Cannot remove event, unknown error happens!")
+                self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
             else:
                 self.bot.sendMessage(chat_id, "The event %s has been removed!" %(query_data))
-                self.bot.sendMessage(chat_id, "What you probably want to do next: ")
+                self.bot.sendMessage(chat_id, self.successRemoveDatabaseandCalendar)
+                self.bot.sendMessage(chat_id, self.suggestion)
                 self.bot.sendMessage(chat_id, "Run /removeevent to remove another event")
                 self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                 self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
@@ -556,18 +625,18 @@ class BotCommand(API):
         super().__init__()
         self.command_list = [
             '/start',
+            '/help',
+            '/quit',
+            '/isfree',
+            '/getupcomingevent',
+            '/addevent',
+            '/removeevent',
+            '/getevent',
             '/addcourse',
             '/removecourse',
             '/getcourse',
             '/setstudenttype',
-            '/st',
-            '/setstudentype',
-            '/addevent',
-            '/removeevent',
-            '/getevent',
-            '/isfree',
             '/addfirstweek',
-            '/quit'
         ]
         self.str_text = str_text
         
@@ -596,43 +665,72 @@ class BotCommand(API):
         return self.str_text in self.command_list
 
     def AddEventCommand(self, chat_id):
-        str_input = hc.StringParseGoogleAPI(self.str_text)
-        str_input.ParseEvent()
-        event_name = str_input.event_name
-        location = str_input.location
-        start_date = str_input.start_date
-        start_date_pretty = str_input.start_time_cantik
-        end_date_pretty = str_input.end_time_cantik
-        end_date = str_input.end_date
+        try:
+            # Parsing
+            str_input = hc.StringParseGoogleAPI(self.str_text)
+            str_input.ParseEvent()
+            event_name = str_input.event_name
+            location = str_input.location
+            start_date = str_input.start_date
+            start_date_pretty = str_input.start_time_cantik
+            end_date_pretty = str_input.end_time_cantik
+            end_date = str_input.end_date
 
-        query = gc.GoogleAPI().FreeBusyQuery(start_date_pretty, end_date_pretty)
-        isFree = gc.GoogleAPI().isFree(query)
+        except:
+            raise err.ParseError
+        
+        try:
+            # Performing queries
+            Google = gc.GoogleAPI()
+            query = Google.FreeBusyQuery(start_date_pretty, end_date_pretty)
+            isFree = Google.isFree(query)
+            info_busy = Google.BusyInfo(query)
+        
+        except:
+            raise err.QueryError('Unable to perform query')
+        
         # Get the query's busy info
         if not isFree:
             print("not free!")
-            return (0,start_date_pretty,end_date_pretty)
-            # raise ZeroDivisionError
-        # Call the GoogleAPI class and create event
-        current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
-        # load the event to the database
-        other_event_id_dict = {
-            current_event_id: {
-                'name': event_name,
-                'location': location,
-                'start': start_date_pretty,
-                'end': end_date_pretty
+            self.bot.sendMessage(chat_id, "Cannot add event!")
+            self.bot.sendMessage(chat_id, "You have %d event(s) occuring between %s and %s" %(len(info_busy), start_date_pretty, end_date_pretty))
+            
+            for i in range(len(info_busy)):
+                # Ignoring timezones
+                ignored_tz_start_busy = hc.StringParseGoogleAPI(info_busy[i]['start']).IgnoreTimeZone()
+                ignored_tz_end_busy = hc.StringParseGoogleAPI(info_busy[i]['end']).IgnoreTimeZone()
+
+                # Make these pretty
+                start_busy_pretty = ignored_tz_start_busy.strftime('%Y-%m-%d %H:%M')
+                end_busy_pretty = ignored_tz_end_busy.strftime('%Y-%m-%d %H:%M')
+
+                # Send message to user
+                self.bot.sendMessage(chat_id, "%d. %s until %s" %(i + 1, start_busy_pretty, end_busy_pretty))
+            
+            # Raise the error
+            raise err.IsNotFreeError
+        
+        else:
+            # Call the GoogleAPI class and create event
+            current_event_id = gc.GoogleAPI().createEvent(event_name, location, start_date, end_date)
+            # load the event to the database
+            other_event_id_dict = {
+                current_event_id: {
+                    'name': event_name,
+                    'location': location,
+                    'start': start_date_pretty,
+                    'end': end_date_pretty
+                }
             }
-        }
-        excel = db.DB()
-        existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
-        if excel.isRecordExist(chat_id, other_event_id=True):
-            existing_data_dict = json.loads(existing_data_str)
-            other_event_id_dict.update(existing_data_dict)
+            excel = db.DB()
+            existing_data_str = excel.table_query(chat_id, other_event_id=True)[4]
+            if excel.isRecordExist(chat_id, other_event_id=True):
+                existing_data_dict = json.loads(existing_data_str)
+                other_event_id_dict.update(existing_data_dict)
 
-        other_event_id_str = json.dumps(other_event_id_dict)
-        excel.update(chat_id, other_event_id=other_event_id_str)
-        return (1,start_date_pretty,end_date_pretty,current_event_id)
-
+            other_event_id_str = json.dumps(other_event_id_dict)
+            excel.update(chat_id, other_event_id=other_event_id_str)
+            
     def RemoveEventCommand(self, chat_id):
         query_data = self.str_text
         evt_name, start, end = query_data.split(';')
@@ -648,30 +746,43 @@ class BotCommand(API):
         excel.update(chat_id, other_event_id=other_event_id_update_str)
         gc.GoogleAPI().deleteEvent(evt_id)
 
-    def IsFreeCommand(self):
-        str_input = hc.StringParseGoogleAPI(self.str_text)
-        str_input.ParseDateRange()
-        start_date_query = str_input.start_date
-        end_date_query = str_input.end_date
+    def IsFreeCommand(self, chat_id):
+        try:
+            start_date_query, end_date_query = self.str_text.split(';')
+        except:
+            raise err.ParseError
 
         # Call the GoogleAPI class and check isFree
-        query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
+        try:
+            query = gc.GoogleAPI().FreeBusyQuery(start_date_query, end_date_query)
+            isFree = gc.GoogleAPI().isFree(query)
+        except:
+            raise err.QueryError
 
-        isFree = gc.GoogleAPI().isFree(query)
+        self.bot.sendMessage(chat_id, isFree)
         # Get the query's busy info
         if not isFree:
             info_busy = gc.GoogleAPI().BusyInfo(query)
-            self.start_busy = info_busy[0]
-            self.end_busy = info_busy[1]
+            self.bot.sendMessage(chat_id, 'You are busy on this time interval!')
+            self.bot.sendMessage(chat_id, "You have %d event(s) occuring between %s and %s" %(len(info_busy), start_date_query, end_date_query))
+            for i in range(len(info_busy)):
+                # Ignoring timezones
+                ignored_tz_start_busy = hc.StringParseGoogleAPI(info_busy[i]['start']).IgnoreTimeZone()
+                ignored_tz_end_busy = hc.StringParseGoogleAPI(info_busy[i]['end']).IgnoreTimeZone()
+
+                # Make these pretty
+                start_busy_pretty = ignored_tz_start_busy.strftime('%Y-%m-%d %H:%M')
+                end_busy_pretty = ignored_tz_end_busy.strftime('%Y-%m-%d %H:%M')
+
+                # Send message to user
+                self.bot.sendMessage(chat_id, "%d. %s until %s" %(i + 1, start_busy_pretty, end_busy_pretty))
+            raise err.IsNotFreeError
         return isFree
 
     def AddCourseCommand(self,chat_id):
-        str_input = hc.StringParseIndex(self.str_text)
-        str_input.Parse()
-        
         global course_code  # set course_code to global!
-        course_code = str_input.course_code.upper()
-        # index = str_input.index
+        course_code = self.str_text.replace(' ', '').upper()
+        
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
         is_course_code_exist = excel.isRecordExist(chat_id, course_code_event_id=True)
@@ -683,8 +794,13 @@ class BotCommand(API):
         course_code_dict = json.loads(course_code_str_update)
         
         if not is_course_code_exist or course_code not in list(course_code_dict.keys()):
-            self.getdata.start(course_code, student_type)
-            self.parseddataindex=self.getdata.parsedatahml()
+            # Splinter in action
+            try:
+                self.getdata.start(course_code, student_type)
+                self.parseddataindex = self.getdata.parsedatahml()
+            except:
+                raise err.BrowserError
+
             inlines_keyboard = []
             for i in range(len(self.getdata.indexlist)):
                 inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
@@ -731,13 +847,53 @@ class BotCommand(API):
         excel.update(chat_id, student_type=course_type)
 
     def AddFirstWeek(self, chat_id):
-        first_week, first_recess_week = self.str_text.split(';')
-        
-        # Initialize db
-        excel = db.DB()
-        # Update the exel file
-        excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
+        try:
+            first_week, first_recess_week = self.str_text.split(';')
+        except:
+            raise err.ParseError
+        first_week_obj = datetime.datetime.strptime(first_week, '%Y-%m-%d')
+        first_recess_week_obj = datetime.datetime.strptime(first_recess_week, '%Y-%m-%d')
+        # If it is Monday, then proceed
+        if first_week_obj.weekday() == 0 and first_recess_week_obj.weekday() == 0:
+            # Initialize db
+            excel = db.DB()
+            # Update the exel file
+            excel.update(chat_id, first_week=first_week, first_recess_week=first_recess_week)
+        else:
+            raise err.IsNotMondayError('Date is not monday!')
     
+    def getUpcomingEvent(self, chat_id):
+        num_event = int(self.str_text)
+        self.bot.sendMessage(chat_id, 'Getting %s upcoming event(s) for you' %(num_event))
+        events = gc.GoogleAPI().getUpcomingEventList(num_event)
+        event_detail_list = []
+        inlines_keyboard = []
+        for event in events:
+            # Getting the start, end, and summary
+            start = event['start']['dateTime']
+            end = event['end']['dateTime']
+            summary = event['summary']
+
+            # Ignoring their timezones
+            ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
+            ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
+
+            # Making these pretty
+            ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
+            ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
+
+            # Combining all
+            complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
+            event_detail_list.append(complete_event)
+        
+        # Preparing inline keyboard
+        for event_detail in event_detail_list:
+            inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
+        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+        
+        # Send the message to user
+        self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
+        
 
 class IndexToGoogle(API):
     """Description: the main class to integrate indexes with Google Calendar"""

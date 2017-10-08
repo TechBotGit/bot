@@ -3,6 +3,7 @@ import pytz
 import os
 import sys
 import time
+import ErrorClass as err
 
 from bs4 import BeautifulSoup
 from splinter import Browser
@@ -344,11 +345,15 @@ class splintergetdata(object):
                     browser.windows.current = ii
                     html_page = browser.html
 
-                    self.soup = BeautifulSoup(html_page, 'html.parser')
+                    self.soup = BeautifulSoup(html_page, 'lxml')
+                    print("test")
         print('Mining data success')
 
     def parsedatahml(self):
         tables = self.soup.find('table',border=True)
+        checker = self.soup.find_all('table',border=True)
+        if(len(checker)>1):
+            raise err.BrowserError
         rows = tables.find_all('tr')
         # print(rows)
         for iterator in range(1,len(rows)):

@@ -539,7 +539,7 @@ class API(object):
         elif msg['message']['text'].find("Your course code are as follows") != -1:
             self.bot.answerCallbackQuery(query_id,'')
         else:
-            self.bot.answerCallbackQuery(query_id, text='Got it :)')
+            self.bot.answerCallbackQuery(query_id, text='')
             
     def StoreChat(self, update_object):
         update_id = update_object[0]['update_id']
@@ -778,7 +778,8 @@ class BotCommand(API):
     def AddCourseCommand(self,chat_id):
         global course_code  # set course_code to global!
         course_code = self.str_text.replace(' ', '').upper()
-        
+        if len(course_code)<3:
+            raise err.ParseError
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
         is_course_code_exist = excel.isRecordExist(chat_id, course_code_event_id=True)

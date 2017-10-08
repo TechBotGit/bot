@@ -270,19 +270,8 @@ class API(object):
                 
                 elif msg_received == '/getupcomingevent':
                     self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
-                    keyboard=[
-                        [
-                            '7', '8', '9'
-                        ],
-                        [
-                            '4', '5', '6'
-                        ],
-                        [
-                            '1', '2', '3'
-                        ]
-                    ]
-                    reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, one_time_keyboard=True)
-                    self.bot.sendMessage(chat_id, 'Press!', reply_markup=reply_markup)
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "_10_", parse_mode="Markdown")
 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
@@ -414,7 +403,12 @@ class API(object):
                         self.bot.sendMessage(chat_id, "If you have, run /addcourse straight away!")
                 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/getupcomingevent':
-                    BotCommandObject.getUpcomingEvent(chat_id)
+                    try:
+                        BotCommandObject.getUpcomingEvent(chat_id)
+                    except ValueError:
+                        self.bot.sendMessage(chat_id, "Wrong format")
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /getupcomingevent again and enter an integer")
                 else:
 
                     # Below is not a command. It only makes the bot smarter

@@ -478,6 +478,8 @@ class API(object):
             if db_check.isRecordExist(chat_id, course_code_event_id=True):
                 data = db_check.table_query(chat_id, course_code_event_id=True)[3]
                 data_dict = json.loads(data)
+                if(course_code in list(data_dict.keys())):
+                    raise err.QueryError
                 course_code_dict.update(data_dict)
 
             if not BotCommandObject.error:

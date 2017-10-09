@@ -46,15 +46,12 @@ If you are using Mozilla Firefox, then read the [Documentation for geckodriver](
 
 # User Manual
 
-Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff :)
+Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!
 
-Want to add course index? Just run /addindex.
+Want to know me more? Just ask me whatever you want and hope I can understand
 
-Want to plan your meetings? Just type in 'meetings' and let me schedule it for you.
+Want to know what I can do? Just run /help to see commands that I can do to help you
 
-Want to know me more? Just ask me whatever you want and hope I can understand :)
-
-To know more commands just type forward slash '/' to see what's available
 
 ## Contents
 
@@ -79,8 +76,9 @@ To know more commands just type forward slash '/' to see what's available
 
 #### 2.6 Updating the List of Commands of Your Bot
 
+
 ### [Chapter 3 List of Commands Available](#chapter-3-list-of-commands-available-1)
-#### 3.01 /start and /
+#### 3.01 /start
 
 #### 3.02 /addevent
 
@@ -100,7 +98,12 @@ To know more commands just type forward slash '/' to see what's available
 
 #### 3.10 /isfree
 
-#### 3.11 /quit
+#### 3.11 /getupcomingevent
+
+#### 3.12 /help
+
+#### 3.13 /quit
+
 
 ### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-4-inputing-course-indexes-and-finding-common-free-time-1)
 
@@ -123,10 +126,17 @@ To know more commands just type forward slash '/' to see what's available
 
 ### 4.7 Check If You Are Free At A Certain Time
 
+### 4.8 See All Your Upcomin Events
+
+### 4.9 To See All The Commands You Have In Your Bot
+
+### [Chapter 5 Further Information](#chapter-5-further-information-1)
+
 
 
 
 ## Chapter 1 Introduction
+> [Back to contents](#contents)
 
 ### 1.1 Overview
 
@@ -141,6 +151,7 @@ Hence, you can find common free time to get together for various meetings.
 
 
 ## Chapter 2 Getting Started
+> [Back to contents](#contents)
 
 Before you can run the bot, several settings are required. 
 
@@ -193,11 +204,14 @@ addcourse - This command allows you to add your courses according to your index 
 removecourse - This command allows you to remove the course schedule you have put into the Google Calendar.
 getcourse - This command lets you display all the courses you have put in the Google Calendar.
 isfree - This command lets you check whether you are free at a certain time interval or not. 
+getupcomingevent - This command displays all your upcoming events 
+help - this displays all the commands you can use in the bot
 quit - This quits the bot.
 ```
 After you have done this, everytime you type in **/**, the bot will suggest commands you might want to use. 
 
 ### Chapter 3 List of Commands Available
+> [Back to contents](#contents)
 
 #### 3.01 /start
 This command is used to initially start the bot. Type **/start** in the telegram bot chat and the bot will greet you and tell you what it can do. 
@@ -230,10 +244,17 @@ This command lets you display all the courses you have put in the Google Calenda
 #### 3.10 /isfree
 This command lets you check whether you are free at a certain time interval or not. 
 
-#### 3.11 /quit
+#### 3.11 /getupcomingevent
+This command displays all your upcoming events
+
+#### 3.12 /help
+This command displays all the commands present in the bot
+
+#### 3.13 /quit
 This quits the bot.
 
 ## Chapter 4 Inputing Course Indexes and Finding Common Free Time
+> [Back to contents](#contents)
 
 
 ### 4.1 Inputting Your Course
@@ -369,6 +390,23 @@ For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00
 Input the details of your event according to the format above.
 The bot will return **Successful!** if your event creation is successful.
 
+If you are not free on that time span, you cannot create an event. For example you have 2 classes on that time span:
+```
+10:30 - 11:30 CZ1003 LEC
+14:30 - 16:30 CZ1004 LAB
+```
+Hence, the bot will return:
+```
+You have 2 events occuring between 2017-10-09 08:00 and 2017-10-09 16:00
+
+1. 2017-10-09 10:30 until 2017-10-09 11:30
+2. 2017-10-09 14:30 until 2017-10-09 16:00
+
+What you probably want to do next:
+
+Run /addevent again with different datetime
+```
+
 ### 4.5 Removing Your Event
 
 You can remove the events you have put in your Google Calendar by typing in **/removeevent** to your bot. 
@@ -435,3 +473,95 @@ You are busy on this interval!
 
 You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
 ```
+If you are not free on that time span, for example you have 2 classes on that time span:
+```
+10:30 - 11:30 CZ1003 LEC
+14:30 - 16:30 CZ1004 LAB
+```
+Hence, the bot will return:
+```
+You have 2 events occuring between 2017-10-09 08:00 and 2017-10-09 16:00
+
+1. 2017-10-09 10:30 until 2017-10-09 11:30
+2. 2017-10-09 14:30 until 2017-10-09 16:00
+
+What you probably want to do next:
+
+Run /isfree again with different datetime
+```
+
+### 4.8 See All Your Upcoming Events
+
+You can view your upcoming events through the **/getupcomingevents** command. The bot will respond in the following manner:
+
+```
+Please enter how many upcoming events are you looking for!
+
+Press!
+```
+It will then display a markup keyboard displaying a number from 1 to 7. You can choose to display upto 7 upcoming events. 
+In the case where you clicked **7**, the bot will respond in this following manner:
+```
+Getting 7 upcoming event(s) for you
+Here they are!
+```
+And it will display the first seven of your upcoming events (including your courses).
+It displays the **name of the event, date of the event and time interval of the event**.
+
+### 4.9 To See All The Commands You Have In Your Bot
+
+To see all the commands available in your bot, you may type in **/help** and the bot will display the commands available in the bot in the following manner:
+```
+Basic Commands 
+/start - Send welcome message 
+/help - list available commands 
+/quit - Send good bye message 
+
+General Commands 
+/isfree - To check whether you are free at a certain time interval 
+/getupcomingevent - List your upcoming events 
+
+Event-related Commands 
+/addevent - Add an event to your Google Calendar 
+/removeevent - Remove an event from your Google Calendar 
+/getevent - List all events that you have added 
+
+Course-related Commands 
+/addcourse - Add a course schedule to your Google Calendar 
+/removecourse - Remove a course schedule from your Google Calendar 
+/getcourse - List all courses that you have added 
+/setstudenttype - Set your student type (Full Time or Part Time) 
+/addfirstweek - Add the first weekday, i.e. Monday, of your first week and recess week
+```
+
+## Chapter 5 Further Information
+> [Back to contents](#contents)
+### Information 1: 
+
+For any commands that requires you to input a **date**:
+
+If the bot returns you this response:
+```
+Your format is correct, however we cannot perform the query to your Google Account
+```
+Then these cases may occur:
+
+Case 1: You have problems with your API keys
+
+Case 2: You entered a bad date, for instance your end time is earlier than your start time (Your event starts at 5 p.m. but ends at 4 p.m.)
+
+For these two cases, you may want to resolve your API problem and run the **/addevent** again and give the bot a reasonable time interval.
+
+### Information 2
+
+If the bot responds in this following manner:
+```
+Cannot access the course
+```
+This can also be caused by these following cases:
+
+Case 1: You may have problems with your browser driver, for instance you may have a problem with your chromedriver for Google Chrome.
+
+Case 2: You may have entered a course code that **does not exist**
+
+Case 3: You may have entered the wrong first week and first recess week. The **/addfirstweek** command can only accept a **Monday** as the start of the first week and first recess week.

@@ -64,15 +64,18 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 ### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
-#### 2.1 Setting Up Telegram bot token
+#### 2.1 Cloning repository to your local machine
 
-#### 2.2 Setting Up Google API
+#### 2.2 Setting Up Telegram bot token
 
-#### 2.3 Setting Up Browser
+#### 2.3 Setting Up Google API
 
-#### 2.4 Testing your Bot
+#### 2.4 Setting Up Browser
 
-#### 2.5 Updating the List of Commands of Your Bot
+#### 2.5 Testing your Bot
+
+#### 2.6 Updating the List of Commands of Your Bot
+
 
 ### [Chapter 3 List of Commands Available](#chapter-3-list-of-commands-available-1)
 #### 3.01 /start
@@ -100,6 +103,7 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 #### 3.12 /help
 
 #### 3.13 /quit
+
 
 ### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-4-inputing-course-indexes-and-finding-common-free-time-1)
 
@@ -151,23 +155,29 @@ Hence, you can find common free time to get together for various meetings.
 
 Before you can run the bot, several settings are required. 
 
-### 2.1 Setting Up Telegram Bot
+### 2.1 Cloning Repository to your local machine
+**You need to clone this repository to your local machine.**
+1. Navigate to any folder from your Terminal
+2. Run `git clone https://github.com/TechBotGit/bot.git`
+> To get the latest version of Git: Download it from the [Git's official documentation](https://git-scm.com/downloads)
+
+### 2.2 Setting Up Telegram Bot
 
 1. To set up a bot, read the [Telegram's official documentation](https://core.telegram.org/api).
 2. After you receive the token, save it in the **[resources/](resources/)** folder under the name of **token.txt**
 
-### 2.2 Setting Up Google API
+### 2.3 Setting Up Google API
 
 1. Turn on your Google API by following the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)
 2. After you receive your API (.json file), save it in the **[resources/api/](resources/api)** folder under the name of **client_secret.json**.
 
-### 2.3 Setting Up Browser
+### 2.4 Setting Up Browser
 
 Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
 >**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
 
-### 2.4 Testing your Bot
+### 2.5 Testing your Bot
 
 1. Run your Bot
 

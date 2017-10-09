@@ -496,7 +496,7 @@ class API(object):
                     course_code_dict_str = json.dumps(course_code_dict)
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
                     try:
-                        toGoogle.PreCreateEventIndex(event_list)
+                        toGoogle.PreCreateEventIndex(event_list, self.indexchosen)
                     except:
                         self.bot.sendMessage(chat_id, "Unknown error has occured")
                         
@@ -925,11 +925,11 @@ class IndexToGoogle(API):
                 event_list[i].append(self.index_dictionary[key][i])
         return event_list
 
-    def PreCreateEventIndex(self, evt_list):
+    def PreCreateEventIndex(self, evt_list, fixed_index):
         """Description: preparation to add the event from evt_list to Google Calendar"""
+        course_index = fixed_index  # This is a fixed index
         for i in range(len(evt_list)):
             event1 = evt_list[i]
-            course_index = event1[0]
             course_type = event1[1]
             course_group = event1[2]
             day = event1[3]

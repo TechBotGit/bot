@@ -270,19 +270,8 @@ class API(object):
                 
                 elif msg_received == '/getupcomingevent':
                     self.bot.sendMessage(chat_id, 'Please enter how many upcoming events are you looking for!')
-                    keyboard=[
-                        [
-                            '7', '8', '9'
-                        ],
-                        [
-                            '4', '5', '6'
-                        ],
-                        [
-                            '1', '2', '3'
-                        ]
-                    ]
-                    reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, one_time_keyboard=True)
-                    self.bot.sendMessage(chat_id, 'Press!', reply_markup=reply_markup)
+                    self.bot.sendMessage(chat_id, '*For example:* ', parse_mode="Markdown")
+                    self.bot.sendMessage(chat_id, "_10_", parse_mode="Markdown")
 
                 else:
                     self.bot.sendMessage(chat_id, "Command not updated!")
@@ -386,9 +375,11 @@ class API(object):
                         self.bot.sendMessage(chat_id, '2. You entered a course code that does not exist')
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, 'Resolve your browser problem')
-                        self.bot.sendMessage(chat_id, 'Run /addcourse and enter the correct course code')
+                        self.bot.sendMessage(chat_id, 'Run /addcourse again and enter the correct course code')
                     except:
                         self.bot.sendMessage(chat_id, 'Cannot access the course! Make sure you have entered the correct format!')
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /addcourse again and enter the correct course code")
 
                     else:
                         if not self.error:
@@ -414,7 +405,12 @@ class API(object):
                         self.bot.sendMessage(chat_id, "If you have, run /addcourse straight away!")
                 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/getupcomingevent':
-                    BotCommandObject.getUpcomingEvent(chat_id)
+                    try:
+                        BotCommandObject.getUpcomingEvent(chat_id)
+                    except ValueError:
+                        self.bot.sendMessage(chat_id, "Wrong format")
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Run /getupcomingevent again and enter an integer")
                 else:
 
                     # Below is not a command. It only makes the bot smarter
@@ -500,7 +496,7 @@ class API(object):
                     course_code_dict_str = json.dumps(course_code_dict)
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
                     try:
-                        toGoogle.PreCreateEventIndex(event_list)
+                        toGoogle.PreCreateEventIndex(event_list, self.indexchosen)
                     except:
                         self.bot.sendMessage(chat_id, "Unknown error has occured")
                         
@@ -542,9 +538,11 @@ class API(object):
                 self.bot.sendMessage(chat_id, "Run /removeevent to remove another event")
                 self.bot.sendMessage(chat_id, "Run /addevent to add an event")
                 self.bot.sendMessage(chat_id, "Run /getevent to list all events you have added")
+        elif msg['message']['text'].find("Your course code are as follows") != -1:
+            self.bot.answerCallbackQuery(query_id,'')
         else:
-            self.bot.answerCallbackQuery(query_id, text='Got it :)')
-
+            self.bot.answerCallbackQuery(query_id, text='')
+            
     def StoreChat(self, update_object):
         update_id = update_object[0]['update_id']
         text = update_object[0]['message']['text']
@@ -782,7 +780,8 @@ class BotCommand(API):
     def AddCourseCommand(self,chat_id):
         global course_code  # set course_code to global!
         course_code = self.str_text.replace(' ', '').upper()
-        
+        if len(course_code) < 3:
+            raise err.ParseError
         excel = db.DB()
         student_type = excel.table_query(chat_id, student_type=True)[2]
         is_course_code_exist = excel.isRecordExist(chat_id, course_code_event_id=True)
@@ -812,7 +811,7 @@ class BotCommand(API):
             self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
             self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
             self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removecourse!')
-            self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and type the correct course code")
+            self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and enter the correct course code")
 
     def RemoveCourseCommand(self, chat_id):
         course_code = self.str_text
@@ -926,11 +925,11 @@ class IndexToGoogle(API):
                 event_list[i].append(self.index_dictionary[key][i])
         return event_list
 
-    def PreCreateEventIndex(self, evt_list):
+    def PreCreateEventIndex(self, evt_list, fixed_index):
         """Description: preparation to add the event from evt_list to Google Calendar"""
+        course_index = fixed_index  # This is a fixed index
         for i in range(len(evt_list)):
             event1 = evt_list[i]
-            course_index = event1[0]
             course_type = event1[1]
             course_group = event1[2]
             day = event1[3]

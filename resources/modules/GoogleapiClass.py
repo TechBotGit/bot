@@ -74,7 +74,7 @@ class GoogleAPI(object):
             'reminders': {
                 'useDefault': False,
                 'overrides': [
-                    {'method': 'email', 'minutes': 60}
+                    {'method': 'popup', 'minutes': 60}
                 ],
             },
         }

@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# bot
-=======
 # Telegram Bot
->>>>>>> a4af7bb133925e07c6db7a2f4164eb4bffa23c8e
-=======
-# Telegram Bot
->>>>>>> fae46f24934c73c34f9b0f2a5ef22553b5145270
 CZ1003 Project
 bot-project
 
@@ -33,70 +25,35 @@ pip install splinter
 pip install --upgrade google-api-python-client
 ```
 
-<<<<<<< HEAD
 ### **5. Google Chrome Driver**
 ```
 brew install chromedriver
 ```
-
 
 ### **6. openpyxl Package**
 ```
 pip install openpyxl
 ```
 
-=======
->>>>>>> fae46f24934c73c34f9b0f2a5ef22553b5145270
-## Setting Up Google API
-### **Turn on the Google API of your account**
-Refer to the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python).
-> Important Notes: save the .json file in the *[resources/api/](resources/api)* folder under the name of *client_secret.json*.
+### 7. Browser Driver
+Assuming you are using Google Chrome, then run the following command:
+```
+brew install chromedriver
+```
+If you are using Mozilla Firefox, then read the [Documentation for geckodriver](https://github.com/mozilla/geckodriver)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Marketplace
-Explore
- @gabherondale
- Sign out
- Watch 0
-  Star 0
-  Fork 2 Archonsh/cz1003project
- Code  Issues 0  Pull requests 0  Projects 0  Wiki Insights 
-Branch: master Find file Copy pathcz1003project/README.md
-982d7fd  on 30 Sep 2016
-@Archonsh Archonsh Update README.md
-1 contributor
-RawBlameHistory     
-106 lines (72 sloc)  3.7 KB
-CZ 1003 Project
 
-User Manual
-
-User manual of SchedulerBot
-=======
 
 # User Manual
->>>>>>> a4af7bb133925e07c6db7a2f4164eb4bffa23c8e
-=======
 
-# User Manual
->>>>>>> fae46f24934c73c34f9b0f2a5ef22553b5145270
+Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!
 
-Welcome to our bot! We will help you maneuver your WAY through your DAY!
-Feel free to ask me stuff :)
-If you want to know your course schedule, type in COURSE. If you want to plan your meetings, type in MEETINGS. If you want to know anything about me, just type in whatever you want and hope I understand :)
+Want to know me more? Just ask me whatever you want and hope I can understand
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-Contents
-=======
+Want to know what I can do? Just run /help to see commands that I can do to help you
+
+
 ## Contents
->>>>>>> fae46f24934c73c34f9b0f2a5ef22553b5145270
 
 ### [Chapter 1 Introduction](#chapter-1-introduction-1)
 
@@ -106,28 +63,27 @@ Contents
 
 ### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
 
-#### 2.1 IDLE Python 3.6
 
-<<<<<<< HEAD
-#### 2.2 Visual Studio Code 1.15.1 Python 3.6
-=======
-#### 2.5 Updating the List of Commands of Your Bot
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
+#### 2.1 Cloning repository to your local machine
 
-### Chapter 3 List of Commands Available
-#### 3.01 /start and /
+#### 2.2 Setting Up Telegram bot token
 
-<<<<<<< HEAD
-#### 3.1 Inputting Your Index 
-=======
+#### 2.3 Setting Up Google API
+
+#### 2.4 Setting Up Browser
+
+#### 2.5 Testing your Bot
+
+#### 2.6 Updating the List of Commands of Your Bot
+
+
+### [Chapter 3 List of Commands Available](#chapter-3-list-of-commands-available-1)
+#### 3.01 /start
+
 #### 3.02 /addevent
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 
 #### 3.03 /removeevent
 
-<<<<<<< HEAD
-#### 3.3 Check If You Are Free at A Certain Time 
-=======
 #### 3.04 /getevent
 
 #### 3.05 /setstudenttype
@@ -142,9 +98,14 @@ Contents
 
 #### 3.10 /isfree
 
-#### 3.11 /quit
+#### 3.11 /getupcomingevent
 
-### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
+#### 3.12 /help
+
+#### 3.13 /quit
+
+
+### [Chapter 4 Inputing Course Indexes and Finding Common Free Time](#chapter-4-inputing-course-indexes-and-finding-common-free-time-1)
 
 ### 4.1 Inputting Your Course
 
@@ -164,13 +125,18 @@ Contents
 ### 4.6 Displaying Your Events
 
 ### 4.7 Check If You Are Free At A Certain Time
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 
-#### 3.4 Choose Meeting Time According to Bot Recommendation
+### 4.8 See All Your Upcomin Events
+
+### 4.9 To See All The Commands You Have In Your Bot
+
+### [Chapter 5 Further Information](#chapter-5-further-information-1)
+
 
 
 
 ## Chapter 1 Introduction
+> [Back to contents](#contents)
 
 ### 1.1 Overview
 
@@ -183,156 +149,46 @@ Hence, you can find common free time to get together for various meetings.
 The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
 
 ## Chapter 2 Getting Started
+> [Back to contents](#contents)
 
 We have several alternatives to run the program as to which Python platform you choose to use.
 
-### 2.1 IDLE Python 3.6
+### 2.1 Cloning Repository to your local machine
+**You need to clone this repository to your local machine.**
+1. Navigate to any folder from your Terminal
+2. Run `git clone https://github.com/TechBotGit/bot.git`
+> To get the latest version of Git: Download it from the [Git's official documentation](https://git-scm.com/downloads)
+
+### 2.2 Setting Up Telegram Bot
 
 To start the program, you should first open IDLE Python3.6.
 Then open file “first_thing.py” found in the "samples" folder. 
 Then click “Run” and choose “Run Module” to start the bot. 
 You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
 
-### 2.2 Visual Studio Code 1.15.1 Python 3.6
+### 2.3 Setting Up Google API
 
 To start the program, you should first open Visual Studio Code 1.15.1 Python 3.6. 
 Then open file "first_thing.py" found in the "samples" folder. Then rightclick and choose "Run Code" if your default Programming language is Python 3.6 or "Run Python File in Terminal" if your default Programming language is not Python 3.6. You will be able to see the text "Listening ..." printed on the screen, indicating that your code is currently running.
 
+### 2.4 Setting Up Browser
+Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
-## Chapter 3 Inputing Course Indexes and Finding Common Free Time
+>**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
 
-### 3.0 Starting The Bot
+### 2.5 Testing your Bot
 
-To start the bot, say "hi" to the bot and wait for it to greet you.
-Then ask what the bot can do by asking "what do you do?", or you can simply type in "/start". 
-You can then talk to the bot and ask it to arrange your meet
+1. Run your Bot
 
-### 3.1 Inputting Your Index
+To start the program, run file **app.py** in the **[main/](main/)** folder. 
+You will be able to see the text *Listening ...* printed on the console, indicating that your code is currently running.
 
-You can input your index in the bot. This way, the bot can tell you what courses you have throughout the day. To input your course's index, you must first type in **/addindex**
-The bot will reply in the following manner:
-```
-Sure thing. Please type your details in following format:
+2. Say *"Hi"* to your Bot
 
-Course Name;Course Type(Full/Part Time);Index Number
-```
-
-### 3.2 Creating New Event
-
-You can create new events through the bot and the bot will input it in your Google Calendar for you.
-First, type in **/createevent** to create your event.
-The bot will respond in the following manner:
-```
-Okay send me the details in following format:
-
-Event Name;location;yyyy-mm-ddThh:mm:ss;yyyy-mm-ddThh:mm:ss
-```
-Input the details of your event according to the format above.
-The bot will return **Successful!** if your event creation is successful.
-
-**NOTE: the 'T' indicates a separation between the date and time of the event.
-You must include the 'T' in your input.**
-
-### 3.3 Check If You Are Free At A Certain Time
-
-You can check whether you are free at a particular time through the bot.
-First, type in **/isfree** to check if you are free at that particular time.
-The bot will respond in the following manner:
-```
-Please enter the date interval using the following format:
-
-YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM
-```
-Input the details in the format above.
-If you are free at that particular time interval, the bot will respond in this following manner:
-```
-True
-
-You are free on this time interval
-```
-However if you are not free at that particular time interval, the bot will respond in this following manner:
-
-```
-False
-
-You are busy on this interval!
-
-You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
-```
-
-### 3.4 Choose Meeting Time According to Bot Recommendation
-
-This bot also offers the function to predict how many people will be in the section you are going to. Accessing the interface where two buttons “Library Current Status Inquiry” and “Library Status Prediction” are presented, you are expected to click on the latter. After that, do the same as the above-mentioned step to focus on one section. The program will return you a computed number, which is the average of the last several sets of data collected.
-<<<<<<< HEAD
-© 2017 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-API
-Training
-Shop
-Blog
-About
-=======
-## Contents
-
-### [Chapter 1 Introduction](#chapter-1-introduction-1)
-
-#### 1.1 Overview
-
-#### 1.2 System Requirements
-
-### [Chapter 2 Getting Started](#chapter-2-getting-started-1)
-
-#### 2.1 IDLE Python 3.6
-
-#### 2.2 Visual Studio Code 1.15.1 Python 3.6
-
-### [Chapter 3 Inputing Course Indexes and Finding Common Free Time](#chapter-3-inputing-course-indexes-and-finding-common-free-time-1)
-
-#### 3.1 Inputting Your Index 
-##### 3.1.1 Selecting Student Type
-##### 3.1.2 Adding your First Week and First Recess Week
-
-#### 3.2 Creating New Event
-
-#### 3.3 Check If You Are Free at A Certain Time 
+Try sending the message *"Hi"* to your bot. If it replies *"Hi, <your_name>!"*, then you're all set!
 
 
-
-
-## Chapter 1 Introduction
-
-### 1.1 Overview
-
-This bot is a software written to help NTU students keep track of their course schedule. 
-This bot also allows NTU students or NTU Bot Users to compare their respective schedules. 
-Hence, you can find common free time to get together for various meetings. 
-
-### 1.2 System Requirements
-
-The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
-
-## Chapter 2 Getting Started
-
-We have several alternatives to run the program as to which Python platform you choose to use.
-
-### 2.1 IDLE Python 3.6
-
-To start the program, you should first open IDLE Python3.6.
-Then open file “first_thing.py” found in the "samples" folder. 
-Then click “Run” and choose “Run Module” to start the bot. 
-You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
-
-### 2.2 Visual Studio Code 1.15.1 Python 3.6
-
-To start the program, you should first open Visual Studio Code 1.15.1 Python 3.6. 
-Then open file "first_thing.py" found in the "samples" folder. Then rightclick and choose "Run Code" if your default Programming language is Python 3.6 or "Run Python File in Terminal" if your default Programming language is not Python 3.6. You will be able to see the text "Listening ..." printed on the screen, indicating that your code is currently running.
-
-#### 2.5 Updating the List of Commands of Your Bot
+#### 2.6 Updating the List of Commands of Your Bot
 To be able to use the **/** command in your bot, you must first in put the Command List into BotFather.
 To do that, you must first type in **/setcommands** into BotFather. 
 BotFather will then ask you to choose **which bot** you want to set these commands for. Choose your Personal Assistant Bot.
@@ -348,11 +204,15 @@ addcourse - This command allows you to add your courses according to your index 
 removecourse - This command allows you to remove the course schedule you have put into the Google Calendar.
 getcourse - This command lets you display all the courses you have put in the Google Calendar.
 isfree - This command lets you check whether you are free at a certain time interval or not. 
+getupcomingevent - This command displays all your upcoming events 
+help - this displays all the commands you can use in the bot
 quit - This quits the bot.
 ```
 After you have done this, everytime you type in **/**, the bot will suggest commands you might want to use. 
 
+
 ### Chapter 3 List of Commands Available
+> [Back to contents](#contents)
 
 #### 3.01 /start
 This command is used to initially start the bot. Type **/start** in the telegram bot chat and the bot will greet you and tell you what it can do. 
@@ -379,24 +239,24 @@ This command allows you to add your courses according to your index into Google 
 #### 3.08 /removecourse
 This command allows you to remove the course schedule you have put into the Google Calendar.
 
-<<<<<<< HEAD
-### 3.0 Starting The Bot
-
-To start the bot, say "hi" to the bot and wait for it to greet you.
-Then ask what the bot can do by asking "what do you do?", or you can simply type in "/start". 
-You can then talk to the bot and ask it to arrange your meet
-=======
 #### 3.09 /getcourse
 This command lets you display all the courses you have put in the Google Calendar.
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 
 #### 3.10 /isfree
 This command lets you check whether you are free at a certain time interval or not. 
 
-#### 3.11 /quit
+#### 3.11 /getupcomingevent
+This command displays all your upcoming events
+
+#### 3.12 /help
+This command displays all the commands present in the bot
+
+#### 3.13 /quit
 This quits the bot.
 
+
 ## Chapter 4 Inputing Course Indexes and Finding Common Free Time
+> [Back to contents](#contents)
 
 
 ### 4.1 Inputting Your Course
@@ -413,12 +273,8 @@ Run /setstudenttype or /st to set your student_type, i.e. Full Time or Part Time
 
 Run /addfirstweek to set your first_week and first_recess_week
 ```
-<<<<<<< HEAD
-#### 3.1.1. Setting Student Type
-=======
 
 #### 4.1.1. Setting Student Type
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 
 You must set your student type before putting in your index. This is equivalent to declaring whether you are a part time student or a full time student.
 To do this, you must first type in **/setstudenttype** or **/st**
@@ -431,12 +287,8 @@ You will be given two choices in the keyboard; "Full-Time Student" and "Part-Tim
 ```
 Successful!
 ```
-<<<<<<< HEAD
-#### 3.1.2. Adding your First Week and First Recess Week
-=======
 
 #### 4.1.2. Adding your First Week and First Recess Week
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 
 You must also enter your first week and first recess week in your bot. To do that, you must first enter **/addfirstweek** into the bot. 
 ```
@@ -454,14 +306,10 @@ Captured!
 
 Your data is sucessfully recorded in our database!
 ```
-<<<<<<< HEAD
-After you have completed the process above, enter **/addindex** into the bot, and the bot should reply you in the following manner:
-=======
 
 #### 4.1.3 Adding Your Course Code
 
 After you have completed the process above, enter **/addcourse** into the bot, and the bot should reply you in the following manner:
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
 ```
 Sure thing. Please type your details in following format:
 
@@ -535,6 +383,23 @@ For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00
 Input the details of your event according to the format above.
 The bot will return **Successful!** if your event creation is successful.
 
+If you are not free on that time span, you cannot create an event. For example you have 2 classes on that time span:
+```
+10:30 - 11:30 CZ1003 LEC
+14:30 - 16:30 CZ1004 LAB
+```
+Hence, the bot will return:
+```
+You have 2 events occuring between 2017-10-09 08:00 and 2017-10-09 16:00
+
+1. 2017-10-09 10:30 until 2017-10-09 11:30
+2. 2017-10-09 14:30 until 2017-10-09 16:00
+
+What you probably want to do next:
+
+Run /addevent again with different datetime
+```
+
 ### 4.5 Removing Your Event
 
 You can remove the events you have put in your Google Calendar by typing in **/removeevent** to your bot. 
@@ -601,13 +466,96 @@ You are busy on this interval!
 
 You have an event from 2017-09-21T21:00:00+08:00 to 2017-09-21T22:00:00+08:00
 ```
-<<<<<<< HEAD
 
-### 3.4 Choose Meeting Time According to Bot Recommendation
+If you are not free on that time span, for example you have 2 classes on that time span:
+```
+10:30 - 11:30 CZ1003 LEC
+14:30 - 16:30 CZ1004 LAB
+```
+Hence, the bot will return:
+```
+You have 2 events occuring between 2017-10-09 08:00 and 2017-10-09 16:00
 
-This bot also offers the function to predict how many people will be in the section you are going to. Accessing the interface where two buttons “Library Current Status Inquiry” and “Library Status Prediction” are presented, you are expected to click on the latter. After that, do the same as the above-mentioned step to focus on one section. The program will return you a computed number, which is the average of the last several sets of data collected.
->>>>>>> a4af7bb133925e07c6db7a2f4164eb4bffa23c8e
-=======
->>>>>>> fae46f24934c73c34f9b0f2a5ef22553b5145270
-=======
->>>>>>> 38d0fb90211b31e2d73919c361fed6c0b3f61521
+1. 2017-10-09 10:30 until 2017-10-09 11:30
+2. 2017-10-09 14:30 until 2017-10-09 16:00
+
+What you probably want to do next:
+
+Run /isfree again with different datetime
+```
+
+### 4.8 See All Your Upcoming Events
+
+You can view your upcoming events through the **/getupcomingevents** command. The bot will respond in the following manner:
+
+```
+Please enter how many upcoming events are you looking for!
+
+Press!
+```
+It will then display a markup keyboard displaying a number from 1 to 7. You can choose to display upto 7 upcoming events. 
+In the case where you clicked **7**, the bot will respond in this following manner:
+```
+Getting 7 upcoming event(s) for you
+Here they are!
+```
+And it will display the first seven of your upcoming events (including your courses).
+It displays the **name of the event, date of the event and time interval of the event**.
+
+### 4.9 To See All The Commands You Have In Your Bot
+
+To see all the commands available in your bot, you may type in **/help** and the bot will display the commands available in the bot in the following manner:
+```
+Basic Commands 
+/start - Send welcome message 
+/help - list available commands 
+/quit - Send good bye message 
+
+General Commands 
+/isfree - To check whether you are free at a certain time interval 
+/getupcomingevent - List your upcoming events 
+
+Event-related Commands 
+/addevent - Add an event to your Google Calendar 
+/removeevent - Remove an event from your Google Calendar 
+/getevent - List all events that you have added 
+
+Course-related Commands 
+/addcourse - Add a course schedule to your Google Calendar 
+/removecourse - Remove a course schedule from your Google Calendar 
+/getcourse - List all courses that you have added 
+/setstudenttype - Set your student type (Full Time or Part Time) 
+/addfirstweek - Add the first weekday, i.e. Monday, of your first week and recess week
+```
+
+## Chapter 5 Further Information
+> [Back to contents](#contents)
+### Information 1: 
+
+For any commands that requires you to input a **date**:
+
+If the bot returns you this response:
+```
+Your format is correct, however we cannot perform the query to your Google Account
+```
+Then these cases may occur:
+
+Case 1: You have problems with your API keys
+
+Case 2: You entered a bad date, for instance your end time is earlier than your start time (Your event starts at 5 p.m. but ends at 4 p.m.)
+
+For these two cases, you may want to resolve your API problem and run the **/addevent** again and give the bot a reasonable time interval.
+
+### Information 2
+
+If the bot responds in this following manner:
+```
+Cannot access the course
+```
+This can also be caused by these following cases:
+
+Case 1: You may have problems with your browser driver, for instance you may have a problem with your chromedriver for Google Chrome.
+
+Case 2: You may have entered a course code that **does not exist**
+
+Case 3: You may have entered the wrong first week and first recess week. The **/addfirstweek** command can only accept a **Monday** as the start of the first week and first recess week.

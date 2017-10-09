@@ -158,6 +158,7 @@ The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
 We have several alternatives to run the program as to which Python platform you choose to use.
 
 ### 2.1 Cloning Repository to your local machine
+
 **You need to clone this repository to your local machine.**
 1. Navigate to any folder from your Terminal
 2. Run `git clone https://github.com/TechBotGit/bot.git`
@@ -165,17 +166,16 @@ We have several alternatives to run the program as to which Python platform you 
 
 ### 2.2 Setting Up Telegram Bot
 
-To start the program, you should first open IDLE Python3.6.
-Then open file “app.py” found in the "samples" folder. 
-Then click “Run” and choose “Run Module” to start the bot. 
-You will be able to see the text “Listening ...” printed on the screen, indicating that your code is currently running.
+1. To set up a bot, read the [Telegram's official documentation](https://core.telegram.org/api).
+2. After you receive the token, save it in the **[resources/](resources/)** folder under the name of **token.txt**
 
 ### 2.3 Setting Up Google API
 
-To start the program, you should first open Visual Studio Code 1.15.1 Python 3.6. 
-Then open file "app.py" found in the "samples" folder. Then rightclick and choose "Run Code" if your default Programming language is Python 3.6 or "Run Python File in Terminal" if your default Programming language is not Python 3.6. You will be able to see the text "Listening ..." printed on the screen, indicating that your code is currently running.
+1. Turn on your Google API by following the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)
+2. After you receive your API (.json file), save it in the **[resources/api/](resources/api)** folder under the name of **client_secret.json**.
 
 ### 2.4 Setting Up Browser
+
 Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
 >**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
@@ -191,7 +191,7 @@ You will be able to see the text *Listening ...* printed on the console, indicat
 
 Try sending the message *"Hi"* to your bot. If it replies *"Hi, <your_name>!"*, then you're all set!
 
-#### 2.6 Updating the List of Commands of Your Bot
+### 2.6 Updating the List of Commands of Your Bot
 To be able to view the list of commands in your bot without the use of **/help** command, you must first in put the Command List into BotFather.
 
 To do that, you must first type in **/setcommands** into BotFather. 

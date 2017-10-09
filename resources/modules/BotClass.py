@@ -387,7 +387,7 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /addcourse again and enter the correct course code")
 
                     else:
-                        if not BotCommandObject.error:
+                        if not self.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
@@ -465,7 +465,7 @@ class API(object):
                 self.bot.answerCallbackQuery(query_id, text='Error! :(')
                 self.bot.sendMessage(chat_id, 'Error occured! Please try again...')
             else:
-                self.bot.answerCallbackQuery(query_id, text='Index received! :)')
+                self.bot.answerCallbackQuery(query_id, text='Index added! :)')
 
             BotFindIndexObject = hc.chooseindex()
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
@@ -799,7 +799,6 @@ class BotCommand(API):
         course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
         
         if course_code_str is None:
-            # Change it to an empty dictionary
             excel.update(chat_id, course_code_event_id='{}')
         course_code_str_update = excel.table_query(chat_id, course_code_event_id=True)[3]
         course_code_dict = json.loads(course_code_str_update)
@@ -819,7 +818,7 @@ class BotCommand(API):
             keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
             self.bot.sendMessage(chat_id, 'Please choose your index below.\n Click only one of them once!', reply_markup=keyboard)
         else:
-            self.error = 1
+            API.error = 1
             self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
             self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
             self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removecourse!')
@@ -832,6 +831,7 @@ class BotCommand(API):
         check_db = db.DB()
         course_code_db_str = check_db.table_query(chat_id, course_code_event_id=course_code)[3]
         course_code_db_obj = json.loads(course_code_db_str)
+
         # Remove it from Google Calendar
         Google = gc.GoogleAPI()
         try:

@@ -479,6 +479,10 @@ class API(object):
                 data = db_check.table_query(chat_id, course_code_event_id=True)[3]
                 data_dict = json.loads(data)
                 if(course_code in list(data_dict.keys())):
+                    self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
+                    self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
+                    self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removecourse!')
+                    self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and type the correct course code")
                     raise err.QueryError
                 course_code_dict.update(data_dict)
 

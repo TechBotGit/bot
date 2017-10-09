@@ -115,7 +115,12 @@ class API(object):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print(content_type, chat_type, chat_id)
         response = self.bot.getUpdates()
-        self.StoreChat(response)
+        try:
+            self.StoreChat(response)
+        except: 
+            self.bot.sendMessage(chat_id,"Please write slowly!")
+            raise err.ParseError("Typed too fast!")
+        # self.StoreChat(response)
 
         if content_type == 'text':
 
@@ -475,6 +480,12 @@ class API(object):
             if db_check.isRecordExist(chat_id, course_code_event_id=True):
                 data = db_check.table_query(chat_id, course_code_event_id=True)[3]
                 data_dict = json.loads(data)
+                if(course_code in list(data_dict.keys())):
+                    self.bot.sendMessage(chat_id, 'Our database shows that you have already added the course code %s' %(course_code))
+                    self.bot.sendMessage(chat_id, 'You cannot add the same course code twice!')
+                    self.bot.sendMessage(chat_id, 'To change index, you must remove current existing course code by running /removecourse!')
+                    self.bot.sendMessage(chat_id, "Typo? Just run /addcourse again and type the correct course code")
+                    raise err.QueryError
                 course_code_dict.update(data_dict)
 
             if not BotCommandObject.error:

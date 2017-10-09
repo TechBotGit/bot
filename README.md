@@ -191,9 +191,9 @@ You will be able to see the text *Listening ...* printed on the console, indicat
 
 Try sending the message *"Hi"* to your bot. If it replies *"Hi, <your_name>!"*, then you're all set!
 
-
 #### 2.6 Updating the List of Commands of Your Bot
 To be able to view the list of commands in your bot without the use of **/help** command, you must first in put the Command List into BotFather.
+
 To do that, you must first type in **/setcommands** into BotFather. 
 BotFather will then ask you to choose **which bot** you want to set these commands for. Choose your Personal Assistant Bot.
 Then copy the following and send it to BotFather:

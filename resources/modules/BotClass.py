@@ -115,7 +115,12 @@ class API(object):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print(content_type, chat_type, chat_id)
         response = self.bot.getUpdates()
-        self.StoreChat(response)
+        try:
+            self.StoreChat(response)
+        except: 
+            self.bot.sendMessage(chat_id,"Please write slowly!")
+            raise err.ParseError("Typed too fast!")
+        # self.StoreChat(response)
 
         if content_type == 'text':
 

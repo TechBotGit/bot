@@ -100,6 +100,10 @@ class DB(object):
                             result_list.append(None)
                     break
                 break
+        # No chat id yet
+        if len(result_list) == 0:
+            for i in range(len(arg_list)):
+                result_list.append(None)
         return result_list
     
     def set_table_query(self, chat_id, update_list):

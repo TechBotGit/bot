@@ -149,7 +149,7 @@ class API(object):
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
                     
-                    if not excel.isRecordExist(chat_id, other_event_id=True):
+                    if not excel.isRecordExist(chat_id, other_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
@@ -169,7 +169,7 @@ class API(object):
                 elif msg_received == '/getevent':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
-                    if not excel.isRecordExist(chat_id, other_event_id=True):
+                    if not excel.isRecordExist(chat_id, other_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id, "There is no event recorded in our database!")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
@@ -215,7 +215,7 @@ class API(object):
                 elif msg_received == '/removecourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
@@ -235,7 +235,7 @@ class API(object):
                 elif msg_received == '/getcourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id, "There are no indexes registered in our database!")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")

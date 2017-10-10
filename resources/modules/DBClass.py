@@ -9,9 +9,9 @@ class DB(object):
 
     def __init__(self):
         """Initialize WorkBook"""
-        self.filename = "/../resources/database/database.xlsx"
-        self.cwd = os.path.dirname(sys.argv[0])
-        self.path_file = self.cwd + self.filename
+        self.filename = "../resources/database/database.xlsx"
+        # self.cwd = os.path.dirname(sys.argv[0])
+        self.path_file = self.filename
         self.wb = Workbook()
         self.sheet = self.wb.active
         self.sheet['A1'] = 'chat_id'

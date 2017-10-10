@@ -16,8 +16,8 @@ class API(object):
     """API Basic initialisation"""
     def __init__(self):
         # Deploy Bot
-        self.cwd = os.path.dirname(sys.argv[0])
-        self.api_key = self.cwd + '/../resources/token.txt'
+        # self.cwd = os.path.dirname(sys.argv[0])
+        self.api_key = '../resources/token.txt'
         f = open(self.api_key, 'r')
         self.token = f.read()
         f.close()

@@ -324,8 +324,8 @@ class PreformattedBotInlineMarkup(object):
 class splintergetdata(object):
     def __init__(self):
         self.url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
-        self.cwd = os.path.dirname(sys.argv[0])
-        self.browser_file = self.cwd + "/../resources/browser.txt"
+        # self.cwd = os.path.dirname(sys.argv[0])
+        self.browser_file = "../resources/browser.txt"
         f = open(self.browser_file, 'r')
         self.browser_used = f.read()
         f.close()

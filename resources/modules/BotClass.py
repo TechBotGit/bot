@@ -222,12 +222,12 @@ class API(object):
                     
                     else:
                         course_code_dict = json.loads(course_code_str)
-                        index_list = [
+                        course_code_list = [
                             key
                             for key in list(course_code_dict.keys())
                         ]
                         inlines_keyboard = []
-                        for i in index_list:
+                        for i in course_code_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Please click the course that you want to remove!",reply_markup=keyboard)
@@ -241,12 +241,12 @@ class API(object):
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")
                     else:
                         course_code_dict = json.loads(course_code_str)
-                        index_list = [
+                        course_code_list = [
                             key
                             for key in list(course_code_dict.keys())
                         ]
                         inlines_keyboard = []
-                        for i in list(index_list):
+                        for i in list(course_code_list):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your course code are as follows: ", reply_markup=keyboard)

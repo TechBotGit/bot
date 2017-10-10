@@ -873,13 +873,15 @@ class BotCommand(API):
         num_event = int(self.str_text)
         self.bot.sendMessage(chat_id, 'Getting %s upcoming event(s) for you' %(num_event))
         events = gc.GoogleAPI().getUpcomingEventList(num_event)
-        event_detail_list = []
-        inlines_keyboard = []
+        event_detail = ''
         if not events:
             self.bot.sendMessage(chat_id, 'No upcoming events found!')
             self.bot.sendMessage(chat_id, self.suggestion)
             self.bot.sendMessage(chat_id, 'Run /addevent to add an event')
         else:
+            if num_event > len(events):
+                self.bot.sendMessage(chat_id, 'There are only %d event(s) ahead!' %(len(events)))
+            self.bot.sendMessage(chat_id, "Here they are!")
             for event in events:
                 # Getting the start, end, and summary
                 start = event['start']['dateTime']
@@ -895,19 +897,15 @@ class BotCommand(API):
                 ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
 
                 # Combining all
-                complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
-                event_detail_list.append(complete_event)
+                complete_event = "*" + summary + "*" + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ') \n'
+                event_detail += complete_event
             
-            # Preparing inline keyboard
-            for event_detail in event_detail_list:
-                inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
-            keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-            
-            # Send the message to user
-            # If there are less events than requested
-            if num_event > len(event_detail_list):
-                self.bot.sendMessage(chat_id, 'There are only %d event(s) ahead!' %(len(event_detail_list)))
-            self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
+            try:
+                self.bot.sendMessage(chat_id, event_detail, parse_mode="Markdown")
+            except:
+                self.bot.sendMessage(chat_id, 'Too many events! Enter a smaller integer please!')
+                self.bot.sendMessage(chat_id, self.suggestion)
+                self.bot.sendMessage(chat_id, "Run /getupcomingevent again and enter a smaller integer, typically less than 70!")
         
 
 class IndexToGoogle(API):

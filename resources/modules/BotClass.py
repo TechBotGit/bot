@@ -224,7 +224,7 @@ class API(object):
                         course_code_dict = json.loads(course_code_str)
                         course_code_list = [
                             key
-                            for key in list(course_code_dict.keys())
+                            for key in sorted(list(course_code_dict.keys()))
                         ]
                         inlines_keyboard = []
                         for i in course_code_list:
@@ -243,7 +243,7 @@ class API(object):
                         course_code_dict = json.loads(course_code_str)
                         course_code_list = [
                             key
-                            for key in list(course_code_dict.keys())
+                            for key in sorted(list(course_code_dict.keys()))
                         ]
                         inlines_keyboard = []
                         for i in list(course_code_list):

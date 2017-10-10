@@ -1,8 +1,6 @@
 import os
-import sys
 import json
 from openpyxl import load_workbook, Workbook
-# from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 class DB(object):
@@ -10,7 +8,6 @@ class DB(object):
     def __init__(self):
         """Initialize WorkBook"""
         self.filename = "../resources/database/database.xlsx"
-        # self.cwd = os.path.dirname(sys.argv[0])
         self.path_file = self.filename
         self.wb = Workbook()
         self.sheet = self.wb.active

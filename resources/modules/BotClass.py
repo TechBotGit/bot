@@ -1,5 +1,3 @@
-import os
-import sys
 import json
 import telepot
 import datetime
@@ -16,7 +14,6 @@ class API(object):
     """API Basic initialisation"""
     def __init__(self):
         # Deploy Bot
-        # self.cwd = os.path.dirname(sys.argv[0])
         self.api_key = '../resources/token.txt'
         f = open(self.api_key, 'r')
         self.token = f.read()

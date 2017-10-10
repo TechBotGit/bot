@@ -875,31 +875,39 @@ class BotCommand(API):
         events = gc.GoogleAPI().getUpcomingEventList(num_event)
         event_detail_list = []
         inlines_keyboard = []
-        for event in events:
-            # Getting the start, end, and summary
-            start = event['start']['dateTime']
-            end = event['end']['dateTime']
-            summary = event['summary']
+        if not events:
+            self.bot.sendMessage(chat_id, 'No upcoming events found!')
+            self.bot.sendMessage(chat_id, self.suggestion)
+            self.bot.sendMessage(chat_id, 'Run /addevent to add an event')
+        else:
+            for event in events:
+                # Getting the start, end, and summary
+                start = event['start']['dateTime']
+                end = event['end']['dateTime']
+                summary = event['summary']
 
-            # Ignoring their timezones
-            ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
-            ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
+                # Ignoring their timezones
+                ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
+                ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
 
-            # Making these pretty
-            ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
-            ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
+                # Making these pretty
+                ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
+                ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
 
-            # Combining all
-            complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
-            event_detail_list.append(complete_event)
-        
-        # Preparing inline keyboard
-        for event_detail in event_detail_list:
-            inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
-        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-        
-        # Send the message to user
-        self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
+                # Combining all
+                complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
+                event_detail_list.append(complete_event)
+            
+            # Preparing inline keyboard
+            for event_detail in event_detail_list:
+                inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
+            keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
+            
+            # Send the message to user
+            # If there are less events than requested
+            if num_event > len(event_detail_list):
+                self.bot.sendMessage(chat_id, 'There are only %d event(s) ahead!' %(len(event_detail_list)))
+            self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
         
 
 class IndexToGoogle(API):

@@ -505,8 +505,14 @@ class API(object):
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
                     try:
                         toGoogle.PreCreateEventIndex(event_list, self.indexchosen)
+                    
                     except:
-                        self.bot.sendMessage(chat_id, "Unknown error has occured")
+                        self.bot.sendMessage(chat_id, "You have credential issues")
+                        self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                        # Delete from database
+                        del(course_code_dict[course_code])
+                        course_code_str = json.dumps(course_code_dict)
+                        db.DB().update(chat_id, course_code_event_id=course_code_str)
                         
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")

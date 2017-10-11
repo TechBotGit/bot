@@ -31,3 +31,8 @@ class BrowserError(Error):
 class OnlineCourseError(Error):
     """Raised when online course is selected"""
     pass
+
+
+class CredentialError(Error):
+    """Raised when the credential file (.json file) is invalid or doesn't exist"""
+    pass

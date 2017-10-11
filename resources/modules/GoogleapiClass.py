@@ -25,7 +25,7 @@ class GoogleAPI(object):
         # If modifying these SCOPES, delete your previously saved credentials
         # at ~/.credentials/calendar-python-quickstart.json
         self.SCOPES = 'https://www.googleapis.com/auth/calendar'
-        self.CLIENT_SECRET_FILE = '../api/client_secret.json'
+        self.CLIENT_SECRET_FILE = '../api/client_secret_dummy.json'
         self.APPLICATION_NAME = 'Google Calendar API Python Quickstart'
         self.credentials = self.get_credentials()
         self.http = self.credentials.authorize(httplib2.Http())
@@ -38,7 +38,7 @@ class GoogleAPI(object):
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
         
-        credential_path = os.path.join(credential_dir, 'calendar-python-quickstart.json')
+        credential_path = os.path.join(credential_dir, 'calendar-python-quickstart_dummy.json')
         store = Storage(credential_path)
         credentials = store.get()
         

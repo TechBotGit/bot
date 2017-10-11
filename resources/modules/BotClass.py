@@ -509,6 +509,9 @@ class API(object):
                     except:
                         self.bot.sendMessage(chat_id, "You have credential issues")
                         self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Fix your API issues and put your credential files in the correct location")
+                        self.bot.sendMessage(chat_id, "If necessary, delete your entire API project and create another one by following the instructions in the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)", parse_mode="Markdown")
                         # Delete from database
                         del(course_code_dict[course_code])
                         course_code_str = json.dumps(course_code_dict)

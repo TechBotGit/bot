@@ -19,3 +19,6 @@ geckodriver.log
 *.xlsx
 *.xls
 *.csv
+
+# Sample directory
+samples/

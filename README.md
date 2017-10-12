@@ -35,21 +35,23 @@ brew install chromedriver
 pip install openpyxl
 ```
 
-### 7. Browser Driver
+### 7. lxml Package
+```
+pip install lxml
+```
+
+### 8. Browser Driver
 Assuming you are using Google Chrome, then run the following command:
 ```
 brew install chromedriver
 ```
 If you are using Mozilla Firefox, then read the [Documentation for geckodriver](https://github.com/mozilla/geckodriver)
 
-### 8. Installing lxml
-```
-pip install lxml
-```
+
 
 # User Manual
 
-Hi, <first name>! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!
+Hi! Need help to be more productive? Good news, I'm here to manage your time! Feel free to ask me stuff!
 
 Want to know me more? Just ask me whatever you want and hope I can understand
 
@@ -178,7 +180,7 @@ We have several alternatives to run the program as to which Python platform you 
 
 Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
->**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
+>**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#8-browser-driver)
 
 ### 2.5 Testing your Bot
 

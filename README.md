@@ -148,7 +148,7 @@ This bot is a software written to help NTU students keep track of their course s
 This bot allows you to automatically access your course schedule from STARS. You no longer have to worry about **ODD** and **EVEN** weeks as well as lectures and seminars occuring on **random** weeks through out the semester as the bot will automatically handle it for you. 
 The bot also reminds you to attend your lectures, tutorials, labs and events **one hour** before respective events start in form of a **push notification**.
 
-To recapitulate, there is no need for you to print your class schedule from STARS planner anymore. Furthermore, you don't have to manually check your class schedule if you want to add any personal events of your own (this is highly prone to error!) as the bot will automatically tell you if you are free on that time interval or not. In short, you can say good bye to the mindblowing **ODD* and **EVEN** weeks!
+To recapitulate, there is no need for you to print your class schedule from STARS planner anymore. Furthermore, you don't have to manually check your class schedule if you want to add any personal events of your own (this is highly prone to error!) as the bot will automatically tell you if you are free on that time interval or not. In short, you can say good bye to the mindblowing **ODD** and **EVEN** weeks!
 
 ### 1.2 System Requirements
 

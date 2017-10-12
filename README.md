@@ -430,9 +430,7 @@ Okay send me the details in following format:
 
 Event Name;location;YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM
 
-For example:
-
-Party;NTU;2017-10-08 20:00;2017-10-08 22:00
+For example: Party;NTU;2017-10-08 20:00;2017-10-08 22:00
 ```
 Input the details of your event according to the format above.
 If addition of event is successful, the bot will return this following message:
@@ -468,7 +466,7 @@ Run /addevent to add another event with different datetime
 ### 4.5 Removing Your Event
 
 You can remove the events you have put in your Google Calendar by typing in **/removeevent** to your bot. 
-The bot will display the events you currently have on your calendar as a keyboard. Click on the event you want to remove and wait for the success message as shown below:
+The bot will display the events you currently have on your calendar as a keyboard with the following format: **event_name;start_time;end_time**. Click on the event you want to remove and wait for the success message as shown below:
 ```
 The event Party;2017-10-08 20:00;2017-10-08 22:00 has been removed!
 
@@ -520,6 +518,10 @@ The bot will respond in the following manner:
 Please enter the date interval using the following format:
 
 YYYY-MM-DD HH:MM;YYYY-MM-DD HH:MM
+
+For example:
+
+2017-10-09 08:00;2017-10-09 16:00
 ```
 Input the details in the format above.
 If you are free at that particular time interval, the bot will respond in this following manner:
@@ -555,6 +557,22 @@ What you probably want to do next:
 
 Run /isfree again with different datetime
 ```
+If there is something wrong with the date and time you have inputted, the bot will respond in this following manner:
+```
+Your format is correct, however we cannot perform the query to your Google Account
+
+Chances are:
+
+1. You have problems with your API keys
+
+2. You entered a bad date, e.g. your end time is smaller than your start time
+
+What you probably want to do next:
+
+Resolve your API problem
+
+Run /addevent again and give me a reasonable date interval
+```
 
 ### 4.8 See All Your Upcoming Events
 
@@ -563,10 +581,9 @@ You can view your upcoming events through the **/getupcomingevents** command. Th
 ```
 Please enter how many upcoming events are you looking for!
 
-Press!
+For example: 10
 ```
-It will then display a markup keyboard displaying a number from 1 to 7. You can choose to display upto 7 upcoming events. 
-In the case where you clicked **7**, the bot will respond in this following manner:
+In the case where you entered **7**, the bot will reply in this following manner:
 ```
 Getting 7 upcoming event(s) for you
 Here they are!
@@ -578,6 +595,8 @@ It displays the **name of the event, date of the event and time interval of the 
 
 To see all the commands available in your bot, you may type in **/help** and the bot will display the commands available in the bot in the following manner:
 ```
+Here is the list of commands that I can do:
+
 Basic Commands 
 /start - Send welcome message 
 /help - list available commands 

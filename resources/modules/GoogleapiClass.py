@@ -149,7 +149,8 @@ class GoogleAPI(object):
         print(event_id)
         course_code, course_type = summary.split(' ')
         db.DB().UpdateCourseCodeEventId(chat_id, course_code, event_id)
-
+        # print(event['iCalUID'])
+   
     def FreeBusyQuery(self, str_date_start, str_date_end):  # str_date --> yyyy-mm-dd hh:mm
         
         # Parsing date

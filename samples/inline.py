@@ -31,6 +31,8 @@ f = open(path_file, "r")
 token = (f.read())
 f.close()
 bot = telepot.Bot(token)
+MessageLoop(bot, {'chat': on_chat_message,'callback_query': on_callback_query}).run_as_thread()
+bot = telepot.Bot(token)
 MessageLoop(bot, {'chat': on_chat_message, 'callback_query': on_callback_query}).run_as_thread()
 
 print('Listening ...')

@@ -90,6 +90,14 @@ class StringParseGoogleAPI(object):
     def day(self):
         return self._day
 
+    # @property
+    # def occuring_week(self):
+    #     return self._occuring_week
+
+    # @property
+    # def ignored_week(self):
+    #     return self._ignored_week
+
     @property
     def start_time_cantik(self):
         return self._start_time_cantik
@@ -336,7 +344,7 @@ class splintergetdata(object):
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            time.sleep(5)  # to make sure the website has been fully loaded...
+
             for ii in browser.windows:
                 if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
                     browser.windows.current = ii

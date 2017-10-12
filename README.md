@@ -152,7 +152,8 @@ To recapitulate, there is no need for you to print your class schedule from STAR
 
 ### 1.2 System Requirements
 
-The bot requires Telegram versions released after 9 April, 2016 or Telegram Web.
+1. Telegram versions released after 9 April, 2016 or Telegram Web.
+2. Python3.6x
 
 ## Chapter 2 Getting Started
 > [Back to contents](#contents)

@@ -36,10 +36,16 @@ pip install lxml
 ```
 
 ### 7. Browser Driver
-Assuming you are using Google Chrome, then run the following command:
+Assuming you are using Google Chrome running on macOS / Linux, then run the following command:
 ```
 brew install chromedriver
 ```
+> For macOs: To get the latest version of brew, visit [Brew's official documentation](https://brew.sh/)
+
+> For Linux: To get the latest version of brew, visit [Linuxbrew's official documentation](http://linuxbrew.sh/)
+
+For Windows operating systems, you need to manually download the driver file and install it.
+
 If you are using Mozilla Firefox, then read the [Documentation for geckodriver](https://github.com/mozilla/geckodriver)
 
 

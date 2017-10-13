@@ -111,30 +111,44 @@ Want to know what I can do? Just run /help to see commands that I can do to help
 
 ### [Chapter 4 Inputting Course Indexes and Finding Common Free Time](#chapter-4-inputting-course-indexes-and-finding-common-free-time-1)
 
-### 4.1 Inputting Your Course
+#### 4.1 Inputting Your Course
 
-#### 4.1.1. Setting Student Type
-#### 4.1.2. Adding your First Week and First Recess Week
+##### 4.1.1. Setting Student Type
+##### 4.1.2. Adding your First Week and First Recess Week
+##### 4.1.3 Adding Your Course Code
 
-#### 4.1.3 Adding Your Course Code
+#### 4.2 Removing Your Course
 
-### 4.2 Removing Your Course
+#### 4.3 Displaying Your Courses
 
-### 4.3 Displaying Your Courses
+#### 4.4 Creating New Event
 
-### 4.4 Creating New Event
+#### 4.5 Removing Your Event
 
-### 4.5 Removing Your Event
+#### 4.6 Displaying Your Events
 
-### 4.6 Displaying Your Events
+#### 4.7 Check If You Are Free At A Certain Time
 
-### 4.7 Check If You Are Free At A Certain Time
+#### 4.8 See All Your Upcoming Events
 
-### 4.8 See All Your Upcoming Events
+#### 4.9 To See All The Commands You Have In Your Bot
 
-### 4.9 To See All The Commands You Have In Your Bot
 
 ### [Chapter 5 Further Information](#chapter-5-further-information-1)
+
+
+### [Chapter 6 Our Python Files](#chapter-6-our-python-files-1)
+#### 6.1 main/app.py
+
+#### 6.2 resources/modules/BotClass.py
+
+#### 6.3 resources/modules/GoogleapiClass.py
+
+#### 6.4 resources/modules/HelperClass.py
+
+#### 6.5 resources/modules/DBClass.py
+
+#### 6.6 resources/modules/ErrorClass.py
 
 
 
@@ -662,3 +676,43 @@ Check if you have inputted a **Monday** and no other day for the start of the fi
 Whenever a keyboard is displayed for you to click, make sure you click on them only **once** . Clicking the keyboard more than once will result in an error in your database and the bot may not be able to run properly.
 
 **Do not** scroll up and click on previous keyboard once you are done with that specific command. This can result in an error in your database and the bot may not be able to run properly.
+
+
+
+## Chapter 6 Our Python Files
+> [Back to contents](#contents)
+
+## 6.1 [main/app.py](main/app.py)
+This file is responsible for running the entire bot scripts in the resources/modules directory. Using the MessageLoop class, the these scripts are continuously run, unless 	manually interrupted or an unhandled error occurs.
+
+
+## 6.2 [resources/modules/BotClass.py](resources/modules/BotClass.py)
+
+This file is responsible for:
+  1. Initializing the bot
+  2. Handling messages
+  3. Handling commands
+
+
+## 6.3 [resources/modules/GoogleapiClass.py](resources/modules/GoogleapiClass.py)
+
+This file is responsible for:
+  1. Initializing credential requirements for Google Calendar API
+  2. Read and write the data in the Google Calendar
+
+
+## 6.4 [resources/modules/HelperClass.py](resources/modules/HelperClass.py)
+
+The file is responsible for parsing string inputs and outputs
+
+
+## 6.5 [resources/modules/DBClass.py](resources/modules/DBClass.py)
+
+This file is responsible for:
+  1. Generate an excel file as a database
+  2. Read and write the excel file
+
+
+## 6.6 [resources/modules/ErrorClass.py](resources/modules/ErrorClass.py)
+
+This file is used to define custom exceptions. These exceptions are needed to handle specific errors, such as API request error, parse error, etc.

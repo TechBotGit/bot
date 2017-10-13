@@ -5,42 +5,37 @@ bot-project
 # Pre-requisites
 ## Installing Dependencies
 
-### **1. Telepot module**
+### 1. Telepot module
 ```
 pip install telepot
 ```
 	
-### **2. Beautifulsoup module**
+### 2. Beautifulsoup module
 ```
 pip install beautifulsoup4
 ```
 
-### **3. Splinter module**
+### 3. Splinter module
 ```
 pip install splinter
 ```
 
-### **4. Google API module**
+### 4. Google API module
 ```
 pip install --upgrade google-api-python-client
 ```
 
-### **5. Google Chrome Driver**
-```
-brew install chromedriver
-```
-
-### **6. openpyxl Package**
+### 5. openpyxl Package
 ```
 pip install openpyxl
 ```
 
-### 7. lxml Package
+### 6. lxml Package
 ```
 pip install lxml
 ```
 
-### 8. Browser Driver
+### 7. Browser Driver
 Assuming you are using Google Chrome, then run the following command:
 ```
 brew install chromedriver
@@ -195,7 +190,7 @@ We have several alternatives to run the program as to which Python platform you 
 
 Write your browser name (i.e. *chrome* or *firefox*) and save it in the **[resources/](resources/)** folder under the name of **browser.txt**
 
->**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#8-browser-driver)
+>**Important Notes**: Your browser must have its driver in order to work. [Refer to step in the pre-requisite section](#7-browser-driver)
 
 ### 2.5 Testing your Bot
 
